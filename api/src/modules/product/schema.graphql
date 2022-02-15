@@ -1,0 +1,73 @@
+scalar DateTime
+"""
+TODO: itemType
+"""
+type Query {
+  productByID(product_id: ID!): product
+  productByPage(data: productByPageInput!): [product]
+  userProducts: [product]
+}
+
+type Mutation {
+  createProduct(data: createProductInput!): ID
+}
+
+input productByPageInput {
+  page: Int!
+  search: String
+  itemType: String
+  Maker: String
+  MinPrice: Float
+  MaxPrice: Float
+  sellType: String
+  Location: String
+  lastProductID: ID!
+}
+
+input createProductInput {
+  title: String!
+  titleExtraInfo: String
+  description: String!
+  location: String!
+  sellType: productSellType!
+  price: Float
+}
+
+type product {
+  product_id: ID!
+  title: String!
+
+  titleExtraInfo: String
+  description: String!
+  location: String!
+  sellType: productSellType!
+  price: Float
+
+  created_at: DateTime!
+  updated_at: DateTime!
+  user: user!
+
+  product_status: productStatus!
+
+  product_images: [productImage]!
+
+  haveImages: Boolean!
+}
+
+enum productSellType {
+  TRADE
+  SELL
+}
+
+enum productStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+}
+
+type productImage {
+  product_image_id: ID!
+  image_url: String
+  product_id: ID!
+  product: product!
+}

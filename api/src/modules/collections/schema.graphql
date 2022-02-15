@@ -1,0 +1,37 @@
+scalar DateTime
+
+type Query {
+  myCollections: [collection]!
+  myCollection(id: ID!): collection!
+}
+
+type Mutation {
+  createCollection(name: String!): collection
+  deleteCollection(id: ID!): Boolean
+  updateCollection(id: ID!, name: String!): collection
+
+  addProductToCollection(collectionId: ID!, productId: ID!): collection_product
+  removeProductFromCollection(collectionId: ID!, productId: ID!): Boolean
+}
+
+type collection {
+  collection_id: ID!
+  name: String!
+
+  user: user!
+  collections_product: [collection_product]!
+
+  created_at: DateTime!
+}
+
+type collection_product {
+  collection_product_id: ID!
+
+  product: product!
+  product_id: ID!
+
+  collection: collection!
+  collection_id: ID!
+
+  created_at: DateTime!
+}
