@@ -1,12 +1,16 @@
 import type { AppProps } from "next/app";
 import { ApolloProvider } from "@apollo/client";
 import React from "react";
-import { AuthProvider } from "../context/AuthContext";
-import Layout from "../components/Layout/Layout";
-import "@css/style.css";
-import checkDarkMode from "@src/functions/checkDarkMode";
-import { client } from "@src/libs/Apollo";
 import { useRouter } from "next/router";
+
+import { AuthProvider } from "@src/context/AuthContext";
+
+import { client } from "@src/libs/Apollo";
+
+import checkDarkMode from "@src/functions/checkDarkMode";
+
+import Layout from "@src/components/Layout/Layout";
+import "@css/style.css";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();

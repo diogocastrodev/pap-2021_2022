@@ -1,29 +1,30 @@
 import * as jwt from 'jsonwebtoken';
 import { config, Depromisify } from "./utils";
-import { Request, Response } from 'express'
+import { IncomingMessage, ServerResponse } from 'http';
+import { Request, Response } from 'express';
 
 /* Resolvers context param */
 export interface ResolverContext {
     is_authed: boolean,
-    user_id?: String,
+    public_id?: string,
     request: Request,
     response: Response
 }
 
-/* context function params */
-type ContextProps = {
-    req: Request
+interface IContext {
+    req: Request,
     res: Response
 }
 
 /* This function will be executed when get a GraphQL Request */
-export const context = async ({ req, res }: ContextProps) => {
+export async function context ({ req, res}: IContext): Promise<ResolverContext> {
     /* Initialize context as user not authed */
     const ctx: ResolverContext = {
         is_authed: false,
         request: req,
         response: res
     }
+
     /* Get Token from headers */
     let token: string = req.headers.authorization || '';
     if(token){
@@ -36,12 +37,12 @@ export const context = async ({ req, res }: ContextProps) => {
             /* If token isn't valid will return the context as user not authed */
             if(typeof decoded === 'string') return ctx;
             /* 
-                otherwise will get user_id and it exists will set authed to true and add the user_id
-                so, in GraphQL resolvers will be able to use it or check if user is logged in
+            otherwise will get user_id and it exists will set authed to true and add the user_id
+            so, in GraphQL resolvers will be able to use it or check if user is logged in
             */
-            if(decoded.user_id) {
+            if(decoded.public_id) {
                 ctx.is_authed = true;
-                ctx.user_id = decoded.user_id
+                ctx.public_id = decoded.public_id
             }
         } catch(e){
             /* Silence */

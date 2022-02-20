@@ -30,10 +30,6 @@ const getUserQuery = gql`
     me {
       public_user_id
       email
-      haveAvatar
-      avatar
-      name
-      surname
     }
     checkToken
   }

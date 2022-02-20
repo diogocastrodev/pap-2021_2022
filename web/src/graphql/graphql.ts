@@ -14,6 +14,28 @@ export type Scalars = {
   DateTime: any;
 };
 
+export enum ColorStyle {
+  Hex = 'HEX',
+  Rgb = 'RGB',
+  Rgba = 'RGBA'
+}
+
+export type Folders = {
+  __typename?: 'Folders';
+  color: Scalars['String'];
+  color_style: ColorStyle;
+  created_at: Scalars['DateTime'];
+  folder_id: Scalars['ID'];
+  folders?: Maybe<Array<Maybe<Folders>>>;
+  name: Scalars['String'];
+  parent_folder?: Maybe<Folders>;
+  parent_id?: Maybe<Scalars['ID']>;
+  todos?: Maybe<Array<Maybe<Todo>>>;
+  updated_at: Scalars['DateTime'];
+  user?: Maybe<User>;
+  user_id: Scalars['String'];
+};
+
 export type LoginInput = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -21,36 +43,14 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addProductToCollection?: Maybe<Collection_Product>;
-  createCollection?: Maybe<Collection>;
-  createProduct?: Maybe<Scalars['ID']>;
-  deleteCollection?: Maybe<Scalars['Boolean']>;
+  createFolder?: Maybe<Folders>;
   login?: Maybe<Scalars['String']>;
   register?: Maybe<Scalars['String']>;
-  removeProductFromCollection?: Maybe<Scalars['Boolean']>;
-  updateCollection?: Maybe<Collection>;
-  verifyEmail?: Maybe<Scalars['String']>;
 };
 
 
-export type MutationAddProductToCollectionArgs = {
-  collectionId: Scalars['ID'];
-  productId: Scalars['ID'];
-};
-
-
-export type MutationCreateCollectionArgs = {
-  name: Scalars['String'];
-};
-
-
-export type MutationCreateProductArgs = {
-  data: CreateProductInput;
-};
-
-
-export type MutationDeleteCollectionArgs = {
-  id: Scalars['ID'];
+export type MutationCreateFolderArgs = {
+  data: CreateFolderInput;
 };
 
 
@@ -63,66 +63,41 @@ export type MutationRegisterArgs = {
   data: RegisterInput;
 };
 
+export enum Permissions {
+  Admin = 'ADMIN',
+  User = 'USER'
+}
 
-export type MutationRemoveProductFromCollectionArgs = {
-  collectionId: Scalars['ID'];
-  productId: Scalars['ID'];
-};
-
-
-export type MutationUpdateCollectionArgs = {
-  id: Scalars['ID'];
-  name: Scalars['String'];
-};
-
-
-export type MutationVerifyEmailArgs = {
-  hash: Scalars['String'];
-};
-
-/** TODO: itemType */
 export type Query = {
   __typename?: 'Query';
-  checkToken: Scalars['Boolean'];
+  checkToken?: Maybe<Scalars['Boolean']>;
   me?: Maybe<User>;
-  myCollection: Collection;
-  myCollections: Array<Maybe<Collection>>;
-  productByID?: Maybe<Product>;
-  productByPage?: Maybe<Array<Maybe<Product>>>;
-  profile?: Maybe<Profile>;
-  userProducts?: Maybe<Array<Maybe<Product>>>;
-};
-
-
-/** TODO: itemType */
-export type QueryMyCollectionArgs = {
-  id: Scalars['ID'];
-};
-
-
-/** TODO: itemType */
-export type QueryProductByIdArgs = {
-  product_id: Scalars['ID'];
-};
-
-
-/** TODO: itemType */
-export type QueryProductByPageArgs = {
-  data: ProductByPageInput;
-};
-
-
-/** TODO: itemType */
-export type QueryProfileArgs = {
-  id: Scalars['ID'];
+  userFolders?: Maybe<ReturnFolders>;
 };
 
 export type RegisterInput = {
   email: Scalars['String'];
-  name: Scalars['String'];
   password: Scalars['String'];
-  phone_number?: InputMaybe<Scalars['String']>;
-  surname: Scalars['String'];
+  username: Scalars['String'];
+};
+
+export type Todo = {
+  __typename?: 'Todo';
+  todo_id: Scalars['ID'];
+};
+
+export type User = {
+  __typename?: 'User';
+  created_at: Scalars['DateTime'];
+  email: Scalars['String'];
+  hash?: Maybe<Scalars['String']>;
+  password: Scalars['String'];
+  permissions: Permissions;
+  public_user_id: Scalars['Int'];
+  status: UserStatus;
+  updated_at: Scalars['DateTime'];
+  user_id: Scalars['ID'];
+  username: Scalars['String'];
 };
 
 export enum UserStatus {
@@ -131,101 +106,25 @@ export enum UserStatus {
   Pending = 'PENDING'
 }
 
-export type Collection = {
-  __typename?: 'collection';
-  collection_id: Scalars['ID'];
-  collections_product: Array<Maybe<Collection_Product>>;
-  created_at: Scalars['DateTime'];
+export type CreateFolderInput = {
+  color?: InputMaybe<Scalars['String']>;
+  color_style?: InputMaybe<ColorStyle>;
   name: Scalars['String'];
-  user: User;
+  parent_id?: InputMaybe<Scalars['ID']>;
 };
 
-export type Collection_Product = {
-  __typename?: 'collection_product';
-  collection: Collection;
-  collection_id: Scalars['ID'];
-  collection_product_id: Scalars['ID'];
-  created_at: Scalars['DateTime'];
-  product: Product;
-  product_id: Scalars['ID'];
-};
-
-export type CreateProductInput = {
-  description: Scalars['String'];
-  location: Scalars['String'];
-  price?: InputMaybe<Scalars['Float']>;
-  sellType: ProductSellType;
-  title: Scalars['String'];
-  titleExtraInfo?: InputMaybe<Scalars['String']>;
-};
-
-export type Product = {
-  __typename?: 'product';
-  created_at: Scalars['DateTime'];
-  description: Scalars['String'];
-  haveImages: Scalars['Boolean'];
-  location: Scalars['String'];
-  price?: Maybe<Scalars['Float']>;
-  product_id: Scalars['ID'];
-  product_images: Array<Maybe<ProductImage>>;
-  product_status: ProductStatus;
-  sellType: ProductSellType;
-  title: Scalars['String'];
-  titleExtraInfo?: Maybe<Scalars['String']>;
-  updated_at: Scalars['DateTime'];
-  user: User;
-};
-
-export type ProductByPageInput = {
-  Location?: InputMaybe<Scalars['String']>;
-  Maker?: InputMaybe<Scalars['String']>;
-  MaxPrice?: InputMaybe<Scalars['Float']>;
-  MinPrice?: InputMaybe<Scalars['Float']>;
-  itemType?: InputMaybe<Scalars['String']>;
-  lastProductID: Scalars['ID'];
-  page: Scalars['Int'];
-  search?: InputMaybe<Scalars['String']>;
-  sellType?: InputMaybe<Scalars['String']>;
-};
-
-export type ProductImage = {
-  __typename?: 'productImage';
-  image_url?: Maybe<Scalars['String']>;
-  product: Product;
-  product_id: Scalars['ID'];
-  product_image_id: Scalars['ID'];
-};
-
-export enum ProductSellType {
-  Sell = 'SELL',
-  Trade = 'TRADE'
-}
-
-export enum ProductStatus {
-  Active = 'ACTIVE',
-  Expired = 'EXPIRED',
-  Inactive = 'INACTIVE'
-}
-
-export type Profile = {
-  __typename?: 'profile';
-  avatar?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  haveAvatar: Scalars['Boolean'];
+export type ExportedData = {
+  __typename?: 'exportedData';
+  children?: Maybe<Array<Maybe<ExportedData>>>;
+  color: Scalars['String'];
+  color_style: ColorStyle;
+  depth: Scalars['Int'];
+  folder_id: Scalars['String'];
   name: Scalars['String'];
-  product?: Maybe<Array<Maybe<Product>>>;
-  surname: Scalars['String'];
 };
 
-export type User = {
-  __typename?: 'user';
-  avatar?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  haveAvatar: Scalars['Boolean'];
-  location: Scalars['String'];
-  name: Scalars['String'];
-  phone_number?: Maybe<Scalars['String']>;
-  product?: Maybe<Array<Maybe<Product>>>;
-  public_user_id?: Maybe<Scalars['String']>;
-  surname: Scalars['String'];
+export type ReturnFolders = {
+  __typename?: 'returnFolders';
+  folders: Array<Maybe<ExportedData>>;
+  folders_amount: Scalars['Int'];
 };

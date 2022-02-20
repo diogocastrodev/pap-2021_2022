@@ -17,7 +17,6 @@ import NotificationsButton, {
 import { AuthContext } from "@src/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { searchGlobalState } from "@src/context/SearchContext";
 import { useHookstate } from "@hookstate/core";
 import Image from "next/image";
 import UserAvatar from "../user/items/Avatar/UserAvatar";
@@ -97,8 +96,6 @@ export default function Navbar(props: props) {
     },
   ];
 
-  const searchState = useHookstate(searchGlobalState);
-
   const router = useRouter();
 
   return (
@@ -107,8 +104,8 @@ export default function Navbar(props: props) {
         <div className="w-full flex flex-row items-center">
           <div className="text-black font-extrabold text-3xl">
             <Link href={"/"}>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500 select-none cursor-pointer">
-                {"Logo"}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500 select-none cursor-pointer">
+                {"pap"}
               </span>
             </Link>
           </div>
@@ -117,42 +114,13 @@ export default function Navbar(props: props) {
               <a className="text-black">Home</a>
             </Link>
           </div>
-          <div className="pl-6">
-            <Link href={"/search"}>
-              <a className="text-black">Search</a>
-            </Link>
-          </div>
-        </div>
-        <div className="w-full flex justify-center items-center h-full">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              router.push({
-                pathname: "/search",
-                query: { search: searchState.get().search },
-              });
-            }}
-          >
-            <TextInput
-              mainDiv={{
-                className: "w-full",
-              }}
-              input={{
-                type: "text",
-                setValue: (e) =>
-                  searchState.set({
-                    search: e.target.value,
-                  }),
-                value: searchState.get().search,
-                color: "transparent",
-                placeholder: "Search",
-              }}
-              button={{
-                buttonType: "submit",
-                icon: <SearchIcon />,
-              }}
-            />
-          </form>
+          {user.AuthData.is_logged && (
+            <div className="pl-6">
+              <Link href={`/dashboard`}>
+                <a className="text-black">Dashboard</a>
+              </Link>
+            </div>
+          )}
         </div>
         <div className="justify-self-end justify-end w-full h-full flex flex-row items-center pr-4">
           {user.AuthData.is_logged && (

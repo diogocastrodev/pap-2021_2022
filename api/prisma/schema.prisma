@@ -10,120 +10,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// --------------------------------------------------------------------------
-//                                   Models
-// --------------------------------------------------------------------------
-
 model user {
-  user_id        String @id @default(uuid()) @db.Uuid()
-  public_user_id String @unique @default(cuid()) @db.VarChar(255)
+  user_id        String @id @default(uuid())
+  public_user_id Int    @unique @default(autoincrement())
 
-  email    String @unique @db.VarChar(255)
-  password String @db.VarChar(255)
+  username String @unique
+  email    String @unique
+  password String
 
-  name    String @db.VarChar(255)
-  surname String @db.VarChar(255)
-
-  location String? @db.VarChar(255)
-
-  phone_number String? @db.VarChar(255)
-
-  haveAvatar Boolean @default(false) @db.Boolean()
-  avatar     String? @unique @db.VarChar(255)
+  roles Roles @default(USER)
 
   status UserStatus @default(PENDING)
+  hash   String?    @default(cuid())
 
-  hash          String  @unique @db.VarChar(255)
-  emailVerified Boolean @default(false) @db.Boolean()
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  created_at DateTime @default(now()) @db.Timestamp(0)
-  updated_at DateTime @updatedAt @db.Timestamp(0)
-
-  product       product[]
-  notifications notifications[]
-  collections   collection[]
+  folders folders[]
 }
 
-model notifications {
-  notification_id String @id @default(uuid()) @db.Uuid()
-
-  seen Boolean @default(false)
-
-  user    user   @relation(fields: [user_id], references: [user_id])
-  user_id String @db.Uuid
-}
-
-model notifications_types {
-  notification_type_id String @id @default(uuid()) @db.Uuid()
-
-  type  String              @db.VarChar(255)
-  style notification_styles
-}
-
-model collection {
-  collection_id String @id @default(uuid()) @db.Uuid()
-
-  name String @db.VarChar(255)
-
-  user                user                  @relation(fields: [user_id], references: [user_id])
-  user_id             String                @db.Uuid
-  collections_product collections_product[]
-
-  created_at DateTime @default(now()) @db.Timestamp(0)
-  updated_at DateTime @updatedAt @db.Timestamp(0)
-}
-
-model collections_product {
-  collection_product_id String @id @default(uuid()) @db.Uuid()
-
-  product    product @relation(fields: [product_id], references: [product_id])
-  product_id String  @db.Uuid
-
-  collection    collection @relation(fields: [collection_id], references: [collection_id])
-  collection_id String     @db.Uuid
-
-  created_at DateTime @default(now()) @db.Timestamp(0)
-  updated_at DateTime @updatedAt @db.Timestamp(0)
-}
-
-model product {
-  product_id     String          @id @default(uuid()) @db.Uuid()
-  title          String          @db.VarChar(255)
-  titleExtraInfo String?         @db.VarChar(255)
-  description    String          @db.Text
-  location       String          @db.VarChar(255)
-  sellType       productSellType @default(SELL)
-  price          Float?          @db.Real
-
-  created_at DateTime @default(now()) @db.Timestamp(0)
-  updated_at DateTime @updatedAt @db.Timestamp(0)
-
-  user_id String @db.Uuid()
-  user    user   @relation(fields: [user_id], references: [user_id])
-
-  product_status ProductStatus @default(ACTIVE)
-
-  product_images       product_images[]
-  collections_products collections_product[]
-
-  haveImages Boolean @default(false) @db.Boolean()
-}
-
-model product_images {
-  product_image_id String  @id @default(uuid()) @db.Uuid()
-  image_url        String  @db.VarChar(255)
-  product_id       String  @db.Uuid()
-  product          product @relation(fields: [product_id], references: [product_id])
-}
-
-// --------------------------------------------------------------------------
-//                                    Enums
-// --------------------------------------------------------------------------
-
-enum notification_styles {
-  VERIFICATION
-  SUCCESS
-  ERROR
+enum Roles {
+  ADMIN
+  USER
 }
 
 enum UserStatus {
@@ -132,13 +40,49 @@ enum UserStatus {
   PENDING
 }
 
-enum ProductStatus {
-  ACTIVE
-  INACTIVE
-  EXPIRED
+enum ColorStyle {
+  RGBA
+  RGB
+  HEX
 }
 
-enum productSellType {
-  TRADE
-  SELL
+model folders {
+  folder_id String @id @default(uuid())
+  name      String
+
+  color       String     @default("0 0 0 0")
+  color_style ColorStyle @default(RGBA)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Antipattern - Depend of a parent
+  parent_id     String?
+  parent_folder folders?  @relation("subfolder", fields: [parent_id], references: [folder_id])
+  folders       folders[] @relation("subfolder")
+
+  // User
+  user_id String
+  user    user   @relation(fields: [user_id], references: [user_id])
+
+  // Todos
+  todos todo[]
+}
+
+model todo {
+  todo_id     String     @id @default(uuid())
+  description String
+  status      TodoStatus
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  folder    folders? @relation(fields: [folder_id], references: [folder_id])
+  folder_id String?
+}
+
+enum TodoStatus {
+  ACTIVE
+  DONE
+  DELETED
 }

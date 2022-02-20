@@ -1,12 +1,10 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { product, collection, collections_product, product_images, user } from '.prisma/client';
+import { user, folders } from '.prisma/client';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -18,6 +16,28 @@ export type Scalars = {
   DateTime: any;
 };
 
+export enum ColorStyle {
+  Hex = 'HEX',
+  Rgb = 'RGB',
+  Rgba = 'RGBA'
+}
+
+export type Folders = {
+  __typename?: 'Folders';
+  color: Scalars['String'];
+  color_style: ColorStyle;
+  created_at: Scalars['DateTime'];
+  folder_id: Scalars['ID'];
+  folders?: Maybe<Array<Maybe<Folders>>>;
+  name: Scalars['String'];
+  parent_folder?: Maybe<Folders>;
+  parent_id?: Maybe<Scalars['ID']>;
+  todos?: Maybe<Array<Maybe<Todo>>>;
+  updated_at: Scalars['DateTime'];
+  user?: Maybe<User>;
+  user_id: Scalars['String'];
+};
+
 export type LoginInput = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -25,36 +45,14 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addProductToCollection?: Maybe<Collection_Product>;
-  createCollection?: Maybe<Collection>;
-  createProduct?: Maybe<Scalars['ID']>;
-  deleteCollection?: Maybe<Scalars['Boolean']>;
+  createFolder?: Maybe<Folders>;
   login?: Maybe<Scalars['String']>;
   register?: Maybe<Scalars['String']>;
-  removeProductFromCollection?: Maybe<Scalars['Boolean']>;
-  updateCollection?: Maybe<Collection>;
-  verifyEmail?: Maybe<Scalars['String']>;
 };
 
 
-export type MutationAddProductToCollectionArgs = {
-  collectionId: Scalars['ID'];
-  productId: Scalars['ID'];
-};
-
-
-export type MutationCreateCollectionArgs = {
-  name: Scalars['String'];
-};
-
-
-export type MutationCreateProductArgs = {
-  data: CreateProductInput;
-};
-
-
-export type MutationDeleteCollectionArgs = {
-  id: Scalars['ID'];
+export type MutationCreateFolderArgs = {
+  data: CreateFolderInput;
 };
 
 
@@ -67,66 +65,41 @@ export type MutationRegisterArgs = {
   data: RegisterInput;
 };
 
+export enum Permissions {
+  Admin = 'ADMIN',
+  User = 'USER'
+}
 
-export type MutationRemoveProductFromCollectionArgs = {
-  collectionId: Scalars['ID'];
-  productId: Scalars['ID'];
-};
-
-
-export type MutationUpdateCollectionArgs = {
-  id: Scalars['ID'];
-  name: Scalars['String'];
-};
-
-
-export type MutationVerifyEmailArgs = {
-  hash: Scalars['String'];
-};
-
-/** TODO: itemType */
 export type Query = {
   __typename?: 'Query';
-  checkToken: Scalars['Boolean'];
+  checkToken?: Maybe<Scalars['Boolean']>;
   me?: Maybe<User>;
-  myCollection: Collection;
-  myCollections: Array<Maybe<Collection>>;
-  productByID?: Maybe<Product>;
-  productByPage?: Maybe<Array<Maybe<Product>>>;
-  profile?: Maybe<Profile>;
-  userProducts?: Maybe<Array<Maybe<Product>>>;
-};
-
-
-/** TODO: itemType */
-export type QueryMyCollectionArgs = {
-  id: Scalars['ID'];
-};
-
-
-/** TODO: itemType */
-export type QueryProductByIdArgs = {
-  product_id: Scalars['ID'];
-};
-
-
-/** TODO: itemType */
-export type QueryProductByPageArgs = {
-  data: ProductByPageInput;
-};
-
-
-/** TODO: itemType */
-export type QueryProfileArgs = {
-  id: Scalars['ID'];
+  userFolders?: Maybe<ReturnFolders>;
 };
 
 export type RegisterInput = {
   email: Scalars['String'];
-  name: Scalars['String'];
   password: Scalars['String'];
-  phone_number?: InputMaybe<Scalars['String']>;
-  surname: Scalars['String'];
+  username: Scalars['String'];
+};
+
+export type Todo = {
+  __typename?: 'Todo';
+  todo_id: Scalars['ID'];
+};
+
+export type User = {
+  __typename?: 'User';
+  created_at: Scalars['DateTime'];
+  email: Scalars['String'];
+  hash?: Maybe<Scalars['String']>;
+  password: Scalars['String'];
+  permissions: Permissions;
+  public_user_id: Scalars['Int'];
+  status: UserStatus;
+  updated_at: Scalars['DateTime'];
+  user_id: Scalars['ID'];
+  username: Scalars['String'];
 };
 
 export enum UserStatus {
@@ -135,103 +108,27 @@ export enum UserStatus {
   Pending = 'PENDING'
 }
 
-export type Collection = {
-  __typename?: 'collection';
-  collection_id: Scalars['ID'];
-  collections_product: Array<Maybe<Collection_Product>>;
-  created_at: Scalars['DateTime'];
+export type CreateFolderInput = {
+  color?: Maybe<Scalars['String']>;
+  color_style?: Maybe<ColorStyle>;
   name: Scalars['String'];
-  user: User;
+  parent_id?: Maybe<Scalars['ID']>;
 };
 
-export type Collection_Product = {
-  __typename?: 'collection_product';
-  collection: Collection;
-  collection_id: Scalars['ID'];
-  collection_product_id: Scalars['ID'];
-  created_at: Scalars['DateTime'];
-  product: Product;
-  product_id: Scalars['ID'];
-};
-
-export type CreateProductInput = {
-  description: Scalars['String'];
-  location: Scalars['String'];
-  price?: InputMaybe<Scalars['Float']>;
-  sellType: ProductSellType;
-  title: Scalars['String'];
-  titleExtraInfo?: InputMaybe<Scalars['String']>;
-};
-
-export type Product = {
-  __typename?: 'product';
-  created_at: Scalars['DateTime'];
-  description: Scalars['String'];
-  haveImages: Scalars['Boolean'];
-  location: Scalars['String'];
-  price?: Maybe<Scalars['Float']>;
-  product_id: Scalars['ID'];
-  product_images: Array<Maybe<ProductImage>>;
-  product_status: ProductStatus;
-  sellType: ProductSellType;
-  title: Scalars['String'];
-  titleExtraInfo?: Maybe<Scalars['String']>;
-  updated_at: Scalars['DateTime'];
-  user: User;
-};
-
-export type ProductByPageInput = {
-  Location?: InputMaybe<Scalars['String']>;
-  Maker?: InputMaybe<Scalars['String']>;
-  MaxPrice?: InputMaybe<Scalars['Float']>;
-  MinPrice?: InputMaybe<Scalars['Float']>;
-  itemType?: InputMaybe<Scalars['String']>;
-  lastProductID: Scalars['ID'];
-  page: Scalars['Int'];
-  search?: InputMaybe<Scalars['String']>;
-  sellType?: InputMaybe<Scalars['String']>;
-};
-
-export type ProductImage = {
-  __typename?: 'productImage';
-  image_url?: Maybe<Scalars['String']>;
-  product: Product;
-  product_id: Scalars['ID'];
-  product_image_id: Scalars['ID'];
-};
-
-export enum ProductSellType {
-  Sell = 'SELL',
-  Trade = 'TRADE'
-}
-
-export enum ProductStatus {
-  Active = 'ACTIVE',
-  Expired = 'EXPIRED',
-  Inactive = 'INACTIVE'
-}
-
-export type Profile = {
-  __typename?: 'profile';
-  avatar?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  haveAvatar: Scalars['Boolean'];
+export type ExportedData = {
+  __typename?: 'exportedData';
+  children?: Maybe<Array<Maybe<ExportedData>>>;
+  color: Scalars['String'];
+  color_style: ColorStyle;
+  depth: Scalars['Int'];
+  folder_id: Scalars['String'];
   name: Scalars['String'];
-  product?: Maybe<Array<Maybe<Product>>>;
-  surname: Scalars['String'];
 };
 
-export type User = {
-  __typename?: 'user';
-  avatar?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  haveAvatar: Scalars['Boolean'];
-  location: Scalars['String'];
-  name: Scalars['String'];
-  phone_number?: Maybe<Scalars['String']>;
-  product?: Maybe<Array<Maybe<Product>>>;
-  public_user_id?: Maybe<Scalars['String']>;
-  surname: Scalars['String'];
+export type ReturnFolders = {
+  __typename?: 'returnFolders';
+  folders: Array<Maybe<ExportedData>>;
+  folders_amount: Scalars['Int'];
 };
 
 
@@ -256,7 +153,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
+) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -304,33 +201,30 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  ColorStyle: ColorStyle;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
+  Folders: ResolverTypeWrapper<folders>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   LoginInput: LoginInput;
   Mutation: ResolverTypeWrapper<{}>;
+  Permissions: Permissions;
   Query: ResolverTypeWrapper<{}>;
   RegisterInput: RegisterInput;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Todo: ResolverTypeWrapper<Todo>;
+  User: ResolverTypeWrapper<user>;
   UserStatus: UserStatus;
-  collection: ResolverTypeWrapper<collection>;
-  collection_product: ResolverTypeWrapper<collections_product>;
-  createProductInput: CreateProductInput;
-  product: ResolverTypeWrapper<product>;
-  productByPageInput: ProductByPageInput;
-  productImage: ResolverTypeWrapper<product_images>;
-  productSellType: ProductSellType;
-  productStatus: ProductStatus;
-  profile: ResolverTypeWrapper<Omit<Profile, 'product'> & { product?: Maybe<Array<Maybe<ResolversTypes['product']>>> }>;
-  user: ResolverTypeWrapper<user>;
+  createFolderInput: CreateFolderInput;
+  exportedData: ResolverTypeWrapper<ExportedData>;
+  returnFolders: ResolverTypeWrapper<ReturnFolders>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   DateTime: Scalars['DateTime'];
-  Float: Scalars['Float'];
+  Folders: folders;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   LoginInput: LoginInput;
@@ -338,119 +232,88 @@ export type ResolversParentTypes = {
   Query: {};
   RegisterInput: RegisterInput;
   String: Scalars['String'];
-  collection: collection;
-  collection_product: collections_product;
-  createProductInput: CreateProductInput;
-  product: product;
-  productByPageInput: ProductByPageInput;
-  productImage: product_images;
-  profile: Omit<Profile, 'product'> & { product?: Maybe<Array<Maybe<ResolversParentTypes['product']>>> };
-  user: user;
+  Todo: Todo;
+  User: user;
+  createFolderInput: CreateFolderInput;
+  exportedData: ExportedData;
+  returnFolders: ReturnFolders;
 };
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
 
+export type FoldersResolvers<ContextType = any, ParentType extends ResolversParentTypes['Folders'] = ResolversParentTypes['Folders']> = {
+  color?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  color_style?: Resolver<ResolversTypes['ColorStyle'], ParentType, ContextType>;
+  created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  folder_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  folders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Folders']>>>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  parent_folder?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType>;
+  parent_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  todos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Todo']>>>, ParentType, ContextType>;
+  updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  user_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addProductToCollection?: Resolver<Maybe<ResolversTypes['collection_product']>, ParentType, ContextType, RequireFields<MutationAddProductToCollectionArgs, 'collectionId' | 'productId'>>;
-  createCollection?: Resolver<Maybe<ResolversTypes['collection']>, ParentType, ContextType, RequireFields<MutationCreateCollectionArgs, 'name'>>;
-  createProduct?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationCreateProductArgs, 'data'>>;
-  deleteCollection?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteCollectionArgs, 'id'>>;
+  createFolder?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType, RequireFields<MutationCreateFolderArgs, 'data'>>;
   login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
   register?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
-  removeProductFromCollection?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRemoveProductFromCollectionArgs, 'collectionId' | 'productId'>>;
-  updateCollection?: Resolver<Maybe<ResolversTypes['collection']>, ParentType, ContextType, RequireFields<MutationUpdateCollectionArgs, 'id' | 'name'>>;
-  verifyEmail?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationVerifyEmailArgs, 'hash'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  checkToken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  me?: Resolver<Maybe<ResolversTypes['user']>, ParentType, ContextType>;
-  myCollection?: Resolver<ResolversTypes['collection'], ParentType, ContextType, RequireFields<QueryMyCollectionArgs, 'id'>>;
-  myCollections?: Resolver<Array<Maybe<ResolversTypes['collection']>>, ParentType, ContextType>;
-  productByID?: Resolver<Maybe<ResolversTypes['product']>, ParentType, ContextType, RequireFields<QueryProductByIdArgs, 'product_id'>>;
-  productByPage?: Resolver<Maybe<Array<Maybe<ResolversTypes['product']>>>, ParentType, ContextType, RequireFields<QueryProductByPageArgs, 'data'>>;
-  profile?: Resolver<Maybe<ResolversTypes['profile']>, ParentType, ContextType, RequireFields<QueryProfileArgs, 'id'>>;
-  userProducts?: Resolver<Maybe<Array<Maybe<ResolversTypes['product']>>>, ParentType, ContextType>;
+  checkToken?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  userFolders?: Resolver<Maybe<ResolversTypes['returnFolders']>, ParentType, ContextType>;
 };
 
-export type CollectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['collection'] = ResolversParentTypes['collection']> = {
-  collection_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  collections_product?: Resolver<Array<Maybe<ResolversTypes['collection_product']>>, ParentType, ContextType>;
-  created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['user'], ParentType, ContextType>;
+export type TodoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Todo'] = ResolversParentTypes['Todo']> = {
+  todo_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Collection_ProductResolvers<ContextType = any, ParentType extends ResolversParentTypes['collection_product'] = ResolversParentTypes['collection_product']> = {
-  collection?: Resolver<ResolversTypes['collection'], ParentType, ContextType>;
-  collection_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  collection_product_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  product?: Resolver<ResolversTypes['product'], ParentType, ContextType>;
-  product_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ProductResolvers<ContextType = any, ParentType extends ResolversParentTypes['product'] = ResolversParentTypes['product']> = {
-  created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  haveImages?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  location?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  price?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  product_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  product_images?: Resolver<Array<Maybe<ResolversTypes['productImage']>>, ParentType, ContextType>;
-  product_status?: Resolver<ResolversTypes['productStatus'], ParentType, ContextType>;
-  sellType?: Resolver<ResolversTypes['productSellType'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  titleExtraInfo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  hash?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  permissions?: Resolver<ResolversTypes['Permissions'], ParentType, ContextType>;
+  public_user_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['UserStatus'], ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['user'], ParentType, ContextType>;
+  user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ProductImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['productImage'] = ResolversParentTypes['productImage']> = {
-  image_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  product?: Resolver<ResolversTypes['product'], ParentType, ContextType>;
-  product_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  product_image_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['profile'] = ResolversParentTypes['profile']> = {
-  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  haveAvatar?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+export type ExportedDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['exportedData'] = ResolversParentTypes['exportedData']> = {
+  children?: Resolver<Maybe<Array<Maybe<ResolversTypes['exportedData']>>>, ParentType, ContextType>;
+  color?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  color_style?: Resolver<ResolversTypes['ColorStyle'], ParentType, ContextType>;
+  depth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  folder_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  product?: Resolver<Maybe<Array<Maybe<ResolversTypes['product']>>>, ParentType, ContextType>;
-  surname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['user'] = ResolversParentTypes['user']> = {
-  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  haveAvatar?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  location?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  phone_number?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  product?: Resolver<Maybe<Array<Maybe<ResolversTypes['product']>>>, ParentType, ContextType>;
-  public_user_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  surname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type ReturnFoldersResolvers<ContextType = any, ParentType extends ResolversParentTypes['returnFolders'] = ResolversParentTypes['returnFolders']> = {
+  folders?: Resolver<Array<Maybe<ResolversTypes['exportedData']>>, ParentType, ContextType>;
+  folders_amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
   DateTime?: GraphQLScalarType;
+  Folders?: FoldersResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  collection?: CollectionResolvers<ContextType>;
-  collection_product?: Collection_ProductResolvers<ContextType>;
-  product?: ProductResolvers<ContextType>;
-  productImage?: ProductImageResolvers<ContextType>;
-  profile?: ProfileResolvers<ContextType>;
-  user?: UserResolvers<ContextType>;
+  Todo?: TodoResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
+  exportedData?: ExportedDataResolvers<ContextType>;
+  returnFolders?: ReturnFoldersResolvers<ContextType>;
 };
 

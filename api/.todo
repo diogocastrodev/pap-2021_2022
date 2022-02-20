@@ -1,7 +1,41 @@
 
 
-    Products:
-        ☐ Relevância
-        ☐ Preço:
-            ☐ ASC
-            ☐ DESC
+
+
+
+   User token []        [] Server Token
+
+
+
+
+
+
+
+
+                        {
+                           1: {
+                              1: {
+                                 1: [
+                                 {
+                                    1: 
+                                    {
+
+                                    }
+                                 }
+                                 2: 
+                                 {
+
+                                 }
+                                 ]
+                              },
+                              2: {
+
+                              },
+                              3" {
+
+                              }
+                           },
+                           2: {
+
+                           }
+                        }

@@ -1,51 +1,41 @@
-import express, { NextFunction, Request, Response } from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import passport from "passport";
-import session from "express-session";
-import { graphqlHTTP } from "express-graphql";
-
-import { config, formatError } from "./utils";
-
-import { router } from "./router/routes";
+import { ApolloServer } from "apollo-server-express";
+import { formatError, config } from "./utils";
+import { context, ResolverContext } from "./context";
 import { schema } from "./modules";
-import { context } from "./context";
+import express, { Response, Request } from "express";
+import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
+import cors from "cors";
 
+/* Start Express Server */
 export const app = express();
 
-export interface ContextInterfaceTest {
-  req: Request;
-  res: Response;
-}
+export const server = new ApolloServer({
+  schema,
+  context,
+  formatError,
+  plugins: [ApolloServerPluginLandingPageLocalDefault],
+});
 
+/* DEV: cors */
 app.use(cors());
 
-app.use(cookieParser());
+/* Server Function */
+async function startApolloServer() {
+  /* Start Apollo Server */
+  await server.start();
+  /* Add Express Server to Apollo Server */
+  server.applyMiddleware({ app });
+  /* Let express server listen in port set in .env file or default set in ./utils.ts */
+  app.listen(config.PORT, () => {
+    console.log(
+      `🚀 Server started at http://127.0.0.1:${config.PORT}${server.graphqlPath}`
+    );
+    /* CronJobs */
+    /* cronDeleteAccount.start(); */
+  });
+  /* Return Apollo Server and Express Server */
+  return { server, app };
+}
 
-app.use(
-  session({
-    secret: config.TOKEN_SECRET,
-    resave: true,
-    saveUninitialized: true,
-  })
-);
-
-app.use(passport.initialize());
-
-app.use(passport.session());
-
-app.use("/graphql", async (req: Request, res: Response) =>
-  graphqlHTTP({
-    context: await context({ req, res }),
-    schema,
-    graphiql: true,
-    customFormatErrorFn: formatError,
-    pretty: true,
-  })(req, res)
-);
-
-app.use(router);
-
-app.listen(config.PORT, () => {
-  console.log(`🚀 Server is running on port ${config.PORT}`);
-});
+/* Start Server */
+startApolloServer();

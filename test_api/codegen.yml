@@ -6,10 +6,14 @@ documents: null
 generates:
   ./src/graphql/types.ts:
     config:
+      scalars:
+        Date: Date
       mappers:
-        User: .prisma/client#user
-        Folders: .prisma/client#folders
-        ExportedData: .prisma/client#folders
+        product: .prisma/client#product
+        collection: .prisma/client#collection
+        collection_product: .prisma/client#collections_product
+        productImage: .prisma/client#product_images
+        user: .prisma/client#user
     plugins:
       - typescript
       - typescript-resolvers
