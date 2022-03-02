@@ -11,20 +11,20 @@ datasource db {
 }
 
 model user {
-  user_id        String @id @default(uuid())
-  public_user_id Int    @unique @default(autoincrement())
+  user_id        String @id @default(uuid()) @db.Uuid
+  public_user_id String @unique @default(cuid()) @db.VarChar()
 
-  username String @unique
-  email    String @unique
-  password String
+  username String @unique @db.VarChar(33)
+  email    String @unique @db.VarChar(255)
+  password String @db.VarChar(255)
 
   roles Roles @default(USER)
 
   status UserStatus @default(PENDING)
-  hash   String?    @default(cuid())
+  hash   String?    @default(uuid())
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamp()
+  updated_at DateTime @updatedAt @db.Timestamp()
 
   folders folders[]
 }
@@ -47,38 +47,48 @@ enum ColorStyle {
 }
 
 model folders {
-  folder_id String @id @default(uuid())
-  name      String
+  folder_id String @id @default(uuid()) @db.Uuid
+  name      String @db.VarChar(80)
 
-  color       String     @default("0 0 0 0")
+  color       String     @default("0 0 0 0") @db.VarChar(20)
   color_style ColorStyle @default(RGBA)
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamp()
+  updated_at DateTime @updatedAt @db.Timestamp()
 
   // Antipattern - Depend of a parent
-  parent_id     String?
+  parent_id     String?   @db.Uuid
   parent_folder folders?  @relation("subfolder", fields: [parent_id], references: [folder_id])
   folders       folders[] @relation("subfolder")
 
   // User
-  user_id String
+  user_id String @db.Uuid
   user    user   @relation(fields: [user_id], references: [user_id])
 
-  // Todos
-  todos todo[]
+  // Items
+  folder_items folder_items[]
+}
+
+model folder_items {
+  id String @id @default(uuid()) @db.Uuid
+
+  folders   folders @relation(fields: [folder_id], references: [folder_id])
+  folder_id String  @db.Uuid
+
+  todo        todo?   @relation(fields: [todoTodo_id], references: [todo_id])
+  todoTodo_id String? @db.Uuid
 }
 
 model todo {
-  todo_id     String     @id @default(uuid())
-  description String
+  todo_id     String     @id @default(uuid()) @db.Uuid
+  description String     @db.Text
   status      TodoStatus
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamp()
+  updated_at DateTime @updatedAt @db.Timestamp()
 
-  folder    folders? @relation(fields: [folder_id], references: [folder_id])
-  folder_id String?
+  folder_itemsId String?
+  folder_items   folder_items[]
 }
 
 enum TodoStatus {

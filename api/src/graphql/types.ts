@@ -95,7 +95,7 @@ export type User = {
   hash?: Maybe<Scalars['String']>;
   password: Scalars['String'];
   permissions: Permissions;
-  public_user_id: Scalars['Int'];
+  public_user_id: Scalars['ID'];
   status: UserStatus;
   updated_at: Scalars['DateTime'];
   user_id: Scalars['ID'];
@@ -282,7 +282,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   hash?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   permissions?: Resolver<ResolversTypes['Permissions'], ParentType, ContextType>;
-  public_user_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  public_user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['UserStatus'], ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

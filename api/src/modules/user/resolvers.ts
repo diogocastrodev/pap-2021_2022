@@ -2,7 +2,7 @@ import { AuthenticationError } from "apollo-server-errors";
 import { ResolverContext } from "../../context";
 import { Resolvers } from "../../graphql/types";
 import { db } from "../../database";
-import { verifyPassword, createPassword } from "./helpers";
+import { verifyPassword, createPassword, getUserByPublicId } from "./helpers";
 import * as jwt from "jsonwebtoken";
 import { config } from "../../utils";
 import cookie from "cookie";
@@ -15,15 +15,11 @@ export const UserResolvers: Resolvers<ResolverContext> = {
       if (!context.is_authed || !context.user_id)
         throw new AuthenticationError("no login");
 
-      const userData = await db.user.findUnique({
-        where: {
-          user_id: context.user_id.toString(),
-        },
-      });
+      const user = await getUserByPublicId(context.user_id.toString());
 
-      if (!userData) throw new Error("User not found");
+      if (!user) throw new Error("User not found");
 
-      return userData;
+      return user;
     },
     checkToken: async (_parent, _args, context) => {
       return context.is_authed;
@@ -51,7 +47,7 @@ export const UserResolvers: Resolvers<ResolverContext> = {
 
       const token = jwt.sign(
         {
-          user_id: userData.user_id,
+          user_id: userData.public_user_id,
         },
         config.TOKEN_SECRET
       );

@@ -1,93 +1,43 @@
 import { gql } from "@apollo/client";
 
 export const folderFragment = gql`
-  fragment data on exportedData {
+  fragment folderData on Folders {
+    folder_id
+    color
+    color_style
+    name
+  }
+`;
+
+export const folderChildrenFragment = gql`
+  fragment folderData on exportedData {
+    folder_id
     color
     color_style
     name
   }
 
   fragment children on exportedData {
-    ...data
+    ...folderData
     children {
-      ...data
+      ...folderData
       children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
-      }
-      children {
-        ...data
+        ...folderData
+        children {
+          ...folderData
+          children {
+            ...folderData
+            children {
+              ...folderData
+              children {
+                ...folderData
+                children {
+                  ...folderData
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

@@ -15,7 +15,7 @@ export default function UserAvatar(props: props) {
         props.className && props.className
       } bg-neutral-200 text-black rounded-full flex items-center justify-center`}
     >
-      {user.AuthData.user?.haveAvatar ? (
+      {false ? (
         <img
           src={`${config.CDN.protocol}://${config.CDN.URL}/img/avatar/${user.AuthData.user?.public_user_id}`}
           alt="avatar"

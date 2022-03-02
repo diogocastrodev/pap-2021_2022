@@ -9,7 +9,7 @@ export default function Layout(props: props) {
       <div className="relative z-50">
         <Navbar />
       </div>
-      <div className="mx-2 mt-2">{props.children}</div>
+      <div className="px-2 py-2 flex-1 flex">{props.children}</div>
     </div>
   );
 }

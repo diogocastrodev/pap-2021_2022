@@ -19,6 +19,8 @@ export const server = new ApolloServer({
 /* DEV: cors */
 app.use(cors());
 
+/* TODO: Express GraphQL */
+
 /* Server Function */
 async function startApolloServer() {
   /* Start Apollo Server */

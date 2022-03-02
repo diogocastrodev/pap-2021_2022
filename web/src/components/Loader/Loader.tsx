@@ -1,5 +1,6 @@
 interface props {
   size: "small" | "medium" | "large";
+  className?: string;
 }
 
 export default function Loader(props: props) {
@@ -11,7 +12,7 @@ export default function Loader(props: props) {
           : props.size === "medium"
           ? "border-[5px] h-12 w-12"
           : "border-[7px] h-24 w-24"
-      } rounded-[50%] animate-spin`}
+      } rounded-[50%] animate-spin ${props.className && props.className}`}
       /*  */
     ></div>
   );

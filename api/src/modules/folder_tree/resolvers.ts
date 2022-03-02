@@ -3,6 +3,8 @@ import { ResolverContext } from "../../context";
 import { AuthenticationError } from "apollo-server-errors";
 import { db } from "../../database";
 import { createDataTree, getDepth } from "./helpers";
+import { folders } from "@prisma/client";
+import { getUserByPublicId } from "../user/helpers";
 
 export const FolderResolver: Resolvers<ResolverContext> = {
   Query: {
@@ -12,7 +14,12 @@ export const FolderResolver: Resolvers<ResolverContext> = {
 
       const userFolders = await db.folders.findMany({
         where: {
-          user_id: context.user_id.toString(),
+          user: {
+            public_user_id: context.user_id.toString(),
+          },
+        },
+        orderBy: {
+          name: "asc",
         },
       });
 
@@ -32,17 +39,49 @@ export const FolderResolver: Resolvers<ResolverContext> = {
       if (!context.is_authed || context.user_id === undefined)
         throw new AuthenticationError("no login");
 
-      const folder = await db.folders.create({
-        data: {
-          user_id: context.user_id.toString(),
-          name: args.data.name,
-          parent_id: args.data.parent_id && args.data.parent_id.toString(),
-          color: args.data.color ? args.data.color : "#AAA",
-          color_style: args.data.color_style ? args.data.color_style : "HEX",
-        },
-      });
+      if (args.data.name === "") throw new Error("name is empty");
 
-      if (folder) throw new Error("Failed creating folder");
+      let folder: folders;
+
+      try {
+        if (args.data.parent_id) {
+          const parent = await db.folders.findUnique({
+            where: {
+              folder_id: args.data.parent_id,
+            },
+            select: {
+              user: {
+                select: {
+                  public_user_id: true,
+                },
+              },
+            },
+          });
+
+          if (!parent) throw new Error("Parent folder not found");
+
+          if (parent.user.public_user_id !== context.user_id.toString())
+            throw new Error("You can't create folder in this folder");
+        }
+
+        const userId = await getUserByPublicId(context.user_id.toString());
+
+        if (!userId) throw new Error("User not found");
+
+        folder = await db.folders.create({
+          data: {
+            user_id: userId.user_id,
+            name: args.data.name,
+            parent_id: args.data.parent_id || null,
+            color: args.data.color ? args.data.color : "#AAA",
+            color_style: args.data.color_style ? args.data.color_style : "HEX",
+          },
+        });
+      } catch (e) {
+        throw new Error("Failed creating folder");
+      }
+
+      if (!folder) throw new Error("Failed creating folder");
 
       return folder;
     },

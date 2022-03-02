@@ -1,8 +1,13 @@
 import { gql, useMutation } from "@apollo/client";
 import Button from "@src/components/Form/Buttons/Button";
-import TextInput from "@src/components/Form/Inputs/TextInput";
+import Form from "@src/components/Form/Form/Form";
+import Input from "@src/components/Form/Inputs/Input";
+import InputGroup from "@src/components/Form/Inputs/InputGroup";
+import Stack from "@src/components/Form/Stack/Stack";
+import { routes } from "@src/functions/routes";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import Label from "../../components/Form/Inputs/Label";
 
 const registerMutation = gql`
   mutation register($data: RegisterInput!) {
@@ -25,7 +30,7 @@ export default function RegisterPage() {
     <>
       <div className="h-full w-full flex items-center justify-center absolute">
         <div className="h-108 w-132 bg-neutral-50 shadow-xl inset-x-auto -top-20 rounded-xl">
-          <form
+          <Form
             onSubmit={(e) => {
               e.preventDefault();
               /* TODO: Register */
@@ -40,10 +45,7 @@ export default function RegisterPage() {
                   },
                 })
                   .then(() => {
-                    /* TODO: Router Push -> Login */
-                    router.push({
-                      href: "/login?success=true",
-                    });
+                    routes.redirect("/auth/login");
                   })
                   .catch((e) => {
                     console.log(e);
@@ -55,85 +57,50 @@ export default function RegisterPage() {
             <div className="text-3xl text-black text-center mt-6 mb-4">
               Register
             </div>
-            <div className="flex justify-center items-center flex-wrap">
-              <div className="flex flex-row">
-                {/* Email */}
-                <TextInput
-                  input={{
-                    type: "text",
-                    color: "default",
-                    setValue: (e) => setEmail(e.target.value),
-                    shadow: true,
-                    required: true,
-                    placeholder: "Email",
-                    space: true,
-                  }}
-                  label={{
-                    text: "Email",
-                  }}
-                />
-                {/* Username */}
-                <TextInput
-                  input={{
-                    type: "text",
-                    color: "default",
-                    setValue: (e) => setUsername(e.target.value),
-                    shadow: true,
-                    required: true,
-                    placeholder: "Username",
-                    space: true,
-                  }}
-                  label={{
-                    text: "Username",
-                  }}
-                />
-              </div>
-              <div className="flex flex-row">
-                {/* Password */}
-                <TextInput
-                  input={{
-                    type: "password",
-                    color: "default",
-                    setValue: (e) => setPassword(e.target.value),
-                    shadow: true,
-                    autoComplete: "on",
-                    required: true,
-                    placeholder: "Password",
-                    space: true,
-                  }}
-                  label={{
-                    text: "Password",
-                  }}
-                />
-                {/* Conf Password */}
-                <TextInput
-                  input={{
-                    type: "password",
-                    color: "default",
-                    setValue: (e) => setConfPassword(e.target.value),
-                    shadow: true,
-                    autoComplete: "on",
-                    required: true,
-                    placeholder: "Confirmar Password",
-                    space: true,
-                  }}
-                  label={{
-                    text: "Confirmar Password",
-                  }}
-                />
-              </div>
-              <Button
-                mainDiv={{
-                  className: "mt-6",
-                }}
-                button={{
-                  buttonType: "submit",
-                  label: "Register",
-                  color: "blue",
-                }}
-              />
-            </div>
-          </form>
+            <Stack type="col">
+              <Stack type="row" className="space-x-4">
+                <InputGroup>
+                  <Label text="Email" />
+                  <Input
+                    type="text"
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email"
+                    value={Email}
+                  />
+                </InputGroup>
+                <InputGroup>
+                  <Label text="Username" />
+                  <Input
+                    type="text"
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Username"
+                    value={Username}
+                  />
+                </InputGroup>
+              </Stack>
+              <Stack type="row" className="space-x-4">
+                <InputGroup>
+                  <Label text="Password" />
+                  <Input
+                    type="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                  />
+                </InputGroup>
+                <InputGroup>
+                  <Label text="Confirmar Password" />
+                  <Input
+                    type="password"
+                    onChange={(e) => setConfPassword(e.target.value)}
+                    placeholder="Confirmar Password"
+                  />
+                </InputGroup>
+              </Stack>
+              <Button type="submit" className="mt-4">
+                Register
+              </Button>
+            </Stack>
+          </Form>
         </div>
       </div>
     </>

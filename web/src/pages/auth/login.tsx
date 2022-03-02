@@ -1,7 +1,11 @@
 import { AuthContext } from "@src/context/AuthContext";
 import { useContext, useState } from "react";
-import TextInput from "../../components/Form/Inputs/TextInput";
+import Input from "../../components/Form/Inputs/Input";
 import Button from "../../components/Form/Buttons/Button";
+import Form from "@src/components/Form/Form/Form";
+import Stack from "@src/components/Form/Stack/Stack";
+import InputGroup from "../../components/Form/Inputs/InputGroup";
+import Label from "@src/components/Form/Inputs/Label";
 
 export default function loginPage() {
   const [Email, setEmail] = useState<string>("");
@@ -10,7 +14,7 @@ export default function loginPage() {
   return (
     <div className="h-full w-full flex items-center justify-center absolute">
       <div className="h-108 w-96 bg-neutral-50 shadow-xl inset-x-auto -top-20 rounded-xl">
-        <form
+        <Form
           onSubmit={(e) => {
             e.preventDefault();
             Auth.login(Email, Password);
@@ -18,42 +22,30 @@ export default function loginPage() {
           className="h-full"
         >
           <div className="text-3xl text-black text-center mt-8 mb-4">Login</div>
-          <div className="flex justify-center items-center flex-col">
-            <TextInput
-              input={{
-                type: "text",
-                color: "default",
-                setValue: (e) => setEmail(e.target.value),
-                shadow: true,
-              }}
-              label={{
-                text: "Email",
-              }}
-            />
-            <TextInput
-              input={{
-                type: "password",
-                color: "default",
-                setValue: (e) => setPassword(e.target.value),
-                shadow: true,
-                autoComplete: "on",
-              }}
-              label={{
-                text: "Password",
-              }}
-            />
-            <Button
-              mainDiv={{
-                className: "mt-6",
-              }}
-              button={{
-                buttonType: "submit",
-                label: "Login",
-                color: "blue",
-              }}
-            />
-          </div>
-        </form>
+          <Stack className="flex justify-center items-center flex-col space-y-2">
+            <InputGroup>
+              <Label text="Email" required={true} />
+              <Input
+                type="text"
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={Email}
+              />
+            </InputGroup>
+            <InputGroup>
+              <Label text="Password" required={true} />
+              <Input
+                type="password"
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="on"
+              />
+            </InputGroup>
+            <Button type="submit" color="blue">
+              Login
+            </Button>
+          </Stack>
+        </Form>
       </div>
     </div>
   );

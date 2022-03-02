@@ -5,7 +5,7 @@ import {
   LogoutIcon,
   ArchiveIcon,
 } from "@heroicons/react/solid";
-import TextInput from "../Form/Inputs/TextInput";
+import Input from "../Form/Inputs/Input";
 import { Menu } from "@headlessui/react";
 import { getTheme } from "@src/functions/changeTheme";
 import { useContext, useEffect, useState } from "react";
@@ -55,27 +55,6 @@ export default function Navbar(props: props) {
   ];
 
   const DropDownItems: DropDownProps = [
-    {
-      text: "Account",
-      divider: true,
-      items: [
-        {
-          text: "Profile",
-          href: "/profile",
-          icon: <UserIcon />,
-        },
-        {
-          text: "My Items",
-          href: "/user/items",
-          icon: <SearchIcon />,
-        },
-        {
-          text: "My Collections",
-          href: "/user/collections",
-          icon: <ArchiveIcon />,
-        },
-      ],
-    },
     {
       text: "Preferences",
       items: [

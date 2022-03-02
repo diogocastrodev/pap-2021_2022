@@ -23,7 +23,7 @@ input LoginInput {
 
 type User {
   user_id: ID!
-  public_user_id: Int!
+  public_user_id: ID!
 
   username: String!
   email: String!

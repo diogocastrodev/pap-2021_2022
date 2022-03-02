@@ -1,27 +1,9 @@
-import { gql, useQuery } from "@apollo/client";
-import { folderFragment } from "@src/graphql/fragments";
-import Tree from "../../components/Tree/Tree";
+import DashboardPage from "@components/Dashboard/DashboardPage";
 
-const getFolders = gql`
-  ${folderFragment}
-  query userFolders {
-    userFolders {
-      folders {
-        ...children
-      }
-      folders_amount
-    }
-  }
-`;
-
-export default function DashboardPage() {
-  const { loading, error, data } = useQuery(getFolders);
-  if (loading) return <p>Loading...</p>;
+export default function Dashboard() {
   return (
     <>
-      <div>
-        <Tree folders={data.userFolders.folders} />
-      </div>
+      <DashboardPage />
     </>
   );
 }

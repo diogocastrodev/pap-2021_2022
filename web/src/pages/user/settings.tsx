@@ -7,7 +7,7 @@ import { accessGlobalState } from "@src/libs/Apollo";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
-import TextInput from "../../components/Form/Inputs/TextInput";
+import Input from "../../components/Form/Inputs/Input";
 
 const uploadImageMutation = gql`
   mutation ($file: Upload!) {
@@ -55,19 +55,10 @@ export default function SettingsPage() {
                 }
               }}
             >
-              <TextInput
-                input={{
-                  type: "file",
-                  color: "default",
-                  name: "avatar",
-                  setValue: (e) => setAvatarFile(e.target.files),
-                }}
-                button={{
-                  icon: <UploadIcon />,
-                  buttonOnClick: () => {
-                    console.log(AvatarFile);
-                  },
-                }}
+              <Input
+                type="file"
+                color="default"
+                onChange={(e) => setAvatarFile(e.target.files)}
               />
             </form>
           </div>
