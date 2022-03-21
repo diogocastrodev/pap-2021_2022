@@ -1,0 +1,60 @@
+scalar DateTime
+
+type Query {
+  get: String
+}
+
+type Mutation {
+  get: String
+}
+
+enum FileType {
+  TODO
+  Document
+}
+
+type Document {
+  document_id: ID!
+
+  content: String!
+
+  created_at: DateTime
+  updated_at: DateTime
+
+  file_id: ID!
+}
+
+type Todo {
+  todo_id: ID!
+
+  todoText: String!
+
+  status: TodoStatus
+
+  created_at: DateTime
+  updated_at: DateTime
+
+  file_id: ID!
+}
+
+enum TodoStatus {
+  ACTIVE
+  DONE
+  DELETED
+}
+
+type Files {
+  file_id: ID!
+
+  name: String!
+
+  fileType: FileType
+
+  folder_id: ID
+
+  created_at: DateTime
+  updated_at: DateTime
+
+  todos: [Todo]
+  document: [Document]
+}
