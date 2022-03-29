@@ -3,7 +3,7 @@ import { ResolverContext } from "../../context";
 import { AuthenticationError } from "apollo-server-errors";
 import { db } from "../../database";
 import { createDataTree, getDepth } from "./helpers";
-import { folders } from "@prisma/client";
+import { files, folders } from "@prisma/client";
 import { getUserByPublicId } from "../user/helpers";
 
 export const FolderResolver: Resolvers<ResolverContext> = {
@@ -12,7 +12,9 @@ export const FolderResolver: Resolvers<ResolverContext> = {
       if (!context.is_authed || typeof context.user_id === "undefined")
         throw new AuthenticationError("no login");
 
-      const userFolders = await db.folders.findMany({
+      const userFolders: (folders & {
+        files: files[];
+      })[] = await db.folders.findMany({
         where: {
           user: {
             public_user_id: context.user_id.toString(),
@@ -20,6 +22,9 @@ export const FolderResolver: Resolvers<ResolverContext> = {
         },
         orderBy: {
           name: "asc",
+        },
+        include: {
+          files: true,
         },
       });
 

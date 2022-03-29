@@ -1,7 +1,11 @@
-import { folders } from "@prisma/client";
+import { files, folders } from "@prisma/client";
 import { ExportedData } from "../../graphql/types";
 
-export const createDataTree = (dataset: folders[]) => {
+export const createDataTree = (
+  dataset: (folders & {
+    files: files[];
+  })[]
+): ExportedData[] => {
   let hashTable = Object.create(null);
   dataset.forEach(
     (aData) => (hashTable[aData.folder_id] = { ...aData, children: [] })

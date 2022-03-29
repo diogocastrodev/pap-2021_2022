@@ -9,8 +9,6 @@ export default function ItemData() {
     setId(router.query.id?.toString() as string);
   }, [router.isReady]);
 
-  console.log(router.query);
-
   return (
     <>
       <DashboardPage

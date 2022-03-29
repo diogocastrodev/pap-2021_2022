@@ -78,7 +78,7 @@ export default function Navbar(props: props) {
   const router = useRouter();
 
   return (
-    <div className="h-12 w-screen shadow-lg sticky -top-0.5 bg-bgWhite overflow-hidden z-50">
+    <div className="h-12 w-screen shadow-lg sticky -top-0.5 bg-gray-100 overflow-hidden z-50">
       <div className="px-4 h-full flex">
         <div className="w-full flex flex-row items-center">
           <div className="text-black font-extrabold text-3xl">

@@ -3,7 +3,10 @@ import { formatError, config } from "./utils";
 import { context, ResolverContext } from "./context";
 import { schema } from "./modules";
 import express, { Response, Request } from "express";
-import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
+import {
+  ApolloServerPluginLandingPageLocalDefault,
+  ApolloServerPluginLandingPageGraphQLPlayground,
+} from "apollo-server-core";
 import cors from "cors";
 
 /* Start Express Server */
@@ -13,7 +16,7 @@ export const server = new ApolloServer({
   schema,
   context,
   formatError,
-  plugins: [ApolloServerPluginLandingPageLocalDefault],
+  plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
 });
 
 /* DEV: cors */

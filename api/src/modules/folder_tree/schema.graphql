@@ -21,7 +21,8 @@ type returnFolders {
 }
 
 type exportedData {
-  folder_id: String!
+  folder_id: ID!
+  parent_id: ID!
   name: String!
 
   color: String!
@@ -29,6 +30,8 @@ type exportedData {
 
   children: [exportedData]
   depth: Int!
+
+  files: [Files]!
 }
 
 type Folders {
@@ -49,6 +52,8 @@ type Folders {
   user: User
 
   todos: [Todo]
+
+  files: [Files]
 }
 
 enum ColorStyle {

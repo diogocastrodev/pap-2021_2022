@@ -15,6 +15,11 @@ export const folderChildrenFragment = gql`
     color
     color_style
     name
+    files {
+      file_id
+      fileType
+      name
+    }
   }
 
   fragment children on exportedData {

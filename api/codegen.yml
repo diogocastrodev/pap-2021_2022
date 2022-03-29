@@ -9,7 +9,6 @@ generates:
       mappers:
         User: .prisma/client#user
         Folders: .prisma/client#folders
-        exportedData: .prisma/client#folders
         Document: .prisma/client#document
         Todo: .prisma/client#todo
         Files: .prisma/client#files

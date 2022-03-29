@@ -39,14 +39,14 @@ export enum FileType {
 
 export type Files = {
   __typename?: 'Files';
-  created_at?: Maybe<Scalars['DateTime']>;
+  created_at: Scalars['DateTime'];
   document?: Maybe<Array<Maybe<Document>>>;
-  fileType?: Maybe<FileType>;
+  fileType: FileType;
   file_id: Scalars['ID'];
-  folder_id?: Maybe<Scalars['ID']>;
+  folder_id: Scalars['ID'];
   name: Scalars['String'];
   todos?: Maybe<Array<Maybe<Todo>>>;
-  updated_at?: Maybe<Scalars['DateTime']>;
+  updated_at: Scalars['DateTime'];
 };
 
 export type Folders = {
@@ -54,6 +54,7 @@ export type Folders = {
   color: Scalars['String'];
   color_style: ColorStyle;
   created_at: Scalars['DateTime'];
+  files?: Maybe<Array<Maybe<Files>>>;
   folder_id: Scalars['ID'];
   folders?: Maybe<Array<Maybe<Folders>>>;
   name: Scalars['String'];
@@ -72,15 +73,26 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createFile?: Maybe<Files>;
   createFolder?: Maybe<Folders>;
-  get?: Maybe<Scalars['String']>;
+  createTodo?: Maybe<Todo>;
   login?: Maybe<Scalars['String']>;
   register?: Maybe<Scalars['String']>;
 };
 
 
+export type MutationCreateFileArgs = {
+  data: CreateFileInput;
+};
+
+
 export type MutationCreateFolderArgs = {
   data: CreateFolderInput;
+};
+
+
+export type MutationCreateTodoArgs = {
+  data: CreateTodoInput;
 };
 
 
@@ -101,9 +113,15 @@ export enum Permissions {
 export type Query = {
   __typename?: 'Query';
   checkToken?: Maybe<Scalars['Boolean']>;
-  get?: Maybe<Scalars['String']>;
+  getAllTodos?: Maybe<Array<Maybe<Todo>>>;
+  getFileContent?: Maybe<Files>;
   me?: Maybe<User>;
   userFolders?: Maybe<ReturnFolders>;
+};
+
+
+export type QueryGetFileContentArgs = {
+  data: GetFileContentInput;
 };
 
 export type RegisterInput = {
@@ -120,6 +138,7 @@ export type Todo = {
   todoText: Scalars['String'];
   todo_id: Scalars['ID'];
   updated_at?: Maybe<Scalars['DateTime']>;
+  user?: Maybe<User>;
 };
 
 export enum TodoStatus {
@@ -148,11 +167,22 @@ export enum UserStatus {
   Pending = 'PENDING'
 }
 
+export type CreateFileInput = {
+  fileType?: Maybe<FileType>;
+  folder_id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
 export type CreateFolderInput = {
   color?: Maybe<Scalars['String']>;
   color_style?: Maybe<ColorStyle>;
   name: Scalars['String'];
   parent_id?: Maybe<Scalars['ID']>;
+};
+
+export type CreateTodoInput = {
+  file_id?: Maybe<Scalars['ID']>;
+  todoText: Scalars['String'];
 };
 
 export type ExportedData = {
@@ -161,8 +191,14 @@ export type ExportedData = {
   color: Scalars['String'];
   color_style: ColorStyle;
   depth: Scalars['Int'];
-  folder_id: Scalars['String'];
+  files: Array<Maybe<Files>>;
+  folder_id: Scalars['ID'];
   name: Scalars['String'];
+  parent_id: Scalars['ID'];
+};
+
+export type GetFileContentInput = {
+  fileId: Scalars['ID'];
 };
 
 export type ReturnFolders = {
@@ -259,8 +295,11 @@ export type ResolversTypes = {
   TodoStatus: TodoStatus;
   User: ResolverTypeWrapper<user>;
   UserStatus: UserStatus;
+  createFileInput: CreateFileInput;
   createFolderInput: CreateFolderInput;
-  exportedData: ResolverTypeWrapper<folders>;
+  createTodoInput: CreateTodoInput;
+  exportedData: ResolverTypeWrapper<Omit<ExportedData, 'children' | 'files'> & { children?: Maybe<Array<Maybe<ResolversTypes['exportedData']>>>, files: Array<Maybe<ResolversTypes['Files']>> }>;
+  getFileContentInput: GetFileContentInput;
   returnFolders: ResolverTypeWrapper<Omit<ReturnFolders, 'folders'> & { folders: Array<Maybe<ResolversTypes['exportedData']>> }>;
 };
 
@@ -280,8 +319,11 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Todo: todo;
   User: user;
+  createFileInput: CreateFileInput;
   createFolderInput: CreateFolderInput;
-  exportedData: folders;
+  createTodoInput: CreateTodoInput;
+  exportedData: Omit<ExportedData, 'children' | 'files'> & { children?: Maybe<Array<Maybe<ResolversParentTypes['exportedData']>>>, files: Array<Maybe<ResolversParentTypes['Files']>> };
+  getFileContentInput: GetFileContentInput;
   returnFolders: Omit<ReturnFolders, 'folders'> & { folders: Array<Maybe<ResolversParentTypes['exportedData']>> };
 };
 
@@ -299,14 +341,14 @@ export type DocumentResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type FilesResolvers<ContextType = any, ParentType extends ResolversParentTypes['Files'] = ResolversParentTypes['Files']> = {
-  created_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   document?: Resolver<Maybe<Array<Maybe<ResolversTypes['Document']>>>, ParentType, ContextType>;
-  fileType?: Resolver<Maybe<ResolversTypes['FileType']>, ParentType, ContextType>;
+  fileType?: Resolver<ResolversTypes['FileType'], ParentType, ContextType>;
   file_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  folder_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  folder_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   todos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Todo']>>>, ParentType, ContextType>;
-  updated_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -314,6 +356,7 @@ export type FoldersResolvers<ContextType = any, ParentType extends ResolversPare
   color?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color_style?: Resolver<ResolversTypes['ColorStyle'], ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  files?: Resolver<Maybe<Array<Maybe<ResolversTypes['Files']>>>, ParentType, ContextType>;
   folder_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   folders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Folders']>>>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -327,15 +370,17 @@ export type FoldersResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createFile?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<MutationCreateFileArgs, 'data'>>;
   createFolder?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType, RequireFields<MutationCreateFolderArgs, 'data'>>;
-  get?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createTodo?: Resolver<Maybe<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<MutationCreateTodoArgs, 'data'>>;
   login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
   register?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   checkToken?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  get?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  getAllTodos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Todo']>>>, ParentType, ContextType>;
+  getFileContent?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<QueryGetFileContentArgs, 'data'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   userFolders?: Resolver<Maybe<ResolversTypes['returnFolders']>, ParentType, ContextType>;
 };
@@ -347,6 +392,7 @@ export type TodoResolvers<ContextType = any, ParentType extends ResolversParentT
   todoText?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   todo_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   updated_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -369,8 +415,10 @@ export type ExportedDataResolvers<ContextType = any, ParentType extends Resolver
   color?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color_style?: Resolver<ResolversTypes['ColorStyle'], ParentType, ContextType>;
   depth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  folder_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  files?: Resolver<Array<Maybe<ResolversTypes['Files']>>, ParentType, ContextType>;
+  folder_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  parent_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

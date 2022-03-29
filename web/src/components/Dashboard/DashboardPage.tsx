@@ -12,7 +12,7 @@ import {
   FolderOpenIcon,
 } from "@heroicons/react/outline";
 import { folderChildrenFragment } from "@src/graphql/fragments";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Loader from "../Loader/Loader";
 import Tree from "../Tree/Tree";
 import CreateFolder from "./Folders/Create Folder/CreateFolder";
@@ -20,6 +20,9 @@ import Item from "./Item/Item";
 import LargeItem from "./LargeItem/Largeitem";
 import TinyItem from "./TinyItem/TinyItem";
 import OrganizeFolder from "./Folders/Organize Folders/OrganizeFolder";
+import { AuthContext } from "@src/context/AuthContext";
+import { routes } from "@src/functions/routes";
+import ItemsToPage from "./Items/Items";
 
 const getFolders = gql`
   ${folderChildrenFragment}
@@ -62,6 +65,31 @@ const foldersThreeDotOptions: FolderThreeDotType = [
 ];
 
 export default function DashboardPage(props: props) {
+  /* const user = useContext(AuthContext);
+  if (user.AuthData.loading) return <Loader size="medium" />;
+  if (!user.AuthData.loading) {
+    if (!user.AuthData.is_logged || !user.AuthData.user) {
+      routes.redirect("/auth/login");
+    }
+  }
+  useEffect(() => {
+    if (!user.AuthData.loading) {
+      if (!user.AuthData.is_logged || !user.AuthData.user) {
+        routes.redirect("/auth/login");
+      }
+    }
+  }, [user.AuthData.loading]); */
+
+  const [itemSelected, setItemSelected] = useState<string | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    if (props.item) {
+      setItemSelected(props.item.id);
+    }
+  }, [props.item?.id]);
+
   const { data, loading, error } = useQuery(getFolders);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<dialogTypes>("create");
@@ -149,11 +177,13 @@ export default function DashboardPage(props: props) {
             <div></div>
           </Item>
         </TinyItem> */}
-        <LargeItem className="mx-1 basis-4/5">
-          <Item>
-            <div></div>
-          </Item>
-        </LargeItem>
+        {itemSelected && (
+          <LargeItem className="mx-1 basis-4/5">
+            <Item className="p-2">
+              <ItemsToPage id={itemSelected} />
+            </Item>
+          </LargeItem>
+        )}
       </div>
     </>
   );

@@ -9,7 +9,7 @@ module.exports = {
         gray: colors.neutral,
         zinc: colors.zinc,
         stone: colors.stone,
-        bgWhite: colors.neutral['100'],
+        bgWhite: colors.neutral['200'],
       },
       spacing: {
         '96': '24rem',
