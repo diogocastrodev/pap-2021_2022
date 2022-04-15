@@ -22,7 +22,7 @@ const fileQuery = gql`
 
 export default function ItemsToPage(props: props) {
   const [FileData, setFileData] = useState<Files>();
-  const [getNewFile] = useLazyQuery<Files>(fileQuery, {
+  const [getNewFile] = useLazyQuery(fileQuery, {
     variables: {
       data: {
         fileId: props.id,
@@ -31,8 +31,9 @@ export default function ItemsToPage(props: props) {
   });
   useEffect(() => {
     getNewFile().then((data) => {
-      setFileData(data.data);
+      setFileData(data.data.getFileContent);
     });
+    setFileData(undefined);
   }, [props.id]);
 
   return (

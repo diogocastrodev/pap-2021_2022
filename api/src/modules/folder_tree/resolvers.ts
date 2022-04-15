@@ -38,6 +38,49 @@ export const FolderResolver: Resolvers<ResolverContext> = {
 
       return userFolders_array;
     },
+    getFilesByFolder: async (_parent, args, context) => {
+      if (!context.is_authed || typeof context.user_id === "undefined")
+        throw new AuthenticationError("no login");
+
+      try {
+        const folder = await db.folders.findUnique({
+          where: {
+            folder_id: args.folderId,
+          },
+          select: {
+            user: {
+              select: {
+                public_user_id: true,
+              },
+            },
+          },
+        });
+
+        if (!folder) throw new Error("folder not found");
+
+        if (
+          folder.user.public_user_id.toString() !== context.user_id.toString()
+        )
+          throw new AuthenticationError("no access");
+      } catch (err) {
+        throw new Error(err as string);
+      }
+
+      let files: files[] = [];
+      try {
+        files = await db.files.findMany({
+          where: {
+            folder_id: args.folderId,
+          },
+        });
+
+        if (!files) throw new Error("folder not found");
+      } catch (err) {
+        throw new Error(err as string);
+      }
+
+      return files;
+    },
   },
   Mutation: {
     createFolder: async (_parent, args, context) => {

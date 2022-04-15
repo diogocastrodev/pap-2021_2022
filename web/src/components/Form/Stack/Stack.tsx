@@ -8,9 +8,9 @@ export default function Stack(props: props) {
     <>
       <div
         {...props}
-        className={`flex justify-between ${
-          props.type === "col" ? "flex-col" : "flex-row"
-        } ${props.className || ""}`}
+        className={`flex ${props.type === "col" ? "flex-col" : "flex-row"} ${
+          props.className || ""
+        }`}
       >
         {props.children}
       </div>

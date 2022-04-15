@@ -115,6 +115,7 @@ export type Query = {
   checkToken?: Maybe<Scalars['Boolean']>;
   getAllTodos?: Maybe<Array<Maybe<Todo>>>;
   getFileContent?: Maybe<Files>;
+  getFilesByFolder?: Maybe<Array<Maybe<Files>>>;
   me?: Maybe<User>;
   userFolders?: Maybe<ReturnFolders>;
 };
@@ -122,6 +123,11 @@ export type Query = {
 
 export type QueryGetFileContentArgs = {
   data: GetFileContentInput;
+};
+
+
+export type QueryGetFilesByFolderArgs = {
+  folderId: Scalars['ID'];
 };
 
 export type RegisterInput = {
@@ -381,6 +387,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   checkToken?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   getAllTodos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Todo']>>>, ParentType, ContextType>;
   getFileContent?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<QueryGetFileContentArgs, 'data'>>;
+  getFilesByFolder?: Resolver<Maybe<Array<Maybe<ResolversTypes['Files']>>>, ParentType, ContextType, RequireFields<QueryGetFilesByFolderArgs, 'folderId'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   userFolders?: Resolver<Maybe<ResolversTypes['returnFolders']>, ParentType, ContextType>;
 };

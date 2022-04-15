@@ -8,21 +8,27 @@ import {
 import {
   BookOpenIcon,
   CalendarIcon,
+  CloudDownloadIcon,
+  CogIcon,
   FolderAddIcon,
   FolderOpenIcon,
 } from "@heroicons/react/outline";
 import { folderChildrenFragment } from "@src/graphql/fragments";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, MouseEvent } from "react";
 import Loader from "../Loader/Loader";
-import Tree from "../Tree/Tree";
 import CreateFolder from "./Folders/Create Folder/CreateFolder";
 import Item from "./Item/Item";
 import LargeItem from "./LargeItem/Largeitem";
 import TinyItem from "./TinyItem/TinyItem";
 import OrganizeFolder from "./Folders/Organize Folders/OrganizeFolder";
 import { AuthContext } from "@src/context/AuthContext";
-import { routes } from "@src/functions/routes";
+import { useRouter } from "next/router";
+import TreeNode from "../Tree/TreeNode";
+import DashboardListFiles from "./Folders/Page/ListFiles";
+import { FoldersContext, FoldersProvider } from "@src/context/FoldersContext";
+import moment from "moment";
 import ItemsToPage from "./Items/Items";
+import LastUpdateTimeFolders from "./LastUpdateTime/LastUpdateTime";
 
 const getFolders = gql`
   ${folderChildrenFragment}
@@ -37,6 +43,9 @@ const getFolders = gql`
 `;
 
 interface props {
+  folder?: {
+    id: string;
+  };
   item?: {
     id: string;
   };
@@ -65,6 +74,9 @@ const foldersThreeDotOptions: FolderThreeDotType = [
 ];
 
 export default function DashboardPage(props: props) {
+  const router = useRouter();
+  const folders = useContext(FoldersContext);
+
   /* const user = useContext(AuthContext);
   if (user.AuthData.loading) return <Loader size="medium" />;
   if (!user.AuthData.loading) {
@@ -80,8 +92,15 @@ export default function DashboardPage(props: props) {
     }
   }, [user.AuthData.loading]); */
 
+  const [ShowLastUpdateTime, setShowLastUpdateTime] = useState(false);
+  const [LastUpdateTimePos, setLastUpdateTimePos] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [DateTime, setDateTime] = useState<number>(new Date().getTime());
+
   const [itemSelected, setItemSelected] = useState<string | undefined>(
-    undefined
+    props.item?.id
   );
 
   useEffect(() => {
@@ -90,12 +109,37 @@ export default function DashboardPage(props: props) {
     }
   }, [props.item?.id]);
 
+  const [folderSelected, setFolderSelected] = useState<string | undefined>(
+    props.folder?.id
+  );
+
+  useEffect(() => {
+    if (props.folder) {
+      setFolderSelected(props.folder.id);
+    }
+  }, [props.folder?.id]);
+
   const { data, loading, error } = useQuery(getFolders);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<dialogTypes>("create");
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDateTime(new Date().getTime());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
+      <LastUpdateTimeFolders
+        isOpen={ShowLastUpdateTime}
+        onClose={() => {
+          setShowLastUpdateTime(false);
+        }}
+        pos={LastUpdateTimePos}
+      />
       <Dialog
         as="div"
         open={dialogOpen}
@@ -114,10 +158,19 @@ export default function DashboardPage(props: props) {
           </div>
         </div>
       </Dialog>
+
+      {/* Menu */}
       <div className="flex flex-1 ">
-        <TinyItem className="mx-1 basis-1/5">
-          <Item>
-            <div className="w-full flex flex-col pt-2 px-2">
+        <TinyItem className="flex-none mx-1 basis-1/5">
+          <Item
+            extra={{
+              onContextMenu: (e: MouseEvent<HTMLDivElement>) => {
+                e.preventDefault();
+                e.stopPropagation();
+              },
+            }}
+          >
+            <div className="w-full flex flex-1 h-full flex-col pt-2 px-2">
               <div className="mb-4 mt-2">
                 <div className="w-full flex items-center cursor-not-allowed">
                   <CalendarIcon className="w-5" />
@@ -132,9 +185,38 @@ export default function DashboardPage(props: props) {
                   <span className="ml-2">Diário</span>
                 </div>
               </div>
-              <div className="w-full flex items-center">
+              {/* Folders Section */}
+              <div className="w-full flex  items-center">
+                {/* Icon */}
                 <FolderIcon className="w-5" />
-                <span className="ml-2">Folders</span>
+                {/* Section Title */}
+                <div className="ml-2 flex items-center">
+                  Folders
+                  <div
+                    className="ml-1"
+                    onMouseEnter={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setLastUpdateTimePos({
+                        x: e.clientX,
+                        y: e.clientY,
+                      });
+                      setShowLastUpdateTime(true);
+                    }}
+                    onMouseLeave={() => setShowLastUpdateTime(false)}
+                    onClick={folders.refreshFolders}
+                  >
+                    <CloudDownloadIcon
+                      className={`h-5 w-5 ${
+                        folders.folderData.lastUpdate.getTime() + 20 * 1000 <=
+                        DateTime
+                          ? `text-black text-opacity-40`
+                          : `text-blue-600 text-opacity-90`
+                      } text-opacity-40 cursor-pointer`}
+                    />
+                  </div>
+                </div>
+                {/* 3 Dot Menu */}
                 <div className="ml-auto">
                   <Menu as="div" className={"relative"}>
                     <Menu.Button className={"flex items-center"} as="div">
@@ -167,8 +249,24 @@ export default function DashboardPage(props: props) {
                   </Menu>
                 </div>
               </div>
-              {loading && <Loader size="medium" className="mx-auto mt-8" />}
-              {!loading && data && <Tree folders={data.userFolders.folders} />}
+              {/* Folders Wrapper */}
+              <div
+                className="h-full mb-2"
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log("Full");
+                }}
+              >
+                {/* Folder Loader */}
+                {folders.folderData.loading && (
+                  <Loader size="medium" className="mx-auto mt-8" />
+                )}
+                {/* Show Folders Tree */}
+                {!folders.folderData.loading && folders.folderData.folders && (
+                  <TreeNode folder={folders.folderData.folders} />
+                )}
+              </div>
             </div>
           </Item>
         </TinyItem>
@@ -177,8 +275,17 @@ export default function DashboardPage(props: props) {
             <div></div>
           </Item>
         </TinyItem> */}
+        {/* Folder Area */}
+        {folderSelected && (
+          <LargeItem className="mx-1 basis-auto shrink">
+            <Item className="p-2">
+              <DashboardListFiles folderId={folderSelected} />
+            </Item>
+          </LargeItem>
+        )}
+        {/* Item Area */}
         {itemSelected && (
-          <LargeItem className="mx-1 basis-4/5">
+          <LargeItem className="mx-1 basis-auto shrink">
             <Item className="p-2">
               <ItemsToPage id={itemSelected} />
             </Item>

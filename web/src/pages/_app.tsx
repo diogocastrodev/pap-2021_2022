@@ -11,6 +11,7 @@ import checkDarkMode from "@src/functions/checkDarkMode";
 
 import Layout from "@src/components/Layout/Layout";
 import "@css/style.css";
+import { FoldersProvider } from "@src/context/FoldersContext";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -18,13 +19,15 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
       <AuthProvider>
-        {router.pathname.startsWith("/auth/") ? (
-          <Component {...pageProps} />
-        ) : (
-          <Layout>
+        <FoldersProvider>
+          {router.pathname.startsWith("/auth/") ? (
             <Component {...pageProps} />
-          </Layout>
-        )}
+          ) : (
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          )}
+        </FoldersProvider>
       </AuthProvider>
     </ApolloProvider>
   );

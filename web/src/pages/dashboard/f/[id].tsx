@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import DashboardPage from "@components/Dashboard/DashboardPage";
 
-export default function ItemData() {
+export default function FolderData() {
   const [id, setId] = useState<string>("");
   const router = useRouter();
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function ItemData() {
   return (
     <>
       <DashboardPage
-        item={{
+        folder={{
           id,
         }}
       />

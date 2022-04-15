@@ -3,78 +3,46 @@ import { PencilIcon, DocumentTextIcon } from "@heroicons/react/outline";
 import { ExportedData, FileType } from "@src/graphql/graphql";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { CSSProperties, MouseEvent, useState } from "react";
+import { CSSProperties, HTMLProps, MouseEvent, useState } from "react";
+import ItemContextMenu, {
+  itemContextMenuId,
+} from "../Dashboard/Item/ContextMenu/ContextMenu";
+import { ContextMenuTrigger } from "react-contextmenu";
 
 interface props {
   folder: ExportedData | ExportedData[];
   onClick?: (id: string, name: string) => void;
+  folderExtra?: HTMLProps<HTMLDivElement>;
+  itemExtra?: HTMLProps<HTMLDivElement>;
 }
 
 export default function TreeNode(props: props) {
   const [Color, setColor] = useState<CSSProperties>({});
-  const [contextMenuOpen, setContextMenuOpen] = useState<boolean>(false);
-  const [contextMenuPos, setContextMenuPos] = useState<{
-    x: number;
-    y: number;
-  }>();
-  const [contextMenuFolderClicked, setContextMenuFolderClicked] = useState<{
-    folder_id: string;
-    name: string;
-  }>();
+
+  const [contextPos, setContextPos] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [contextFileIdOpened, setContextFileIdOpened] = useState<string>("");
+  const [isContextOpen, setIsContextOpen] = useState<boolean>(false);
+
   const router = useRouter();
   return (
     <>
-      <Dialog
-        open={contextMenuOpen}
-        onClose={() => setContextMenuOpen(false)}
-        className={`fixed h-screen w-screen inset-0 overflow-y-auto z-[999]`}
-        /*  onContextMenu={(e: MouseEvent<HTMLDivElement, MouseEvent>) => {
-          e.preventDefault();
-          setContextMenuOpen(false);
-        }} */
-      >
-        <Dialog.Overlay
-          className={`fixed inset-0 bg-gray-300 bg-opacity-20 z-[999]`}
-        />
-        <div
-          className={`absolute bg-gray-100 rounded-md p-1 w-64 h-32`}
-          style={{
-            top: contextMenuPos?.y,
-            left: contextMenuPos?.x,
-          }}
-        >
-          <span className="w-full flex flex-col">
-            {Array.from({ length: 3 }).map(() => (
-              <div>Teste</div>
-            ))}
-          </span>
-        </div>
-      </Dialog>
+      {/* <ItemContextMenu
+        isOpen={isContextOpen}
+        onClose={() => setIsContextOpen(false)}
+        pos={contextPos}
+        file={contextFileIdOpened}
+      /> */}
       <div className={`pl-3`}>
         {Array.isArray(props.folder) &&
           props.folder.map((folder: ExportedData, i) => (
-            <Link href={"/dashboard"} key={i}>
-              <div
-                className={`cursor-pointer`}
-                style={{
-                  backgroundColor: `${Color.background}`,
-                }}
-                onContextMenu={(e) => {
-                  if (setContextMenuOpen) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setContextMenuPos({
-                      x: e.pageX,
-                      y: e.pageY,
-                    });
-                    setContextMenuOpen(true);
-                    setContextMenuFolderClicked({
-                      folder_id: folder.folder_id,
-                      name: folder.name,
-                    });
-                  }
-                }}
-              >
+            <Link
+              href={`/dashboard/f/${folder.folder_id}`}
+              key={folder.folder_id}
+            >
+              <div className={`cursor-pointer`}>
                 <div
                   className=""
                   onClick={() =>
@@ -86,10 +54,23 @@ export default function TreeNode(props: props) {
                 </div>
                 <div>
                   {folder.files?.map((file) => (
-                    <Link href={`/dashboard/i/${file?.file_id}`}>
+                    <Link
+                      href={`/dashboard/i/${file?.file_id}`}
+                      key={file?.file_id}
+                    >
                       <div
                         key={file?.file_id}
                         className="mx-1 flex flex-row items-center"
+                        /*  onContextMenu={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setContextPos({
+                              x: e.clientX,
+                              y: e.clientY,
+                            });
+                            setIsContextOpen(true);
+                            setContextFileIdOpened(file!.file_id);
+                          }} */
                       >
                         {file?.fileType === FileType.Document ? (
                           <DocumentTextIcon className="w-5" />
@@ -104,7 +85,7 @@ export default function TreeNode(props: props) {
                 {folder.children && folder.children.length > 0 && (
                   <TreeNode
                     folder={folder.children as ExportedData[]}
-                    key={i}
+                    key={folder.folder_id}
                     onClick={props.onClick && props.onClick}
                   />
                 )}
