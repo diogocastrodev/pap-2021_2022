@@ -49,6 +49,7 @@ export default function DashboardListFiles({ folderId }: props) {
       <CreateFileDialog
         isOpen={isCreateFileDialogOpen}
         onClose={onCloseCreateFileDialog}
+        folderId={folderId}
       />
       <div>
         <Stack type="row" className="pb-4">

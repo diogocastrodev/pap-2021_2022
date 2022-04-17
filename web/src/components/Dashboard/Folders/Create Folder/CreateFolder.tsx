@@ -92,23 +92,27 @@ export default function CreateFolder(props: props) {
               <InputGroup>
                 <Label text="Folder Name" required={true} />
                 <Input
-                  type="text"
-                  onChange={(e) => setName(e.target.value)}
-                  value={name}
+                  input={{
+                    type: "text",
+                    onChange: (e) => setName(e.target.value),
+                    value: name,
+                    required: true,
+                  }}
                   mainDiv={{
                     className: `${
                       error === "empty name" ? "ring-red-400 ring-2" : ""
                     }`,
                   }}
-                  required={true}
                 />
               </InputGroup>
               <InputGroup>
                 <Label text="Folder Parent" />
                 <Input
-                  type="text"
-                  value={LastClicked ? LastClicked.name : "Raiz das pastas"}
-                  disabled={true}
+                  input={{
+                    type: "text",
+                    value: LastClicked ? LastClicked.name : "Raiz das pastas",
+                    disabled: true,
+                  }}
                   button={{
                     icon: <XIcon />,
                     type: "button",
@@ -125,8 +129,10 @@ export default function CreateFolder(props: props) {
               <InputGroup>
                 <Label text="Color" />
                 <Input
-                  type="color"
-                  onChange={(e) => setColor(e.target.value)}
+                  input={{
+                    type: "color",
+                    onChange: (e) => setColor(e.target.value),
+                  }}
                 />
               </InputGroup>
             </Stack>

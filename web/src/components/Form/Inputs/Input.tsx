@@ -1,10 +1,17 @@
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 
-interface props extends React.InputHTMLAttributes<HTMLInputElement> {
+interface input extends React.InputHTMLAttributes<HTMLInputElement> {
+  ref?: React.Ref<HTMLInputElement | undefined>;
+}
+
+interface mainDiv extends React.HTMLAttributes<HTMLDivElement> {
+  ref?: React.Ref<HTMLDivElement | undefined>;
+}
+
+interface props {
   icon?: ReactElement;
-  mainDiv?: {
-    className?: string;
-  };
+  mainDiv?: mainDiv;
+  input?: input;
   button?: {
     icon: ReactElement;
     type: "submit" | "button" | "reset";
@@ -13,11 +20,14 @@ interface props extends React.InputHTMLAttributes<HTMLInputElement> {
   };
 }
 
+/* TODO: AS ANY REMOVE THEM :( */
+
 export default function Input(props: props) {
   return (
     <div className="group">
       <div
         className={`flex flex-row items-center w-full py-2 px-4 rounded-xl ring-0 group-focus:ring-2 group-focus:ring-blue-40 bg-gray-200 ${props.mainDiv?.className}`}
+        {...(props.mainDiv as any)}
       >
         {props.icon && (
           <div className="flex items-center flex-none justify-center w-6 h-6  text-black text-opacity-80 mr-2">
@@ -25,8 +35,8 @@ export default function Input(props: props) {
           </div>
         )}
         <input
-          {...props}
-          className={`w-full focus:outline-none bg-transparent ${props.className}`}
+          {...(props.input as any)}
+          className={`w-full focus:outline-none bg-transparent ${props.input?.className}`}
         />
         {props.button && (
           <button

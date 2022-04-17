@@ -62,19 +62,23 @@ export default function RegisterPage() {
                 <InputGroup>
                   <Label text="Email" />
                   <Input
-                    type="text"
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    value={Email}
+                    input={{
+                      type: "text",
+                      placeholder: "Email",
+                      onChange: (e) => setEmail(e.target.value),
+                      value: Email,
+                    }}
                   />
                 </InputGroup>
                 <InputGroup>
                   <Label text="Username" />
                   <Input
-                    type="text"
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Username"
-                    value={Username}
+                    input={{
+                      type: "text",
+                      placeholder: "Username",
+                      onChange: (e) => setUsername(e.target.value),
+                      value: Username,
+                    }}
                   />
                 </InputGroup>
               </Stack>
@@ -82,17 +86,22 @@ export default function RegisterPage() {
                 <InputGroup>
                   <Label text="Password" />
                   <Input
-                    type="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
+                    input={{
+                      type: "password",
+                      placeholder: "Password",
+                      onChange: (e) => setPassword(e.target.value),
+                      autoComplete: "on",
+                    }}
                   />
                 </InputGroup>
                 <InputGroup>
                   <Label text="Confirmar Password" />
                   <Input
-                    type="password"
-                    onChange={(e) => setConfPassword(e.target.value)}
-                    placeholder="Confirmar Password"
+                    input={{
+                      type: "password",
+                      placeholder: "Confirmar Password",
+                      onChange: (e) => setConfPassword(e.target.value),
+                    }}
                   />
                 </InputGroup>
               </Stack>

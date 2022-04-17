@@ -17,6 +17,11 @@
     "baseUrl": ".",
     "paths": {
       "@src/*" : ["./src/*"],
+      "@context/*": ["./src/context/*"],
+      "@functions/*": ["./src/functions/*"],
+      "@global/*": ["./src/global/*"],
+      "@graphql/*": ["./src/graphql/*"],
+      "@libs/*": ["./src/libs/*"],
       "@public/*" : ["./public/*"],
       "@css/*" : ["./styles/*"],
       "@components/*": ["./src/components/*"]

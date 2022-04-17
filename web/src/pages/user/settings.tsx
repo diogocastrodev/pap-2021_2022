@@ -56,9 +56,10 @@ export default function SettingsPage() {
               }}
             >
               <Input
-                type="file"
-                color="default"
-                onChange={(e) => setAvatarFile(e.target.files)}
+                input={{
+                  type: "file",
+                  onChange: (e) => setAvatarFile(e.target.files),
+                }}
               />
             </form>
           </div>

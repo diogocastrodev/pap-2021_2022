@@ -112,6 +112,7 @@ export type Query = {
   checkToken?: Maybe<Scalars['Boolean']>;
   getAllTodos?: Maybe<Array<Maybe<Todo>>>;
   getFileContent?: Maybe<Files>;
+  getFilesByFolder?: Maybe<Array<Maybe<Files>>>;
   me?: Maybe<User>;
   userFolders?: Maybe<ReturnFolders>;
 };
@@ -119,6 +120,11 @@ export type Query = {
 
 export type QueryGetFileContentArgs = {
   data: GetFileContentInput;
+};
+
+
+export type QueryGetFilesByFolderArgs = {
+  folderId: Scalars['ID'];
 };
 
 export type RegisterInput = {
@@ -188,7 +194,7 @@ export type ExportedData = {
   color: Scalars['String'];
   color_style: ColorStyle;
   depth: Scalars['Int'];
-  files?: Maybe<Array<Maybe<Files>>>;
+  files: Array<Maybe<Files>>;
   folder_id: Scalars['ID'];
   name: Scalars['String'];
   parent_id: Scalars['ID'];

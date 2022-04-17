@@ -26,19 +26,23 @@ export default function loginPage() {
             <InputGroup>
               <Label text="Email" required={true} />
               <Input
-                type="text"
-                placeholder="Email"
-                onChange={(e) => setEmail(e.target.value)}
-                value={Email}
+                input={{
+                  type: "text",
+                  placeholder: "Email",
+                  onChange: (e) => setEmail(e.target.value),
+                  value: Email,
+                }}
               />
             </InputGroup>
             <InputGroup>
               <Label text="Password" required={true} />
               <Input
-                type="password"
-                placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="on"
+                input={{
+                  type: "password",
+                  placeholder: "Password",
+                  onChange: (e) => setPassword(e.target.value),
+                  autoComplete: "on",
+                }}
               />
             </InputGroup>
             <Button type="submit" color="blue">
