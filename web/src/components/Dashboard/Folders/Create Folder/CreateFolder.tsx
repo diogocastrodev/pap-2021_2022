@@ -77,7 +77,12 @@ export default function CreateFolder(props: props) {
             Clique na pasta no qual deseja adicionar
           </span>
           <div className="flex flex-1 w-full bg-gray-200 rounded-md mr-4 py-1">
-            <TreeNode folder={props.folders} onClick={lastClickedFolder} />
+            <TreeNode
+              folders={props.folders}
+              onClick={lastClickedFolder}
+              showFiles={false}
+              redirectFolder={false}
+            />
           </div>
         </div>
         <Form

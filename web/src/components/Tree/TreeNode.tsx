@@ -4,19 +4,26 @@ import { ExportedData, FileType } from "@src/graphql/graphql";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { CSSProperties, HTMLProps, MouseEvent, useState } from "react";
-import ItemContextMenu, {
-  itemContextMenuId,
-} from "../Dashboard/Item/ContextMenu/ContextMenu";
+import ItemContextMenu from "../Dashboard/Item/ContextMenu/ContextMenu";
 import { ContextMenuTrigger } from "react-contextmenu";
 
 interface props {
-  folder: ExportedData | ExportedData[];
+  folders: ExportedData | ExportedData[];
   onClick?: (id: string, name: string) => void;
   folderExtra?: HTMLProps<HTMLDivElement>;
   itemExtra?: HTMLProps<HTMLDivElement>;
+  showFiles?: boolean;
+  redirectFolder?: boolean;
 }
 
-export default function TreeNode(props: props) {
+export default function TreeNode({
+  folders,
+  onClick,
+  folderExtra,
+  itemExtra,
+  showFiles = false,
+  redirectFolder = true,
+}: props) {
   const [Color, setColor] = useState<CSSProperties>({});
 
   const [contextPos, setContextPos] = useState({
@@ -29,39 +36,41 @@ export default function TreeNode(props: props) {
   const router = useRouter();
   return (
     <>
-      {/* <ItemContextMenu
+      <ItemContextMenu
         isOpen={isContextOpen}
         onClose={() => setIsContextOpen(false)}
         pos={contextPos}
         file={contextFileIdOpened}
-      /> */}
+      />
       <div className={`pl-3`}>
-        {Array.isArray(props.folder) &&
-          props.folder.map((folder: ExportedData, i) => (
+        {Array.isArray(folders) &&
+          folders.map((folder: ExportedData, i) => (
             <Link
-              href={`/dashboard/f/${folder.folder_id}`}
+              href={`${
+                redirectFolder ? `/dashboard/f/${folder.folder_id}` : `#`
+              }`}
               key={folder.folder_id}
             >
               <div className={`cursor-pointer`}>
                 <div
                   className=""
                   onClick={() =>
-                    props.onClick &&
-                    props.onClick(folder.folder_id, folder.name)
+                    onClick && onClick(folder.folder_id, folder.name)
                   }
                 >
                   {folder.name}
                 </div>
-                <div>
-                  {folder.files?.map((file) => (
-                    <Link
-                      href={`/dashboard/i/${file?.file_id}`}
-                      key={file?.file_id}
-                    >
-                      <div
+                {showFiles && (
+                  <div>
+                    {folder.files?.map((file) => (
+                      <Link
+                        href={`/dashboard/i/${file?.file_id}`}
                         key={file?.file_id}
-                        className="mx-1 flex flex-row items-center"
-                        /*  onContextMenu={(e) => {
+                      >
+                        <div
+                          key={file?.file_id}
+                          className="mx-1 flex flex-row items-center"
+                          onContextMenu={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             setContextPos({
@@ -70,23 +79,27 @@ export default function TreeNode(props: props) {
                             });
                             setIsContextOpen(true);
                             setContextFileIdOpened(file!.file_id);
-                          }} */
-                      >
-                        {file?.fileType === FileType.Document ? (
-                          <DocumentTextIcon className="w-5" />
-                        ) : (
-                          <PencilIcon className="w-5" />
-                        )}
-                        <span>{file?.name}</span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                          }}
+                        >
+                          {file?.fileType === FileType.Document ? (
+                            <DocumentTextIcon className="w-5" />
+                          ) : (
+                            <PencilIcon className="w-5" />
+                          )}
+                          <span>{file?.name}</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+
                 {folder.children && folder.children.length > 0 && (
                   <TreeNode
-                    folder={folder.children as ExportedData[]}
+                    folders={folder.children as ExportedData[]}
                     key={folder.folder_id}
-                    onClick={props.onClick && props.onClick}
+                    onClick={onClick && onClick}
+                    showFiles={showFiles}
+                    redirectFolder={redirectFolder}
                   />
                 )}
               </div>

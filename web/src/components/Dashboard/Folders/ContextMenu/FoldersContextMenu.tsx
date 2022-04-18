@@ -12,7 +12,7 @@ interface props {
     x: number;
     y: number;
   };
-  file: string;
+  folder: string;
 }
 
 type menuOptions = {
@@ -23,13 +23,13 @@ type menuOptions = {
   className?: string;
 };
 
-export default function ItemContextMenu(props: props) {
+export default function FoldersContextMenu(props: props) {
   const router = useRouter();
   const options: menuOptions[] = [
     {
       name: "Open",
       onClick: () => {
-        router.push(`/dashboard/i/${props.file}`);
+        router.push(`/dashboard/f/${props.folder}`);
         props.onClose();
       },
       icon: <LinkIcon />,

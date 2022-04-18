@@ -1,10 +1,12 @@
 import { gql, useLazyQuery } from "@apollo/client";
 import Stack from "@src/components/Form/Stack/Stack";
 import Loader from "@src/components/Loader/Loader";
+import { FoldersContext } from "@src/context/FoldersContext";
 import { Files } from "@src/graphql/graphql";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Button from "../../../Form/Buttons/Button";
 import CreateFileDialog from "../../Files/Create File/CreateFile";
+import { ExportedData, Maybe } from "@graphql/graphql";
 
 interface props {
   folderId: string;
@@ -20,12 +22,32 @@ const getFilesByFolder = gql`
 `;
 
 export default function DashboardListFiles({ folderId }: props) {
+  const { folderData } = useContext(FoldersContext);
+
+  const filesFromFolders = () => {
+    if (folderData.folders && folderData.folders instanceof Object) {
+      const getFiles = (folders: ExportedData[]) => {
+        folders.map((folder) => {
+          if (folder.folder_id === folderId) {
+            return folder.files;
+          } else {
+            if (folder.children) {
+              return getFiles(folder.children as ExportedData[]);
+            }
+          }
+        });
+      };
+      return getFiles(folderData.folders);
+    }
+  };
+
   const [fileList, setFileList] = useState<Files[]>([]);
 
   const [getNewFileList, { loading }] = useLazyQuery(getFilesByFolder, {
     variables: {
       folderId,
     },
+    partialRefetch: true,
   });
 
   const [isCreateFileDialogOpen, setIsCreateFileDialogOpen] =
@@ -35,14 +57,25 @@ export default function DashboardListFiles({ folderId }: props) {
     setIsCreateFileDialogOpen(false);
   };
 
-  useEffect(() => {
+  const getNewList = () => {
     getNewFileList().then((res) => {
       if (res.data && res.data.getFilesByFolder) {
         setFileList(res.data.getFilesByFolder);
+      } else {
+        setFileList([]);
       }
     });
-    setFileList([]);
+  };
+
+  useEffect(() => {
+    console.log(filesFromFolders());
+    getNewList();
   }, [folderId]);
+
+  useEffect(() => {
+    console.log(filesFromFolders());
+    getNewList();
+  }, []);
 
   return (
     <>

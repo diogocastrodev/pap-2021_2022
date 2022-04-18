@@ -1,3 +1,6 @@
+const removeImports = require("next-remove-imports");
+const withCSS = require("@zeit/next-css");
+
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
@@ -12,3 +15,11 @@ module.exports = {
     CDN_URL: process.env.CDN_URL || 'localhost:5000',
   }
 }
+
+
+/* (phase, { defaultConfig }) => {
+  return removeImports({
+    ...defaultConfig
+  });
+};
+ */

@@ -113,3 +113,8 @@ Total:
         [ ] Docker @created(22-02-03 19:16)
 
     
+
+
+        Idea:
+
+            - colocar um map num map para encontrar o folder_id que corresponde ao file_id novo, e adicionar, ou dar refresh por completo nos folders

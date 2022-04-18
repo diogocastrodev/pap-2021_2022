@@ -126,13 +126,17 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
 
       let newTodo: todo | null = null;
 
+      const userId = await getUserByPublicId(context.user_id);
+
+      if (!userId) throw new Error("User not found");
+
       try {
         newTodo = await db.todo.create({
           data: {
             status: "ACTIVE",
             todoText: args.data.todoText,
             file_id: args.data.file_id,
-            user_id: context.user_id,
+            user_id: userId.user_id,
           },
         });
       } catch (err) {

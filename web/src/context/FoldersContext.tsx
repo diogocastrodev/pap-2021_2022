@@ -12,7 +12,7 @@ interface props {
 type folderType = {
   lastUpdate: Date;
   loading: boolean;
-  folders: ExportedData | undefined | [];
+  folders: ExportedData[] | undefined | [];
 };
 
 /* Set the ContextTypes */
@@ -72,18 +72,13 @@ const FoldersProvider = ({ children }: props) => {
     });
   };
 
-  const autoRefresh = () => {
-    refreshFolders();
-    setTimeout(autoRefresh, 1000 * 60 * 60);
-  };
-
   const autoRefreshSwitch = true;
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       if (autoRefreshSwitch) {
         console.log("Refreshing Folders...");
-        refreshFolders();
+        await refreshFolders();
       }
     }, 5000);
 

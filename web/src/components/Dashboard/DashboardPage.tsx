@@ -9,7 +9,6 @@ import {
   BookOpenIcon,
   CalendarIcon,
   CloudDownloadIcon,
-  CogIcon,
   FolderAddIcon,
   FolderOpenIcon,
 } from "@heroicons/react/outline";
@@ -29,6 +28,8 @@ import { FoldersContext, FoldersProvider } from "@src/context/FoldersContext";
 import moment from "moment";
 import ItemsToPage from "./Items/Items";
 import LastUpdateTimeFolders from "./LastUpdateTime/LastUpdateTime";
+import ItemContextMenu from "./Item/ContextMenu/ContextMenu";
+import FoldersContextMenu from "./Folders/ContextMenu/FoldersContextMenu";
 
 const getFolders = gql`
   ${folderChildrenFragment}
@@ -97,6 +98,13 @@ export default function DashboardPage(props: props) {
     x: 0,
     y: 0,
   });
+
+  const [OpenContextMenu, setOpenContextMenu] = useState(false);
+  const [ContextMenuPos, setContextMenuPos] = useState({
+    x: 0,
+    y: 0,
+  });
+
   const [DateTime, setDateTime] = useState<number>(new Date().getTime());
 
   const [itemSelected, setItemSelected] = useState<string | undefined>(
@@ -133,6 +141,12 @@ export default function DashboardPage(props: props) {
 
   return (
     <>
+      <FoldersContextMenu
+        folder={""}
+        isOpen={OpenContextMenu}
+        onClose={() => setOpenContextMenu(false)}
+        pos={ContextMenuPos}
+      />
       <LastUpdateTimeFolders
         isOpen={ShowLastUpdateTime}
         onClose={() => {
@@ -160,8 +174,8 @@ export default function DashboardPage(props: props) {
       </Dialog>
 
       {/* Menu */}
-      <div className="flex flex-1 ">
-        <TinyItem className="flex-none mx-1 basis-1/5">
+      <div className="flex flex-1 max-h-screen max-w-[100vw]">
+        <TinyItem className="flex-none mx-1 w-80 max-h-full overscroll-y-auto overflow-hidden">
           <Item
             extra={{
               onContextMenu: (e: MouseEvent<HTMLDivElement>) => {
@@ -251,11 +265,15 @@ export default function DashboardPage(props: props) {
               </div>
               {/* Folders Wrapper */}
               <div
-                className="h-full mb-2"
+                className="h-full mb-2 ovverflow-y-auto"
                 onContextMenu={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Full");
+                  setContextMenuPos({
+                    x: e.clientX,
+                    y: e.clientY,
+                  });
+                  setOpenContextMenu(true);
                 }}
               >
                 {/* Folder Loader */}
@@ -264,7 +282,10 @@ export default function DashboardPage(props: props) {
                 )}
                 {/* Show Folders Tree */}
                 {!folders.folderData.loading && folders.folderData.folders && (
-                  <TreeNode folder={folders.folderData.folders} />
+                  <TreeNode
+                    folders={folders.folderData.folders}
+                    showFiles={true}
+                  />
                 )}
               </div>
             </div>
@@ -285,8 +306,8 @@ export default function DashboardPage(props: props) {
         )}
         {/* Item Area */}
         {itemSelected && (
-          <LargeItem className="mx-1 basis-auto shrink">
-            <Item className="p-2">
+          <LargeItem className="mx-1 shrink ">
+            <Item className="p-2 ">
               <ItemsToPage id={itemSelected} />
             </Item>
           </LargeItem>

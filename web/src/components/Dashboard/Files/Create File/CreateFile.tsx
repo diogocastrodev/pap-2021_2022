@@ -3,17 +3,22 @@ import PreMadeDialog, {
   preMadeDialogNeeded,
 } from "@components/Dialog/PreMadeDialog";
 import Input from "@components/Form/Inputs/Input";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import Label from "@components/Form/Inputs/Label";
 import Button from "@components/Form/Buttons/Button";
 import { FileType } from "@src/graphql/graphql";
 import createFile from "@src/graphql/mutations/createFile";
+import { useRouter } from "next/router";
+import { FoldersContext } from "@src/context/FoldersContext";
 
 interface props extends preMadeDialogNeeded {
   folderId: string;
 }
 
 export default function CreateFileDialog({ isOpen, onClose, folderId }: props) {
+  const router = useRouter();
+  const { refreshFolders } = useContext(FoldersContext);
+
   const nameInput = useRef<HTMLDivElement>(null);
   const [name, setName] = useState<string>("");
 
@@ -32,11 +37,6 @@ export default function CreateFileDialog({ isOpen, onClose, folderId }: props) {
         }
       }
     } else {
-      /*
-       * const div = nameInput.current;
-       *
-       * ERROR: "const div" doesn't exist
-       */
       const div = nameInput.current;
       if (div) {
         const classes = div.className;
@@ -57,22 +57,29 @@ export default function CreateFileDialog({ isOpen, onClose, folderId }: props) {
       return;
     }
 
-    /* try { */
-    const { data, error } = await createFile({
-      name: name,
-      fileType: type,
-      folder_id: folderId,
-    });
+    try {
+      const { data, error } = await createFile({
+        name: name,
+        fileType: type,
+        folder_id: folderId,
+        /* redirect: {
+          router,
+        }, */
+      }).then((res) => {
+        refreshFolders();
+        return res;
+      });
 
-    if (data) {
-      onClose();
+      if (data) {
+        refreshFolders();
+        onClose();
+      }
+      if (error) {
+        new Error(error);
+      }
+    } catch (error) {
+      console.error(error);
     }
-    if (error) {
-      new Error(error);
-    }
-    /* } catch (error) {
-      console.log(error);
-    } */
   }
 
   return (
@@ -105,8 +112,12 @@ export default function CreateFileDialog({ isOpen, onClose, folderId }: props) {
               name={`fileType`}
               ref={typeSelect}
             >
-              {Object.keys(FileType).map((type) => (
-                <option key={type} value={type}>
+              {Object.values(FileType).map((type) => (
+                <option
+                  key={type}
+                  value={type as FileType}
+                  className="capitalize"
+                >
                   {type}
                 </option>
               ))}
