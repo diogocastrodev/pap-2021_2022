@@ -174,7 +174,7 @@ export default function DashboardPage(props: props) {
       </Dialog>
 
       {/* Menu */}
-      <div className="flex flex-1 max-h-screen max-w-[100vw]">
+      <div className="flex flex-1 max-h-[91.5vh] max-w-[100vw]">
         <TinyItem className="flex-none mx-1 w-80 max-h-full overscroll-y-auto overflow-hidden">
           <Item
             extra={{
@@ -265,7 +265,7 @@ export default function DashboardPage(props: props) {
               </div>
               {/* Folders Wrapper */}
               <div
-                className="h-full mb-2 ovverflow-y-auto"
+                className="h-full mb-2 overflow-y-auto "
                 onContextMenu={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
