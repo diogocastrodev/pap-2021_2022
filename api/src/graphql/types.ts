@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { user, folders, document, todo, files } from '.prisma/client';
+import { user, folders, document, todo, files, priority } from '.prisma/client';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -75,9 +75,12 @@ export type Mutation = {
   __typename?: 'Mutation';
   createFile?: Maybe<Files>;
   createFolder?: Maybe<Folders>;
+  createPriority: Priority;
   createTodo?: Maybe<Todo>;
+  deletePriority: Scalars['Boolean'];
   login?: Maybe<Scalars['String']>;
   register?: Maybe<Scalars['String']>;
+  updatePriority: Priority;
 };
 
 
@@ -91,8 +94,18 @@ export type MutationCreateFolderArgs = {
 };
 
 
+export type MutationCreatePriorityArgs = {
+  data: CreatePriorityInput;
+};
+
+
 export type MutationCreateTodoArgs = {
   data: CreateTodoInput;
+};
+
+
+export type MutationDeletePriorityArgs = {
+  data: DeletePriorityInput;
 };
 
 
@@ -105,10 +118,26 @@ export type MutationRegisterArgs = {
   data: RegisterInput;
 };
 
+
+export type MutationUpdatePriorityArgs = {
+  data: UpdatePriorityInput;
+};
+
 export enum Permissions {
   Admin = 'ADMIN',
   User = 'USER'
 }
+
+export type Priority = {
+  __typename?: 'Priority';
+  color: Scalars['String'];
+  created_at: Scalars['DateTime'];
+  name: Scalars['String'];
+  priority_id: Scalars['ID'];
+  todos?: Maybe<Array<Maybe<Todo>>>;
+  updated_at: Scalars['DateTime'];
+  user?: Maybe<User>;
+};
 
 export type Query = {
   __typename?: 'Query';
@@ -117,6 +146,7 @@ export type Query = {
   getFileContent?: Maybe<Files>;
   getFilesByFolder?: Maybe<Array<Maybe<Files>>>;
   me?: Maybe<User>;
+  priorities: Array<Maybe<Priority>>;
   userFolders?: Maybe<ReturnFolders>;
 };
 
@@ -186,9 +216,18 @@ export type CreateFolderInput = {
   parent_id?: Maybe<Scalars['ID']>;
 };
 
+export type CreatePriorityInput = {
+  color: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export type CreateTodoInput = {
   file_id?: Maybe<Scalars['ID']>;
   todoText: Scalars['String'];
+};
+
+export type DeletePriorityInput = {
+  id: Scalars['ID'];
 };
 
 export type ExportedData = {
@@ -211,6 +250,12 @@ export type ReturnFolders = {
   __typename?: 'returnFolders';
   folders: Array<Maybe<ExportedData>>;
   folders_amount: Scalars['Int'];
+};
+
+export type UpdatePriorityInput = {
+  color?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
 };
 
 
@@ -294,6 +339,7 @@ export type ResolversTypes = {
   LoginInput: LoginInput;
   Mutation: ResolverTypeWrapper<{}>;
   Permissions: Permissions;
+  Priority: ResolverTypeWrapper<priority>;
   Query: ResolverTypeWrapper<{}>;
   RegisterInput: RegisterInput;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -303,10 +349,13 @@ export type ResolversTypes = {
   UserStatus: UserStatus;
   createFileInput: CreateFileInput;
   createFolderInput: CreateFolderInput;
+  createPriorityInput: CreatePriorityInput;
   createTodoInput: CreateTodoInput;
+  deletePriorityInput: DeletePriorityInput;
   exportedData: ResolverTypeWrapper<Omit<ExportedData, 'children' | 'files'> & { children?: Maybe<Array<Maybe<ResolversTypes['exportedData']>>>, files: Array<Maybe<ResolversTypes['Files']>> }>;
   getFileContentInput: GetFileContentInput;
   returnFolders: ResolverTypeWrapper<Omit<ReturnFolders, 'folders'> & { folders: Array<Maybe<ResolversTypes['exportedData']>> }>;
+  updatePriorityInput: UpdatePriorityInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -320,6 +369,7 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   LoginInput: LoginInput;
   Mutation: {};
+  Priority: priority;
   Query: {};
   RegisterInput: RegisterInput;
   String: Scalars['String'];
@@ -327,10 +377,13 @@ export type ResolversParentTypes = {
   User: user;
   createFileInput: CreateFileInput;
   createFolderInput: CreateFolderInput;
+  createPriorityInput: CreatePriorityInput;
   createTodoInput: CreateTodoInput;
+  deletePriorityInput: DeletePriorityInput;
   exportedData: Omit<ExportedData, 'children' | 'files'> & { children?: Maybe<Array<Maybe<ResolversParentTypes['exportedData']>>>, files: Array<Maybe<ResolversParentTypes['Files']>> };
   getFileContentInput: GetFileContentInput;
   returnFolders: Omit<ReturnFolders, 'folders'> & { folders: Array<Maybe<ResolversParentTypes['exportedData']>> };
+  updatePriorityInput: UpdatePriorityInput;
 };
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
@@ -378,9 +431,23 @@ export type FoldersResolvers<ContextType = any, ParentType extends ResolversPare
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createFile?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<MutationCreateFileArgs, 'data'>>;
   createFolder?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType, RequireFields<MutationCreateFolderArgs, 'data'>>;
+  createPriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationCreatePriorityArgs, 'data'>>;
   createTodo?: Resolver<Maybe<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<MutationCreateTodoArgs, 'data'>>;
+  deletePriority?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePriorityArgs, 'data'>>;
   login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
   register?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
+  updatePriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationUpdatePriorityArgs, 'data'>>;
+};
+
+export type PriorityResolvers<ContextType = any, ParentType extends ResolversParentTypes['Priority'] = ResolversParentTypes['Priority']> = {
+  color?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  priority_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  todos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Todo']>>>, ParentType, ContextType>;
+  updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -389,6 +456,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getFileContent?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<QueryGetFileContentArgs, 'data'>>;
   getFilesByFolder?: Resolver<Maybe<Array<Maybe<ResolversTypes['Files']>>>, ParentType, ContextType, RequireFields<QueryGetFilesByFolderArgs, 'folderId'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  priorities?: Resolver<Array<Maybe<ResolversTypes['Priority']>>, ParentType, ContextType>;
   userFolders?: Resolver<Maybe<ResolversTypes['returnFolders']>, ParentType, ContextType>;
 };
 
@@ -441,6 +509,7 @@ export type Resolvers<ContextType = any> = {
   Files?: FilesResolvers<ContextType>;
   Folders?: FoldersResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Priority?: PriorityResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Todo?: TodoResolvers<ContextType>;
   User?: UserResolvers<ContextType>;

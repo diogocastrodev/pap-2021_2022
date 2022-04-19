@@ -12,6 +12,7 @@ generates:
         Document: .prisma/client#document
         Todo: .prisma/client#todo
         Files: .prisma/client#files
+        Priority: .prisma/client#priority
     plugins:
       - typescript
       - typescript-resolvers

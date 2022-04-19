@@ -1,0 +1,36 @@
+type Query {
+  priorities: [Priority]!
+}
+
+type Mutation {
+  createPriority(data: createPriorityInput!): Priority!
+  updatePriority(data: updatePriorityInput!): Priority!
+  deletePriority(data: deletePriorityInput!): Boolean!
+}
+
+input createPriorityInput {
+  name: String!
+  color: String!
+}
+
+input updatePriorityInput {
+  id: ID!
+  name: String
+  color: String
+}
+
+input deletePriorityInput {
+  id: ID!
+}
+
+type Priority {
+  priority_id: ID!
+  name: String!
+  color: String!
+
+  created_at: DateTime!
+  updated_at: DateTime!
+
+  todos: [Todo]
+  user: User
+}

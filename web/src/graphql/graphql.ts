@@ -72,9 +72,12 @@ export type Mutation = {
   __typename?: 'Mutation';
   createFile?: Maybe<Files>;
   createFolder?: Maybe<Folders>;
+  createPriority: Priority;
   createTodo?: Maybe<Todo>;
+  deletePriority: Scalars['Boolean'];
   login?: Maybe<Scalars['String']>;
   register?: Maybe<Scalars['String']>;
+  updatePriority: Priority;
 };
 
 
@@ -88,8 +91,18 @@ export type MutationCreateFolderArgs = {
 };
 
 
+export type MutationCreatePriorityArgs = {
+  data: CreatePriorityInput;
+};
+
+
 export type MutationCreateTodoArgs = {
   data: CreateTodoInput;
+};
+
+
+export type MutationDeletePriorityArgs = {
+  data: DeletePriorityInput;
 };
 
 
@@ -102,10 +115,26 @@ export type MutationRegisterArgs = {
   data: RegisterInput;
 };
 
+
+export type MutationUpdatePriorityArgs = {
+  data: UpdatePriorityInput;
+};
+
 export enum Permissions {
   Admin = 'ADMIN',
   User = 'USER'
 }
+
+export type Priority = {
+  __typename?: 'Priority';
+  color: Scalars['String'];
+  created_at: Scalars['DateTime'];
+  name: Scalars['String'];
+  priority_id: Scalars['ID'];
+  todos?: Maybe<Array<Maybe<Todo>>>;
+  updated_at: Scalars['DateTime'];
+  user?: Maybe<User>;
+};
 
 export type Query = {
   __typename?: 'Query';
@@ -114,6 +143,7 @@ export type Query = {
   getFileContent?: Maybe<Files>;
   getFilesByFolder?: Maybe<Array<Maybe<Files>>>;
   me?: Maybe<User>;
+  priorities: Array<Maybe<Priority>>;
   userFolders?: Maybe<ReturnFolders>;
 };
 
@@ -183,9 +213,18 @@ export type CreateFolderInput = {
   parent_id?: InputMaybe<Scalars['ID']>;
 };
 
+export type CreatePriorityInput = {
+  color: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export type CreateTodoInput = {
   file_id?: InputMaybe<Scalars['ID']>;
   todoText: Scalars['String'];
+};
+
+export type DeletePriorityInput = {
+  id: Scalars['ID'];
 };
 
 export type ExportedData = {
@@ -208,4 +247,10 @@ export type ReturnFolders = {
   __typename?: 'returnFolders';
   folders: Array<Maybe<ExportedData>>;
   folders_amount: Scalars['Int'];
+};
+
+export type UpdatePriorityInput = {
+  color?: InputMaybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name?: InputMaybe<Scalars['String']>;
 };

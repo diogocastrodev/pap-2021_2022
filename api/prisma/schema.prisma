@@ -26,8 +26,9 @@ model user {
   created_at DateTime @default(now()) @db.Timestamp()
   updated_at DateTime @updatedAt @db.Timestamp()
 
-  folders folders[]
-  todo    todo[]
+  folders  folders[]
+  todo     todo[]
+  priority priority[]
 }
 
 enum Roles {
@@ -120,6 +121,24 @@ model todo {
 
   files   files?  @relation(fields: [file_id], references: [file_id])
   file_id String? @db.VarChar(255)
+
+  priority            priority? @relation(fields: [priorityPriority_id], references: [priority_id])
+  priorityPriority_id String?   @db.VarChar(255)
+}
+
+model priority {
+  priority_id String @id @default(uuid()) @db.VarChar(255)
+
+  name  String @db.VarChar(80)
+  color String @db.VarChar(6)
+
+  created_at DateTime @default(now()) @db.Timestamp()
+  updated_at DateTime @updatedAt @db.Timestamp()
+
+  userId String @db.VarChar(255)
+  user   user   @relation(fields: [userId], references: [user_id])
+
+  todos todo[]
 }
 
 enum TodoStatus {

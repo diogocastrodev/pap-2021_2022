@@ -8,6 +8,8 @@ import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { UserResolvers } from "./modules/user";
 import { FolderResolver } from "./modules/folder_tree/resolvers";
 import { FolderFilesResolver } from "./modules/folders_files/resolvers";
+import { TodoResolver } from "./modules/todo/resolvers";
+import { DocumentResolver } from "./modules/document/resolvers";
 
 /* Load all modules schemas and merge all them in one */
 const baseSchema = loadSchemaSync(join(__dirname, `modules/**/*.graphql`), {
@@ -22,5 +24,11 @@ const finalSchema = mergeSchemas({
 /* Merge Schema with Resolvers */
 export const schema = addResolversToSchema({
   schema: finalSchema,
-  resolvers: merge(UserResolvers, FolderResolver, FolderFilesResolver),
+  resolvers: merge(
+    UserResolvers,
+    FolderResolver,
+    FolderFilesResolver,
+    TodoResolver,
+    DocumentResolver
+  ),
 });
