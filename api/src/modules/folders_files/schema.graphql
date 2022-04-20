@@ -2,23 +2,16 @@ scalar DateTime
 
 type Query {
   getFileContent(data: getFileContentInput!): Files
-  getAllTodos: [Todo]
 }
 
 type Mutation {
   createFile(data: createFileInput!): Files
-  createTodo(data: createTodoInput!): Todo
 }
 
 input createFileInput {
   fileType: FileType
   name: String!
   folder_id: ID!
-}
-
-input createTodoInput {
-  todoText: String!
-  file_id: ID
 }
 
 input getFileContentInput {
@@ -39,27 +32,6 @@ type Document {
   updated_at: DateTime
 
   file_id: ID!
-}
-
-type Todo {
-  todo_id: ID!
-
-  todoText: String!
-
-  status: TodoStatus
-
-  created_at: DateTime
-  updated_at: DateTime
-
-  user: User
-
-  file_id: ID!
-}
-
-enum TodoStatus {
-  ACTIVE
-  DONE
-  DELETED
 }
 
 type Files {
