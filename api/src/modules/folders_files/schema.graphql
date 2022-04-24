@@ -23,17 +23,6 @@ enum FileType {
   Document
 }
 
-type Document {
-  document_id: ID!
-
-  content: String!
-
-  created_at: DateTime
-  updated_at: DateTime
-
-  file_id: ID!
-}
-
 type Files {
   file_id: ID!
 

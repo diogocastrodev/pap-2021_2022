@@ -6,10 +6,12 @@ import { useRouter } from "next/router";
 import { CSSProperties, HTMLProps, MouseEvent, useState } from "react";
 import ItemContextMenu from "../Dashboard/Item/ContextMenu/ContextMenu";
 import { ContextMenuTrigger } from "react-contextmenu";
+import { lightHex } from "@src/functions/colors";
 
 interface props {
   folders: ExportedData | ExportedData[];
   onClick?: (id: string, name: string) => void;
+  onContext?: (id: string) => void;
   folderExtra?: HTMLProps<HTMLDivElement>;
   itemExtra?: HTMLProps<HTMLDivElement>;
   showFiles?: boolean;
@@ -23,6 +25,7 @@ export default function TreeNode({
   itemExtra,
   showFiles = false,
   redirectFolder = true,
+  onContext,
 }: props) {
   const [Color, setColor] = useState<CSSProperties>({});
 
@@ -51,12 +54,21 @@ export default function TreeNode({
               }`}
               key={folder.folder_id}
             >
-              <div className={`cursor-pointer`}>
+              <div
+                className={`cursor-pointer p-1 rounded-md mb-1`}
+                style={{
+                  backgroundColor: folder.color,
+                  color: lightHex(folder.color),
+                }}
+              >
                 <div
                   className=""
                   onClick={() =>
                     onClick && onClick(folder.folder_id, folder.name)
                   }
+                  onContextMenu={() => {
+                    onContext && onContext(folder.folder_id);
+                  }}
                 >
                   {folder.name}
                 </div>
@@ -69,7 +81,7 @@ export default function TreeNode({
                       >
                         <div
                           key={file?.file_id}
-                          className="mx-1 flex flex-row items-center"
+                          className="mx-1 flex flex-row items-center last:pb-2"
                           onContextMenu={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -100,6 +112,7 @@ export default function TreeNode({
                     onClick={onClick && onClick}
                     showFiles={showFiles}
                     redirectFolder={redirectFolder}
+                    onContext={onContext && onContext}
                   />
                 )}
               </div>

@@ -30,6 +30,7 @@ import ItemsToPage from "./Items/Items";
 import LastUpdateTimeFolders from "./LastUpdateTime/LastUpdateTime";
 import ItemContextMenu from "./Item/ContextMenu/ContextMenu";
 import FoldersContextMenu from "./Folders/ContextMenu/FoldersContextMenu";
+import SearchDialog from "./Search/SearchDialog";
 
 const getFolders = gql`
   ${folderChildrenFragment}
@@ -117,6 +118,8 @@ export default function DashboardPage(props: props) {
     }
   }, [props.item?.id]);
 
+  const [folderFocused, setFolderFocused] = useState<string>("");
+
   const [folderSelected, setFolderSelected] = useState<string | undefined>(
     props.folder?.id
   );
@@ -141,8 +144,9 @@ export default function DashboardPage(props: props) {
 
   return (
     <>
+      <SearchDialog />
       <FoldersContextMenu
-        folder={""}
+        folder={folderFocused}
         isOpen={OpenContextMenu}
         onClose={() => setOpenContextMenu(false)}
         pos={ContextMenuPos}
@@ -238,7 +242,7 @@ export default function DashboardPage(props: props) {
                     </Menu.Button>
                     <Menu.Items
                       className={
-                        "absolute top-6 -left-12 py-3 px-2 min-w bg-gray-200 rounded-md shadow-md select-none focus:outline-none space-y-1"
+                        "fixed z-[99] top-44 left-30 py-3 px-2 min-w bg-gray-200 rounded-md shadow-md select-none focus:outline-none space-y-1"
                       }
                     >
                       {foldersThreeDotOptions.map((item, i: number) => (
@@ -285,6 +289,9 @@ export default function DashboardPage(props: props) {
                   <TreeNode
                     folders={folders.folderData.folders}
                     showFiles={true}
+                    onContext={(id: string) => {
+                      setFolderFocused(id);
+                    }}
                   />
                 )}
               </div>

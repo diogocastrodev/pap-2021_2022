@@ -21,7 +21,9 @@ import { useHookstate } from "@hookstate/core";
 import Image from "next/image";
 import UserAvatar from "../user/items/Avatar/UserAvatar";
 
-interface props {}
+interface props {
+  initialPage?: boolean;
+}
 
 type DropDownProps = {
   text: string;
@@ -77,8 +79,20 @@ export default function Navbar(props: props) {
 
   const router = useRouter();
 
+  const [screenY, setScreenY] = useState(0);
+
+  useEffect(() => {
+    if (window) {
+      setScreenY(window.screenY);
+    }
+  }, [typeof window !== "undefined" && window.screenY]);
+
   return (
-    <div className="h-12 w-screen shadow-lg sticky -top-0.5 bg-gray-100 overflow-hidden z-50">
+    <div
+      className={`${
+        props.initialPage && screenY === 0 ? `` : `shadow-lg bg-gray-100`
+      } h-12 w-screen  sticky -top-0.5  overflow-hidden z-50`}
+    >
       <div className="px-4 h-full flex">
         <div className="w-full flex flex-row items-center">
           <div className="text-black font-extrabold text-3xl">

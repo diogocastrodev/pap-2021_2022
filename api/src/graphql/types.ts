@@ -82,6 +82,7 @@ export type Mutation = {
   deleteTodo: Scalars['Boolean'];
   login?: Maybe<Scalars['String']>;
   register?: Maybe<Scalars['String']>;
+  updateDocument: Document;
   updatePriority: Priority;
   updateTodo: Todo;
 };
@@ -132,6 +133,12 @@ export type MutationRegisterArgs = {
 };
 
 
+export type MutationUpdateDocumentArgs = {
+  content?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+};
+
+
 export type MutationUpdatePriorityArgs = {
   data: UpdatePriorityInput;
 };
@@ -160,6 +167,7 @@ export type Priority = {
 export type Query = {
   __typename?: 'Query';
   checkToken?: Maybe<Scalars['Boolean']>;
+  getDocumentContent: Scalars['String'];
   getFileContent?: Maybe<Files>;
   getFilesByFolder?: Maybe<Array<Maybe<Files>>>;
   getTodo?: Maybe<Todo>;
@@ -169,6 +177,11 @@ export type Query = {
   me?: Maybe<User>;
   priorities: Array<Maybe<Priority>>;
   userFolders?: Maybe<ReturnFolders>;
+};
+
+
+export type QueryGetDocumentContentArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -497,6 +510,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'data'>>;
   login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
   register?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
+  updateDocument?: Resolver<ResolversTypes['Document'], ParentType, ContextType, RequireFields<MutationUpdateDocumentArgs, 'id'>>;
   updatePriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationUpdatePriorityArgs, 'data'>>;
   updateTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationUpdateTodoArgs, 'data'>>;
 };
@@ -514,6 +528,7 @@ export type PriorityResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   checkToken?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  getDocumentContent?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryGetDocumentContentArgs, 'id'>>;
   getFileContent?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<QueryGetFileContentArgs, 'data'>>;
   getFilesByFolder?: Resolver<Maybe<Array<Maybe<ResolversTypes['Files']>>>, ParentType, ContextType, RequireFields<QueryGetFilesByFolderArgs, 'folderId'>>;
   getTodo?: Resolver<Maybe<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodoArgs, 'id'>>;

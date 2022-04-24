@@ -59,30 +59,6 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
 
       return fileContent;
     },
-    getAllTodos: async (_parent, args, context) => {
-      if (!context.user_id || !context.is_authed)
-        throw new Error("User not authenticated");
-
-      let todos: todo[] = [];
-
-      try {
-        todos = await db.todo.findMany({
-          where: {
-            user: {
-              public_user_id: context.user_id,
-            },
-          },
-          include: {
-            user: true,
-            files: true,
-          },
-        });
-      } catch (err) {
-        console.log(err);
-      }
-
-      return todos;
-    },
   },
   Mutation: {
     createFile: async (_parent, args, context) => {
@@ -119,33 +95,6 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
       if (!newFile) throw new Error("Internal Error");
 
       return newFile;
-    },
-    createTodo: async (_parent, args, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("User not authenticated");
-
-      let newTodo: todo | null = null;
-
-      const userId = await getUserByPublicId(context.user_id);
-
-      if (!userId) throw new Error("User not found");
-
-      try {
-        newTodo = await db.todo.create({
-          data: {
-            status: "ACTIVE",
-            todoText: args.data.todoText,
-            file_id: args.data.file_id,
-            user_id: userId.user_id,
-          },
-        });
-      } catch (err) {
-        console.log(err);
-      }
-
-      if (!newTodo) throw new Error("Error creating TODO");
-
-      return newTodo;
     },
   },
 };

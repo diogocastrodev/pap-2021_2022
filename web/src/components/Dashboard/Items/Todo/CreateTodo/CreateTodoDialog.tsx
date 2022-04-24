@@ -24,7 +24,7 @@ interface props extends preMadeDialogNeeded {
   onCreate: (id: string, text: string, status: TodoStatus) => void;
 }
 
-export default function (props: props) {
+export default function CreateTodoDialog(props: props) {
   const [text, setText] = useState<string>("");
 
   const textInput = useRef<HTMLDivElement>(null);
@@ -44,7 +44,6 @@ export default function (props: props) {
       const div = textInput.current;
       if (div) {
         const classes = div.className;
-        console.log(classes);
         if (classes.indexOf(errorClasses) !== -1) {
           div.className = classes.replace(errorClasses, "");
         }
@@ -65,7 +64,7 @@ export default function (props: props) {
         .request(createTodoMutation, {
           data: {
             file_id: props.file,
-            todoText: text,
+            name: text,
           },
         })
         .then((res) => {

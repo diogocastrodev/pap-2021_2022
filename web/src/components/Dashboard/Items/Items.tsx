@@ -22,7 +22,7 @@ const fileQuery = gql`
 
 export default function ItemsToPage(props: props) {
   const [FileData, setFileData] = useState<Files>();
-  const [getNewFile] = useLazyQuery(fileQuery, {
+  const [getNewFile, { loading }] = useLazyQuery(fileQuery, {
     variables: {
       data: {
         fileId: props.id,
@@ -38,7 +38,8 @@ export default function ItemsToPage(props: props) {
 
   return (
     <>
-      {FileData && FileData.fileType === FileType.Document ? (
+      {loading && <Loader size="medium" />}
+      {!loading && FileData && FileData.fileType === FileType.Document ? (
         <DocumentPage id={props.id} />
       ) : (
         <TodoPage id={props.id} />

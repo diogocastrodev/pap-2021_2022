@@ -6,6 +6,7 @@ interface input extends React.InputHTMLAttributes<HTMLInputElement> {
 
 interface mainDiv extends React.HTMLAttributes<HTMLDivElement> {
   ref?: React.Ref<HTMLDivElement | undefined>;
+  color?: "default" | "transparent";
 }
 
 interface props {
@@ -26,7 +27,11 @@ export default function Input(props: props) {
   return (
     <div className="group">
       <div
-        className={`flex flex-row items-center w-full py-2 px-4 rounded-xl ring-0 group-focus:ring-2 group-focus:ring-blue-40 bg-gray-200 ${props.mainDiv?.className}`}
+        className={`flex flex-row items-center w-full py-2 px-4 rounded-xl ring-0 group-focus:ring-2 group-focus:ring-blue-40 ${
+          props.mainDiv?.color === "transparent"
+            ? `bg-transparent`
+            : `bg-gray-200`
+        } ${props.mainDiv?.className}`}
         {...(props.mainDiv as any)}
       >
         {props.icon && (

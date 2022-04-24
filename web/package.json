@@ -37,6 +37,7 @@
     "fs": "^0.0.1-security",
     "graphql": "^15.5.2",
     "graphql-request": "^3.5.0",
+    "hotkeys-js": "^3.9.0",
     "jquery": "^3.6.0",
     "moment": "^2.29.1",
     "next": "^12.0.7",

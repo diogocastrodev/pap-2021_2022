@@ -1,5 +1,5 @@
 import { ResolverContext } from "../../context";
-import { Resolvers } from "../../graphql/types";
+import { Resolvers, TodoStatus } from "../../graphql/types";
 import { db } from "../../database";
 
 export const TodoResolver: Resolvers<ResolverContext> = {
@@ -197,26 +197,53 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       if (!context.is_authed || !context.user_id)
         throw new Error("Unauthorized");
 
-      const todo = await db.todo.create({
-        data: {
-          todoText: name,
-          status: "ACTIVE",
-          priority: {
-            connect: {
-              priority_id: priority,
-            },
+      interface INewData {
+        todoText: string;
+        status: TodoStatus;
+        priority: {
+          connect: {
+            priority_id: string;
+          };
+        };
+        user: {
+          connect: {
+            public_user_id: string;
+          };
+        };
+        files?: {
+          connect: {
+            file_id: string;
+          };
+        };
+      }
+
+      let newData: INewData = {
+        todoText: name,
+        status: TodoStatus.Active,
+        priority: {
+          connect: {
+            priority_id: priority,
           },
-          user: {
-            connect: {
-              public_user_id: context.user_id,
-            },
+        },
+        user: {
+          connect: {
+            public_user_id: context.user_id,
           },
+        },
+      };
+
+      if (file && typeof file !== null)
+        newData = {
+          ...newData,
           files: {
             connect: {
               file_id: file,
             },
           },
-        },
+        };
+
+      const todo = await db.todo.create({
+        data: newData,
       });
 
       if (!todo) throw new Error("Todo not found");
@@ -245,23 +272,41 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       if (isUpdatable.user.public_user_id !== context.user_id)
         throw new Error("Unauthorized");
 
-      const newTodo = await db.todo.update({
-        where: {
-          todo_id: id,
-        },
-        data: {
-          todoText: name || "",
+      if (name === "") name = null;
+
+      let dataToUpdate = {};
+
+      if (name && typeof name !== null)
+        dataToUpdate = {
+          ...dataToUpdate,
+          todoText: name,
+        };
+
+      if (priority && typeof priority !== null)
+        dataToUpdate = {
+          ...dataToUpdate,
           priority: {
             connect: {
               priority_id: priority,
             },
           },
+        };
+
+      if (file && typeof file !== null)
+        dataToUpdate = {
+          ...dataToUpdate,
           files: {
             connect: {
               file_id: file,
             },
           },
+        };
+
+      const newTodo = await db.todo.update({
+        where: {
+          todo_id: id,
         },
+        data: dataToUpdate,
       });
 
       if (!newTodo) throw new Error("Todo not found");

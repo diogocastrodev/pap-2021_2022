@@ -74,16 +74,12 @@ const FoldersProvider = ({ children }: props) => {
 
   const autoRefreshSwitch = true;
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      if (autoRefreshSwitch) {
-        console.log("Refreshing Folders...");
-        await refreshFolders();
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
+  /* const interval = setInterval(async () => {
+    if (autoRefreshSwitch) {
+      console.log("Refreshing Folders...");
+      await refreshFolders();
+    }
+  }, 5000); */
 
   /* Run every time opens any page */
   useEffect(() => {
