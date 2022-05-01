@@ -27,7 +27,7 @@ export default function FoldersContextMenu(props: props) {
   const router = useRouter();
   const options: menuOptions[] = [
     {
-      name: "Open",
+      name: "Abrir",
       onClick: () => {
         router.push(`/dashboard/f/${props.folder}`);
         props.onClose();
@@ -35,7 +35,14 @@ export default function FoldersContextMenu(props: props) {
       icon: <LinkIcon />,
     },
     {
-      name: "Delete",
+      name: "Criar Ficheiro",
+      onClick: () => {
+        props.onClose();
+      },
+      icon: <LinkIcon />,
+    },
+    {
+      name: "Apagar",
       onClick: () => {
         props.onClose();
       },

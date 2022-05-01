@@ -314,7 +314,7 @@ export default function DashboardPage(props: props) {
         {/* Item Area */}
         {itemSelected && (
           <LargeItem className="mx-1 shrink ">
-            <Item className="p-2 ">
+            <Item className="p-2 overflow-y-auto overflow-hidden">
               <ItemsToPage id={itemSelected} />
             </Item>
           </LargeItem>

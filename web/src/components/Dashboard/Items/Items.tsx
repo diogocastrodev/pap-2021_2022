@@ -39,9 +39,10 @@ export default function ItemsToPage(props: props) {
   return (
     <>
       {loading && <Loader size="medium" />}
-      {!loading && FileData && FileData.fileType === FileType.Document ? (
+      {!loading && FileData && FileData.fileType === FileType.Document && (
         <DocumentPage id={props.id} />
-      ) : (
+      )}
+      {!loading && FileData && FileData.fileType === FileType.Todo && (
         <TodoPage id={props.id} />
       )}
     </>

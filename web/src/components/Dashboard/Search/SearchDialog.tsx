@@ -1,4 +1,9 @@
-import { KeyboardEvent, useEffect, useState } from "react";
+import {
+  KeyboardEvent,
+  KeyboardEventHandler,
+  useEffect,
+  useState,
+} from "react";
 import PreMadeDialog from "@components/Dialog/PreMadeDialog";
 import AntiFocusTrap from "@components/AntiFocusTrap/AntiFocusTrap";
 import hotkeys from "hotkeys-js";
@@ -87,18 +92,20 @@ export default function SearchDialog() {
           $(`.${GroupItems[SearchSelected].value}`).click();
         }
         break;
-
-      default:
-        break;
     }
   };
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [document.onkeydown]);
+    if (document) {
+      hotkeys("*", (event, _handler) => {
+        handleKeyDown(event);
+      });
+    }
+  }, [typeof document !== "undefined" && document.onkeydown]);
+
+  useEffect(() => {
+    setSearchSelected(0);
+  }, []);
 
   return (
     <>
@@ -146,6 +153,16 @@ export default function SearchDialog() {
               </div>
             </Link>
           ))}
+          {GroupItems.filter((it) => {
+            return (
+              it.text.toLowerCase().includes(Search.toLowerCase()) ||
+              Search.toLowerCase() === ""
+            );
+          }).length === 0 && (
+            <div className="text-center font-semibold">
+              Não foram encotrados resultados
+            </div>
+          )}
         </div>
       </PreMadeDialog>
     </>

@@ -28,7 +28,7 @@ export default function FileContextMenu(props: props) {
   const router = useRouter();
   const options: menuOptions[] = [
     {
-      name: "Open",
+      name: "Abrir",
       onClick: () => {
         router.push(`/dashboard/i/${props.file}`);
         props.onClose();
@@ -36,7 +36,23 @@ export default function FileContextMenu(props: props) {
       icon: <LinkIcon />,
     },
     {
-      name: "Delete",
+      name: "Renomear",
+      onClick: () => {
+        router.push(`/dashboard/i/${props.file}`);
+        props.onClose();
+      },
+      icon: <LinkIcon />,
+    },
+    {
+      name: "Informações",
+      onClick: () => {
+        router.push(`/dashboard/i/${props.file}`);
+        props.onClose();
+      },
+      icon: <LinkIcon />,
+    },
+    {
+      name: "Apagar",
       onClick: () => {
         setIsDeleteDialogOpen(true);
         props.onClose();

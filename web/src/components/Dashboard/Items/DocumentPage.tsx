@@ -1,10 +1,19 @@
 import { Files } from "@src/graphql/graphql";
 import { gql } from "graphql-request";
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { createEditor, Descendant } from "slate";
-import { Slate, Editable, withReact, ReactEditor } from "slate-react";
+import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { graphQL_request_Client } from "../../../libs/graphql-request";
+import Stack from "@components/Form/Stack/Stack";
+import { EditorState } from "draft-js";
+import dynamic from "next/dynamic";
 
+const Editor = dynamic(
+  // @ts-ignore
+  () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
+  { ssr: false }
+);
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 interface props {
   id: string;
 }
@@ -20,9 +29,6 @@ const getDocumentTextQuery = gql`
 `;
 
 export default function DocumentPage(props: props) {
-  /* const [content, setContent] = useState<string>("**Loading...**"); */
-
-  console.log(props.id);
   const getNewDocumentText = async () => {
     const { data, error } = await graphQL_request_Client
       .request(getDocumentTextQuery, {
@@ -44,16 +50,6 @@ export default function DocumentPage(props: props) {
     }
   };
 
-  const example: Descendant[] = [
-    {
-      children: [
-        {
-          text: "yeet",
-        },
-      ],
-    },
-  ];
-
   useEffect(() => {
     getNewDocumentText();
   }, []);
@@ -61,17 +57,56 @@ export default function DocumentPage(props: props) {
     getNewDocumentText();
   }, [props.id]);
 
-  const editor = useMemo(() => withReact(createEditor() as ReactEditor), []);
+  const [content, setContent] = useState<EditorState>(
+    EditorState.createEmpty()
+  );
 
   return (
     <>
-      <div>
-        {/* <MDEditor value={content} onChange={setContent} />
-        <MDEditor.Markdown source={content} /> */}
-        <Slate editor={editor} value={example}>
-          <Editable />
-        </Slate>
+      <div className="p-2 rounded-md shadow-md min-h-full relative">
+        <Editor
+          editorState={content}
+          onEditorStateChange={(e) => setContent(e)}
+          toolbarClassName="editor-toolbar"
+          wrapperClassName="textEditor-wrapper"
+          editorClassName="textEditor-editor"
+          toolbar={{
+            options: [
+              "inline",
+              "blockType",
+              "fontSize",
+              "fontFamily",
+              "list",
+              "textAlign",
+              "colorPicker",
+              "link",
+              "embedded",
+              "emoji",
+              "image",
+              "history",
+            ],
+            inline: { inDropdown: true },
+            list: { inDropdown: true },
+            textAlign: { inDropdown: true },
+            link: { inDropdown: true },
+            history: { inDropdown: true },
+            image: {
+              urlEnabled: true,
+              uploadEnabled: true,
+              previewImage: true,
+              alt: { present: false, mandatory: false },
+            },
+          }}
+        ></Editor>
       </div>
     </>
+  );
+}
+
+function FormatBarItem(props: { children: ReactNode }) {
+  return (
+    <div className="h-6 w-6 rounded-md bg-gray-100 flex items-center justify-center">
+      {props.children}
+    </div>
   );
 }
