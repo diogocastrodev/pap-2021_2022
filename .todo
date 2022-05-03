@@ -1,0 +1,120 @@
+
+Total:
+
+    Frontend:
+
+        [ ] ADs (4 per Page) @created(22-02-03 19:15)
+
+        [ ] NavBar @created(22-02-04 18:01)
+            [ ] User Button Fix :| @created(22-02-04 18:01)
+
+        [ ] Front Page / Root @created(22-02-03 19:15)
+            [ ] Make improvements @created(22-02-03 19:16)
+
+        [ ] Search @created(22-02-03 19:15)
+            [ ] Improve UI/UX @created(22-02-03 19:16)
+        
+        [ ] Theme @created(22-02-03 19:15)
+            [ ] Toogle Light/Dark mode @created(22-02-03 19:15)
+            [ ] Don't let change by any chance on localstorage @created(22-02-03 19:16)
+            [ ] In case of Edge and other browsers make bg in light/dark @created(22-02-03 19:16)
+                - If use Trackpad and slide to left/right/top/bottom you can "leave" the website and see white 
+
+        [ ] Register @created(22-02-03 19:16)
+            [+] Register Form @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [+] Email (Required) @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [+] Username (???) @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [+] Password (Required) @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [+] Confirm Password (Required) @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [+] Phone Number @created(22-02-03 19:16) @done(22-02-03 19:16)
+                    [ ] Get All Phone Prefixes @created(22-02-03 19:16)
+
+        [ ] Login @created(22-02-03 19:16)
+            [+] Login Form @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [+] Email (Required) @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [+] Password (Required) @created(22-02-03 19:16) @done(22-02-03 19:16)
+            [ ] Login Error Handler @high @created(22-02-03 19:16)
+                [ ] Pending @created(22-02-03 19:16)
+                [ ] Inactive (Banned) @created(22-02-03 19:16)
+                [ ] Locked (Too many failed attempts) @created(22-02-03 19:16)
+
+        [ ] User @created(22-02-03 19:16)
+            [ ] Notifications @created(22-02-03 19:16)
+            [ ] Profile @created(22-02-03 19:16)
+            [ ] Products saved for later @created(22-02-04 11:37)
+                [ ] Create "mini folders"/"playlists"/"collection" for products saved @created(22-02-04 11:37)
+            [ ] Check all opened Products @created(22-02-03 19:16)
+                [ ] Count products by category @created(22-02-03 19:16)
+                    [ ] Active @created(22-02-03 19:16)
+                    [ ] Expired @created(22-02-03 19:16)
+                    [ ] Closed @created(22-02-03 19:16)
+                [ ] Show to user the Products @created(22-02-03 19:16)
+            [ ] Settings @created(22-02-03 19:16)
+                [ ] Update User Info @created(22-02-03 19:16)
+                [ ] Update Password @created(22-02-03 19:16)
+                [+] Update Avatar @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [ ] Sync to another platforms @created(22-02-03 19:16)
+                    [ ] Messenger @created(22-02-03 19:16)
+                    [ ] Whatsapp @created(22-02-03 19:16)
+                    [ ] Phone number (??) @created(22-02-03 19:16)
+
+        [ ] Products @created(22-02-03 19:16)
+            [ ] Product Page @created(22-02-03 19:16)
+                [ ] Save for later @created(22-02-04 11:36)
+            [ ] Product Creation @created(22-02-03 19:16)
+            [ ] Product Editing @created(22-02-03 19:16)
+            [ ] Product "Delete" @created(22-02-03 19:16)
+                [ ] It won't delete by complete, only will hide from user @created(22-02-03 19:16)
+                  - Why?
+                  - Admin can check in case of report
+        
+                  
+
+                
+    API:
+        [ ] GraphQL Base @created(22-02-03 19:16)
+            User:
+                [+] Get Personal info @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [ ] Create Account @created(22-02-03 19:16)
+                    [+] Register @created(22-02-03 19:16) @done(22-02-03 19:16)
+                    [+] Verify using email @created(22-02-03 19:16) @done(22-02-08 18:42)
+                    [ ] Verify phone @created(22-02-03 19:16)
+                [+] Login into Account @created(22-02-03 19:16) @done(22-02-03 19:16)
+                    [+] Login @created(22-02-03 19:16) @done(22-02-03 19:16)
+                    [+] Don't allow when account's Pending (waiting for email confirmation) @created(22-02-03 19:16) @done(22-02-03 19:16)
+                    [+] Don't allow when account's Inactive / Disabled @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [ ] Update Account @created(22-02-03 19:16)
+                    [ ] Update User Data @created(22-02-03 19:16)
+                        [ ] Update user informations @created(22-02-03 19:16)
+                        [ ] Update Password @created(22-02-03 19:16)
+                    [+] Update Avatar @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [ ] Delete Account @created(22-02-03 19:16)
+                    - Don't delete Account by complete, in case of reports 
+
+            Products: 
+                [+] Query By Product using IDs @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [+] Get all User's Products @created(22-02-03 19:16) @done(22-02-03 19:16)
+                [ ] Product By Page @high @created(22-02-03 19:16)
+                    [ ] Page 1 = Page 2 @created(22-02-03 19:16)
+                [ ] Create product @created(22-02-03 19:16)
+                    [ ] Create product mutation @created(22-02-03 19:16)
+                    [ ] Image Upload @created(22-02-03 19:16)
+                    [ ] Categories @created(22-02-03 19:16)
+
+        [ ] Sessions @created(22-02-03 19:16)
+
+
+    CDN:
+        [+] Avatar Upload @created(22-02-03 19:16) @done(22-02-03 19:16)
+        [ ] Product Upload @created(22-02-03 19:16)
+
+
+    Maybe:
+        [ ] Docker @created(22-02-03 19:16)
+
+    
+
+
+        Idea:
+
+            - colocar um map num map para encontrar o folder_id que corresponde ao file_id novo, e adicionar, ou dar refresh por completo nos folders

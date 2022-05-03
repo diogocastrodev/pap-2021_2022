@@ -1,0 +1,95 @@
+type Query {
+  priorities: [Priority]!
+
+  getTodo(id: ID!): Todo
+  getTodos: [Todo]!
+  getTodosByPriority(priority: ID!): [Todo]!
+  getTodosByFolder(folder: ID!): [Todo]!
+}
+
+type Mutation {
+  createPriority(data: createPriorityInput!): Priority!
+  updatePriority(data: updatePriorityInput!): Priority!
+  deletePriority(data: deletePriorityInput!): Boolean!
+
+  createTodo(data: createTodoInput!): Todo!
+  updateTodo(data: updateTodoInput!): Todo!
+  deleteTodo(data: deleteTodoInput!): Boolean!
+  changeTodoPriority(data: changeTodoPriorityInput!): Todo!
+}
+
+# Mutation - Priorities - Inputs
+
+input createPriorityInput {
+  name: String!
+  color: String!
+}
+
+input updatePriorityInput {
+  id: ID!
+  name: String
+  color: String
+}
+
+input deletePriorityInput {
+  id: ID!
+}
+
+# Mutation - Todo - Inputs
+
+input createTodoInput {
+  name: String!
+  priority: ID!
+  file: ID
+}
+
+input updateTodoInput {
+  id: ID!
+  name: String
+  priority: ID
+  file: ID
+}
+
+input deleteTodoInput {
+  id: ID!
+}
+
+input changeTodoPriorityInput {
+  id: ID!
+  priority: ID!
+}
+
+# Types
+
+type Todo {
+  todo_id: ID!
+
+  todoText: String!
+
+  status: TodoStatus
+
+  created_at: DateTime
+  updated_at: DateTime
+
+  user: User
+
+  file_id: ID!
+}
+
+enum TodoStatus {
+  ACTIVE
+  DONE
+  DELETED
+}
+
+type Priority {
+  priority_id: ID!
+  name: String!
+  color: String!
+
+  created_at: DateTime!
+  updated_at: DateTime!
+
+  todos: [Todo]
+  user: User
+}

@@ -1,0 +1,50 @@
+scalar DateTime
+
+type Query {
+  me: User
+  checkToken: Boolean
+}
+
+type Mutation {
+  register(data: RegisterInput!): String
+  login(data: LoginInput!): String
+}
+
+input RegisterInput {
+  email: String!
+  username: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type User {
+  user_id: ID!
+  public_user_id: ID!
+
+  username: String!
+  email: String!
+  password: String!
+
+  permissions: Permissions!
+
+  status: UserStatus!
+  hash: String
+
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+enum Permissions {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+}

@@ -1,0 +1,23 @@
+overwrite: true
+watch: true
+schema:
+  - "./src/modules/**/*.graphql"
+documents: null
+generates:
+  ./src/graphql/types.ts:
+    config:
+      mappers:
+        User: .prisma/client#user
+        Folders: .prisma/client#folders
+        Document: .prisma/client#document
+        Todo: .prisma/client#todo
+        Files: .prisma/client#files
+        Priority: .prisma/client#priority
+    plugins:
+      - typescript
+      - typescript-resolvers
+      - typescript-document-nodes
+      - typescript-operations
+  ./graphql.schema.json:
+    plugins:
+      - introspection

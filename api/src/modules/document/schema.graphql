@@ -1,0 +1,18 @@
+type Query {
+  getDocumentContent(id: ID!): String!
+}
+
+type Mutation {
+  updateDocument(id: ID!, content: String): Document!
+}
+
+type Document {
+  document_id: ID!
+
+  content: String!
+
+  created_at: DateTime
+  updated_at: DateTime
+
+  file_id: ID!
+}
