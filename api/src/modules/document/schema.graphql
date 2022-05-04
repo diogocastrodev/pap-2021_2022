@@ -3,7 +3,11 @@ type Query {
 }
 
 type Mutation {
-  updateDocument(id: ID!, content: String): Document!
+  updateDocument(id: ID!, content: String!): Boolean!
+}
+
+type Subscription {
+  updatedDocumentContent(id: ID!): String!
 }
 
 type Document {

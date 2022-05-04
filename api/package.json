@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "SET NODE_ENV=development & nodemon src/server.ts",
+    "dev2": "SET NODE_ENV=development & nodemon src/server2.ts",
     "prod": "SET NODE_ENV=production & ts-node src/server.ts",
     "generate": "graphql-codegen --config codegen.yml"
   },

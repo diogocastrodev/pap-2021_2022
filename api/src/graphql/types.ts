@@ -82,7 +82,7 @@ export type Mutation = {
   deleteTodo: Scalars['Boolean'];
   login?: Maybe<Scalars['String']>;
   register?: Maybe<Scalars['String']>;
-  updateDocument: Document;
+  updateDocument: Scalars['Boolean'];
   updatePriority: Priority;
   updateTodo: Todo;
 };
@@ -134,7 +134,7 @@ export type MutationRegisterArgs = {
 
 
 export type MutationUpdateDocumentArgs = {
-  content?: Maybe<Scalars['String']>;
+  content: Scalars['String'];
   id: Scalars['ID'];
 };
 
@@ -213,6 +213,16 @@ export type RegisterInput = {
   email: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  updatedDocumentContent: Scalars['String'];
+};
+
+
+export type SubscriptionUpdatedDocumentContentArgs = {
+  id: Scalars['ID'];
 };
 
 export type Todo = {
@@ -409,6 +419,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   RegisterInput: RegisterInput;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Subscription: ResolverTypeWrapper<{}>;
   Todo: ResolverTypeWrapper<todo>;
   TodoStatus: TodoStatus;
   User: ResolverTypeWrapper<user>;
@@ -442,6 +453,7 @@ export type ResolversParentTypes = {
   Query: {};
   RegisterInput: RegisterInput;
   String: Scalars['String'];
+  Subscription: {};
   Todo: todo;
   User: user;
   changeTodoPriorityInput: ChangeTodoPriorityInput;
@@ -510,7 +522,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'data'>>;
   login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
   register?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
-  updateDocument?: Resolver<ResolversTypes['Document'], ParentType, ContextType, RequireFields<MutationUpdateDocumentArgs, 'id'>>;
+  updateDocument?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateDocumentArgs, 'content' | 'id'>>;
   updatePriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationUpdatePriorityArgs, 'data'>>;
   updateTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationUpdateTodoArgs, 'data'>>;
 };
@@ -538,6 +550,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   priorities?: Resolver<Array<Maybe<ResolversTypes['Priority']>>, ParentType, ContextType>;
   userFolders?: Resolver<Maybe<ResolversTypes['returnFolders']>, ParentType, ContextType>;
+};
+
+export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
+  updatedDocumentContent?: SubscriptionResolver<ResolversTypes['String'], "updatedDocumentContent", ParentType, ContextType, RequireFields<SubscriptionUpdatedDocumentContentArgs, 'id'>>;
 };
 
 export type TodoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Todo'] = ResolversParentTypes['Todo']> = {
@@ -591,6 +607,7 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   Priority?: PriorityResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
   Todo?: TodoResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   exportedData?: ExportedDataResolvers<ContextType>;

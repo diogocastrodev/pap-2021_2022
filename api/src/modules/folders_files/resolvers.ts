@@ -10,19 +10,9 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
       if (!context.user_id || !context.is_authed)
         throw new Error("User not authenticated");
 
-      let fileContent:
-        | (files & {
-            folders: folders & {
-              user: user;
-            };
-            document: document[];
-            todos: todo[];
-          })
-        | null;
-
       // Get File Content
       try {
-        fileContent = await db.files.findUnique({
+        const fileContent = await db.files.findUnique({
           where: {
             file_id: args.data.fileId,
           },
@@ -43,6 +33,8 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
           fileContent.folders.user.public_user_id !== context.user_id
         )
           throw new Error("You cannot check other people's files content");
+
+        return fileContent;
       } catch (err) {
         if (err) {
           const error = err as string;
@@ -56,8 +48,6 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
 
         throw new Error(err as string);
       }
-
-      return fileContent;
     },
   },
   Mutation: {
