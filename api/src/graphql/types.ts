@@ -40,7 +40,7 @@ export enum FileType {
 export type Files = {
   __typename?: 'Files';
   created_at: Scalars['DateTime'];
-  document?: Maybe<Array<Maybe<Document>>>;
+  document?: Maybe<Document>;
   fileType: FileType;
   file_id: Scalars['ID'];
   folder_id: Scalars['ID'];
@@ -81,6 +81,7 @@ export type Mutation = {
   deletePriority: Scalars['Boolean'];
   deleteTodo: Scalars['Boolean'];
   login?: Maybe<Scalars['String']>;
+  logout?: Maybe<Scalars['Boolean']>;
   register?: Maybe<Scalars['String']>;
   updateDocument: Scalars['Boolean'];
   updatePriority: Priority;
@@ -485,7 +486,7 @@ export type DocumentResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type FilesResolvers<ContextType = any, ParentType extends ResolversParentTypes['Files'] = ResolversParentTypes['Files']> = {
   created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  document?: Resolver<Maybe<Array<Maybe<ResolversTypes['Document']>>>, ParentType, ContextType>;
+  document?: Resolver<Maybe<ResolversTypes['Document']>, ParentType, ContextType>;
   fileType?: Resolver<ResolversTypes['FileType'], ParentType, ContextType>;
   file_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   folder_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -521,6 +522,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deletePriority?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePriorityArgs, 'data'>>;
   deleteTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'data'>>;
   login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
+  logout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   register?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
   updateDocument?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateDocumentArgs, 'content' | 'id'>>;
   updatePriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationUpdatePriorityArgs, 'data'>>;

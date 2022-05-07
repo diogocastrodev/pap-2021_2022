@@ -1,5 +1,10 @@
 import { ReactNode, useEffect, useState } from "react";
-import { convertToRaw, EditorState, ContentState } from "draft-js";
+import {
+  convertToRaw,
+  EditorState,
+  ContentState,
+  convertFromRaw,
+} from "draft-js";
 import dynamic from "next/dynamic";
 
 const Editor = dynamic(
@@ -41,9 +46,7 @@ const subDocumentText = gql`
 
 const setDocumentTextMutation = gql`
   mutation ($updateDocumentId: ID!, $content: String!) {
-    updateDocument(id: $updateDocumentId, content: $content) {
-      content
-    }
+    updateDocument(id: $updateDocumentId, content: $content)
   }
 `;
 
@@ -53,14 +56,18 @@ export default function DocumentPage(props: props) {
   );
 
   const setNewContent = async (newContent: string) => {
-    const blocksFromHtml = htmlToDraft(newContent);
+    console.log("newContent", newContent);
+    setContent(
+      EditorState.createWithContent(convertFromRaw(JSON.parse(newContent)))
+    );
+    /* const blocksFromHtml = htmlToDraft(newContent);
     const { contentBlocks, entityMap } = blocksFromHtml;
     const contentState = ContentState.createFromBlockArray(
       contentBlocks,
       entityMap
     );
     const editorState = EditorState.createWithContent(contentState);
-    setContent(editorState);
+    setContent(editorState); */
   };
 
   const convertToHtml = () => {
@@ -77,10 +84,15 @@ export default function DocumentPage(props: props) {
     return markup;
   };
 
+  const convertToJson = () => {
+    const markup = convertToRaw(content.getCurrentContent());
+    return JSON.stringify(markup);
+  };
+
   const [setDocumentContent] = useMutation(setDocumentTextMutation, {
     variables: {
       updateDocumentId: props.id,
-      content: convertToHtml(),
+      content: convertToJson(),
     },
   });
 
@@ -107,7 +119,7 @@ export default function DocumentPage(props: props) {
   const getNewDocumentText = async () => {
     getDocumentText()
       .then((res) => {
-        console.log(res.data.getFileContent.document.content);
+        /* console.log(res.data.getFileContent.document.content);
         const dbContent = res.data.getFileContent.document.content;
         const blocksFromHtml = htmlToDraft(dbContent);
         const { contentBlocks, entityMap } = blocksFromHtml;
@@ -116,7 +128,8 @@ export default function DocumentPage(props: props) {
           entityMap
         );
         const editorState = EditorState.createWithContent(contentState);
-        setContent(editorState);
+        setContent(editorState); */
+        setNewContent(res.data.getFileContent.document.content);
       })
       .catch((error) => {
         console.log(error);
@@ -131,7 +144,9 @@ export default function DocumentPage(props: props) {
   }, [props.id]);
 
   useEffect(() => {
-    setDocumentContent();
+    if (!loading) {
+      setDocumentContent();
+    }
   }, [content]);
 
   return (

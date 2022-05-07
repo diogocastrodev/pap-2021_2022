@@ -1,20 +1,74 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, split } from "@apollo/client";
+import { HttpLink } from "apollo-link-http";
+import { WebSocketLink } from "@apollo/link-ws";
+import { getMainDefinition } from "@apollo/client/utilities";
 import { createState, State } from "@hookstate/core";
-import { graphQL_Endpoint } from "../global/variables";
-import { createUploadLink } from 'apollo-upload-client';
+import { graphQL_Endpoint, graphQL_Endpoint_Ws } from "../global/variables";
 
-const tokenFromLocalStorage = typeof window !== "undefined" ? localStorage.getItem("token") as string : ''
+const tokenFromLocalStorage =
+  typeof window !== "undefined"
+    ? (localStorage.getItem("token") as string)
+    : "";
 
 const TOKEN = createState(tokenFromLocalStorage);
 
 const wrapState = (s: State<string>) => ({
   get: () => s.value,
-  set: (token: string) => s.set(token)
-})
+  set: (token: string) => s.set(token),
+});
 
-export const accessGlobalState = () => wrapState(TOKEN)
+export const accessGlobalState = () => wrapState(TOKEN);
 
-const options = {
+const httpLink = new HttpLink({
+  uri: graphQL_Endpoint, // Or your Slash GraphQL endpoint (if you're using Slash GraphQL)
+  headers: {
+    authorization: accessGlobalState().get()
+      ? `Bearer ${accessGlobalState().get()}`
+      : "",
+    Accept: "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "*",
+  },
+  credentials: "include",
+});
+
+const wsLink = process.browser
+  ? new WebSocketLink({
+      uri: graphQL_Endpoint_Ws, // Can test with your Slash GraphQL endpoint (if you're using Slash GraphQL)
+      options: {
+        reconnect: true,
+      },
+    })
+  : null;
+
+const link = process.browser
+  ? split(
+      // split based on operation type
+      ({ query }) => {
+        const definition = getMainDefinition(query);
+        return (
+          definition.kind === "OperationDefinition" &&
+          definition.operation === "subscription"
+        );
+      },
+      // @ts-ignore
+      wsLink,
+      httpLink
+    )
+  : httpLink;
+
+export const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  // @ts-ignore
+  link,
+  ssrMode: typeof window === "undefined",
+});
+
+/* -------------------------------------------------------------------------- */
+/*                                  Old Ver2                                  */
+/* -------------------------------------------------------------------------- */
+
+/* const options = {
   uri: `${graphQL_Endpoint}`,
   headers: {
     authorization: accessGlobalState().get() ? `Bearer ${accessGlobalState().get()}` : "",
@@ -25,8 +79,7 @@ export const client = new ApolloClient({
   ssrMode: typeof window === "undefined",
   link: createUploadLink(options),
   cache: new InMemoryCache(),
-})
-
+}) */
 
 /* -------------------------------------------------------------------------- */
 /*                                  Old Code                                  */

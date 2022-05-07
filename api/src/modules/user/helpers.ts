@@ -1,3 +1,4 @@
+// @ts-ignore
 import bcrypt from "bcrypt";
 import { db } from "../../database";
 

@@ -86,7 +86,7 @@ model files {
 
   // todos
   todos    todo[]
-  document document[]
+  document document?
 }
 
 enum fileType {
@@ -103,7 +103,7 @@ model document {
   updated_at DateTime @updatedAt @db.Timestamp()
 
   files   files  @relation(fields: [file_id], references: [file_id])
-  file_id String @db.VarChar(255)
+  file_id String @unique @db.VarChar(255)
 }
 
 model todo {

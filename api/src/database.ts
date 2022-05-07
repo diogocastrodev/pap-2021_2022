@@ -1,4 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
-/* Prisma Client */
-export const db = new PrismaClient();
+/* -------------------------------------------------------------------------- */
+/*                                Prisma Client                               */
+/* -------------------------------------------------------------------------- */
+export const db = new PrismaClient({
+  log: ["query", "info", "warn", "error"],
+});

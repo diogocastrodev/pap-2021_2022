@@ -1,4 +1,5 @@
 import { join } from "path";
+// @ts-ignore
 import { merge } from "lodash";
 import { addResolversToSchema, mergeSchemas } from "@graphql-tools/schema";
 import { loadSchemaSync } from "@graphql-tools/load";

@@ -8,6 +8,7 @@ type Query {
 type Mutation {
   register(data: RegisterInput!): String
   login(data: LoginInput!): String
+  logout: Boolean
 }
 
 input RegisterInput {

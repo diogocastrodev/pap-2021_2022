@@ -1,83 +1,129 @@
-import { ApolloServer } from "apollo-server-express";
-import { formatError, config } from "./utils";
-import { context, ResolverContext } from "./context";
-import { schema } from "./modules";
-import express, { Response, Request } from "express";
-import {
-  ApolloServerPluginLandingPageLocalDefault,
-  ApolloServerPluginLandingPageGraphQLPlayground,
-} from "apollo-server-core";
-import cors from "cors";
+import express from "express";
 import { createServer } from "http";
-import { WebSocketServer } from "ws";
-import { useServer } from "graphql-ws/lib/use/ws";
-import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
-import { PubSub } from "graphql-subscriptions";
+import { SubscriptionServer } from "subscriptions-transport-ws";
+import { execute, subscribe } from "graphql";
+import { schema } from "./modules";
+import { ApolloServer } from "apollo-server-express";
+import { config, formatError } from "./utils";
+import { context } from "./context";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import session from "express-session";
+import { v4 as uuidv4 } from "uuid";
+import bodyParser from "body-parser";
+import { router } from "./router/routes";
+import { consoleLogColors } from "./beauty";
 
-/* Start Express Server */
 export const app = express();
 
-export const pubSub = new PubSub();
+/* -------------------------------------------------------------------------- */
+/*                                 Middleware                                 */
+/* -------------------------------------------------------------------------- */
 
-const httpServer = createServer(app);
+app.use(router);
 
-// Creating the WebSocket server
-const wsServer = new WebSocketServer({
-  // This is the `httpServer` we created in a previous step.
-  server: httpServer,
-  // Pass a different path here if your ApolloServer serves at
-  // a different path.
-  path: "/graphql",
-});
-
-// Hand in the schema we just created and have the
-// WebSocketServer start listening.
-const serverCleanup = useServer({ schema }, wsServer);
-
-export const server = new ApolloServer({
-  schema,
-  context,
-  formatError,
-  plugins: [
-    ApolloServerPluginLandingPageGraphQLPlayground,
-    // Proper shutdown for the HTTP server.
-    ApolloServerPluginDrainHttpServer({ httpServer }),
-
-    // Proper shutdown for the WebSocket server.
-    {
-      async serverWillStart() {
-        return {
-          async drainServer() {
-            await serverCleanup.dispose();
-          },
-        };
-      },
-    },
-  ],
-});
-
-/* DEV: cors */
 app.use(cors());
 
-/* TODO: Express GraphQL */
+app.use(cookieParser());
 
-/* Server Function */
-async function startApolloServer() {
-  /* Start Apollo Server */
-  await server.start();
-  /* Add Express Server to Apollo Server */
-  server.applyMiddleware({ app });
-  /* Let express server listen in port set in .env file or default set in ./utils.ts */
-  app.listen(config.PORT, () => {
-    console.log(
-      `🚀 Server started at http://127.0.0.1:${config.PORT}${server.graphqlPath}`
-    );
-    /* CronJobs */
-    /* cronDeleteAccount.start(); */
-  });
-  /* Return Apollo Server and Express Server */
-  return { server, app };
+app.use(bodyParser.json());
+
+/* -------------------------------------------------------------------------- */
+/*                                Session Type                                */
+/* -------------------------------------------------------------------------- */
+
+declare module "express-session" {
+  interface SessionData {
+    is_logged?: boolean;
+    public_user_id?: string;
+  }
 }
 
-/* Start Server */
-startApolloServer();
+/* --------------------------------- Session -------------------------------- */
+
+var SQLiteStore = require("connect-sqlite3")(session);
+
+app.use(
+  session({
+    store: new SQLiteStore(),
+    secret: config.SESSION_SECRET,
+    genid: (req) => uuidv4(),
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV
+        ? process.env.NODE_ENV.toString() == "production"
+        : false,
+      sameSite: "strict",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
+    },
+    resave: false,
+    saveUninitialized: false,
+    name: "session",
+    unset: "destroy",
+  })
+);
+
+/* -------------------------------------------------------------------------- */
+/*                                Start Server                                */
+/* -------------------------------------------------------------------------- */
+
+async function start() {
+  const httpServer = createServer(app);
+
+  /* -------------------------------------------------------------------------- */
+  /*                            GraphQL Subscription                            */
+  /* -------------------------------------------------------------------------- */
+  const subscriptionServer = SubscriptionServer.create(
+    {
+      schema,
+      execute,
+      subscribe,
+    },
+    {
+      server: httpServer,
+      path: "/graphql",
+    }
+  );
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   GraphQL                                  */
+  /* -------------------------------------------------------------------------- */
+  const server = new ApolloServer({
+    schema,
+    context: ({ req, res }) => context({ req, res }),
+    formatError: formatError,
+    plugins: [
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              subscriptionServer.close();
+            },
+          };
+        },
+      },
+    ],
+  });
+
+  await server.start();
+
+  server.applyMiddleware({
+    app,
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Listen                                   */
+  /* -------------------------------------------------------------------------- */
+
+  httpServer.listen(config.PORT, () => {
+    console.log(`🚀 Express Server open at: http://localhost:${config.PORT}`);
+    console.log(
+      `\t${consoleLogColors.fg.green}[x]${consoleLogColors.reset} GraphQL Open at: http://localhost:${config.PORT}/graphql`
+    );
+  });
+}
+
+/* ------------------------------ Start Server ------------------------------ */
+
+start();

@@ -36,5 +36,5 @@ type Files {
   updated_at: DateTime!
 
   todos: [Todo]
-  document: [Document]
+  document: Document
 }

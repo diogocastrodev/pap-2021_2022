@@ -6,6 +6,7 @@ dotenv.config();
 /* .env data */
 export const config = {
   TOKEN_SECRET: process.env.TOKEN_SECRET || "secret",
+  SESSION_SECRET: process.env.SESSION_SECRET || "secret",
   PORT: process.env.PORT || "5000",
 };
 

@@ -5,7 +5,10 @@ import { db } from "../../database";
 import { verifyPassword, createPassword, getUserByPublicId } from "./helpers";
 import * as jwt from "jsonwebtoken";
 import { config } from "../../utils";
+
+// @ts-ignore
 import cookie from "cookie";
+// @ts-ignore
 import bcrypt from "bcrypt";
 
 // TODO: Add context to resolver
@@ -54,16 +57,14 @@ export const UserResolvers: Resolvers<ResolverContext> = {
 
       if (!token) throw new Error("Error signing token");
 
-      const tokenCookie = cookie.serialize("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV
-          ? process.env.NODE_ENV.toString() == "production"
-          : false,
-        sameSite: "strict",
-        path: "/",
-      });
+      context.request.session.is_logged = true;
+      context.request.session.public_user_id = userData.public_user_id;
 
-      context.response.setHeader("Set-Cookie", tokenCookie);
+      context.request.session.save();
+
+      //createSessionInDb(context.request.session.id, userData.public_user_id);
+
+      /* console.log(context.request.session); */
 
       return token;
     },
@@ -91,6 +92,16 @@ export const UserResolvers: Resolvers<ResolverContext> = {
       if (!createdUser) throw new Error("Error creating user");
 
       return "Success";
+    },
+    logout: async (_parent, _args, context) => {
+      if (!context.is_authed || !context.user_id)
+        throw new Error("User not logged in");
+
+      context.request.session.destroy((err) => {
+        if (err) throw new Error(err);
+      });
+
+      return true;
     },
   },
 };

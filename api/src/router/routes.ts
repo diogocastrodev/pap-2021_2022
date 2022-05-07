@@ -4,7 +4,6 @@ import express, {
   Response,
   ErrorRequestHandler,
 } from "express";
-import { graphqlHTTP } from "express-graphql";
 
 import { avatarUpload } from "./controllers/avatarUpload";
 import { productUpload } from "./controllers/productUpload";
@@ -22,23 +21,21 @@ export const router = express.Router();
 
 // Debug
 router.get("/", (req: Request, res: Response) => {
-  res.json({
-    teste: "teste",
-  });
+  res.status(200).send("API is alive ✅");
 });
 
 /* GraphQL */
-router.use("/graphql", async (req: Request, res: Response) =>
+/* router.use("/graphql", async (req: Request, res: Response) =>
   graphqlHTTP({
     context: await context({ req, res }),
     schema,
     customFormatErrorFn: formatError,
     pretty: true,
   })(req, res)
-);
+); */
 
 /* Image Upload */
-router.post(
+/* router.post(
   "/upload/avatar",
   checkLogin,
   uploadAvatar.single("avatar"),
@@ -50,9 +47,9 @@ router.post(
   checkLogin,
   uploadProducts.array("products", 30),
   productUpload
-);
+); */
 
 /* 404 when page doesn't exist */
-router.use("*", (req: Request, res: Response) => {
+/* router.use("*", (req: Request, res: Response) => {
   res.status(404).end();
-});
+}); */
