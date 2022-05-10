@@ -5,6 +5,9 @@ const {
     parse
   } = require("url");
   const next = require("next");
+
+  const dotenv = require("dotenv").config();
+
   
   const port = process.env.PORT || 3000;
   

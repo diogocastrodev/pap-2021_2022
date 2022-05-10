@@ -6,7 +6,7 @@ import {
   Resolvers,
   SubscriptionUpdatedDocumentContentArgs,
 } from "../../graphql/types";
-import { pubsub } from "../../PubSub";
+import { pubsub } from "../../pubsub";
 
 export const DocumentResolver: Resolvers<ResolverContext> = {
   Query: {},

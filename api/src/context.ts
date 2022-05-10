@@ -1,5 +1,4 @@
-import * as jwt from "jsonwebtoken";
-import { config, Depromisify } from "./utils";
+import { Depromisify } from "./utils";
 import { Request, Response } from "express";
 
 /* Resolvers context param */

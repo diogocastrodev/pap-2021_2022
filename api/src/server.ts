@@ -7,7 +7,7 @@ import { ApolloServer } from "apollo-server-express";
 import { config, formatError } from "./utils";
 import { context } from "./context";
 import cookieParser from "cookie-parser";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import session from "express-session";
 import { v4 as uuidv4 } from "uuid";
 import bodyParser from "body-parser";
@@ -17,12 +17,25 @@ import { consoleLogColors } from "./beauty";
 export const app = express();
 
 /* -------------------------------------------------------------------------- */
+/*                                    Vars                                    */
+/* -------------------------------------------------------------------------- */
+
+const corsOptions: CorsOptions = {
+  credentials: true,
+  origin: [
+    "http://localhost:3000",
+    "https://castro.pap12m.pt",
+    "http://51.68.197.137:3000",
+  ],
+};
+
+/* -------------------------------------------------------------------------- */
 /*                                 Middleware                                 */
 /* -------------------------------------------------------------------------- */
 
 app.use(router);
 
-app.use(cors());
+// app.use(cors());
 
 app.use(cookieParser());
 
@@ -110,6 +123,7 @@ async function start() {
 
   server.applyMiddleware({
     app,
+    cors: corsOptions,
   });
 
   /* -------------------------------------------------------------------------- */
