@@ -97,8 +97,8 @@ export default function Navbar(props: props) {
         <div className="w-full flex flex-row items-center">
           <div className="text-black font-extrabold text-3xl">
             <Link href={"/"}>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500 select-none cursor-pointer">
-                {"pap"}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-blue-400 select-none cursor-pointer">
+                {"note.so"}
               </span>
             </Link>
           </div>
