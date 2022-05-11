@@ -10,12 +10,12 @@ import { ExportedData, Maybe } from "@graphql/graphql";
 import Input from "@components/Form/Inputs/Input";
 import { Listbox } from "@headlessui/react";
 import {
-  DocumentIcon,
+  ArrowLeftIcon,
   DocumentTextIcon,
   PencilIcon,
 } from "@heroicons/react/outline";
 import Link from "next/link";
-import { gqlClient } from "../../../../libs/graphql-request";
+import { gqlClient } from "@libs/graphql-request";
 
 interface props {
   folderId: string;
@@ -41,10 +41,29 @@ const getFilesByFolder = gql`
 export default function DashboardListFiles({ folderId }: props) {
   const { folderData } = useContext(FoldersContext);
 
+  const [parentId, setParentId] = useState<string | undefined>(undefined);
   const [childrenFolders, setChildrenFolders] = useState<Folders[]>([]);
   const [fileList, setFileList] = useState<Files[]>([]);
 
   const [loading, setLoading] = useState(true);
+
+  const filterFolderData = (id: string) => {
+    const selectedFolder = folderData.straightFolders?.filter(
+      (folder) => folder.folder_id === id
+    )[0];
+    return selectedFolder;
+  };
+
+  const updateVars = () => {
+    setChildrenFolders([]);
+    setFileList([]);
+    const folder = filterFolderData(folderId);
+    if (folder) {
+      setParentId(folder.parent_id);
+      setChildrenFolders(folder.children as unknown as Folders[]);
+      setFileList(folder.files as Files[]);
+    }
+  };
 
   const queryFromAPI = () => {
     gqlClient
@@ -133,15 +152,21 @@ export default function DashboardListFiles({ folderId }: props) {
   };
 
   useEffect(() => {
-    setLoading(true);
-    queryFromAPI();
+    setLoading(false);
+    //queryFromAPI();
     setFileSearch("");
+    updateVars();
   }, [folderId]);
 
   useEffect(() => {
-    setLoading(true);
-    queryFromAPI();
+    updateVars();
+  }, [folderData.lastUpdate]);
+
+  useEffect(() => {
+    setLoading(false);
+    //queryFromAPI();
     setFileSearch("");
+    updateVars();
   }, []);
 
   return (
@@ -173,20 +198,28 @@ export default function DashboardListFiles({ folderId }: props) {
         </Stack>
         {loading && <Loader size="medium" />}
         <div className="space-y-4">
-          {!loading && childrenFolders.length > 0 && (
+          {!loading && (childrenFolders.length > 0 || parentId !== "") && (
             <>
               <div className="text-xl mb-2">Pastas</div>
               <Stack type="row" className="flex-wrap gap-2">
-                {childrenFolders.map((it) => (
-                  <Link
-                    href={`/dashboard/f/${it.folder_id}`}
-                    key={it.folder_id}
-                  >
-                    <div className="bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md px-2 py-1 w-48 break-all text-ellipsis overflow-hidden ">
-                      {it.name}
+                {parentId && parentId !== "" && (
+                  <Link href={`/dashboard/f/${parentId}`}>
+                    <div className="flex items-center justify-center bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md px-2 py-1 w-8 h-8 break-all text-ellipsis overflow-hidden ">
+                      <ArrowLeftIcon className="w-6" />
                     </div>
                   </Link>
-                ))}
+                )}
+                {childrenFolders.length > 0 &&
+                  childrenFolders.map((it) => (
+                    <Link
+                      href={`/dashboard/f/${it.folder_id}`}
+                      key={it.folder_id}
+                    >
+                      <div className="bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md px-2 py-1 w-48 break-all text-ellipsis overflow-hidden ">
+                        {it.name}
+                      </div>
+                    </Link>
+                  ))}
               </Stack>
             </>
           )}
@@ -273,11 +306,14 @@ export default function DashboardListFiles({ folderId }: props) {
             </Stack>
           )}
         </div>
-        {!loading && fileList.length === 0 && childrenFolders.length === 0 && (
-          <div className="text-center font-semibold mt-4">
-            Não foram encotrados resultados
-          </div>
-        )}
+        {!loading &&
+          fileList.length === 0 &&
+          childrenFolders.length === 0 &&
+          parentId === "" && (
+            <div className="text-center font-semibold mt-4">
+              Não foram encotrados resultados
+            </div>
+          )}
       </div>
     </>
   );

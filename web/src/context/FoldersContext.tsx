@@ -13,7 +13,7 @@ type folderType = {
   lastUpdate: Date;
   loading: boolean;
   folders: ExportedData[] | undefined | [];
-  straightFolders: Folders[] | undefined | [];
+  straightFolders: ExportedData[] | undefined | [];
 };
 
 /* Set the ContextTypes */
@@ -48,6 +48,22 @@ const FoldersProvider = ({ children }: props) => {
     loading: true,
   });
 
+  const straightFolders = (data: ExportedData[]) => {
+    let folders: ExportedData[] = [];
+    if (data) {
+      const runFolders = (fold: ExportedData[]) => {
+        fold.forEach((folder) => {
+          folders.push(folder as ExportedData);
+          if (folder.children && folder.children.length > 0) {
+            runFolders(folder.children as ExportedData[]);
+          }
+        });
+      };
+      runFolders(data as ExportedData[]);
+    }
+    return folders;
+  };
+
   const refreshFolders = async () => {
     /* Temporary storage for user info */
     var values: ReturnFolders = {
@@ -69,6 +85,7 @@ const FoldersProvider = ({ children }: props) => {
       lastUpdate: new Date(),
       // @ts-expect-error
       folders: values.folders,
+      straightFolders: straightFolders(values.folders as ExportedData[]),
       loading: false,
     });
   };

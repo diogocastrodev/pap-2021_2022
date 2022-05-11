@@ -33,6 +33,11 @@ export const FolderResolver: Resolvers<ResolverContext> = {
         },
       });
 
+      // replace parent_id null with empty string
+      userFolders.forEach((folder) => {
+        if (folder.parent_id === null) folder.parent_id = "";
+      });
+
       let userFolders_array: ReturnFolders = {
         folders: [],
         folders_amount: 0,

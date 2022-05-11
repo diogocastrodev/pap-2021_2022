@@ -12,6 +12,7 @@ export const folderFragment = gql`
 export const folderChildrenFragment = gql`
   fragment folderToData on exportedData {
     folder_id
+    parent_id
     color
     color_style
     name
