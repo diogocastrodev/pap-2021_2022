@@ -5,7 +5,7 @@ import PreMadeDialog, {
 } from "@components/Dialog/PreMadeDialog";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Todo, TodoStatus } from "@src/graphql/graphql";
-import { graphQL_request_Client } from "@libs/graphql-request";
+import { graphqlClient } from "@libs/graphql-request";
 import { gql } from "graphql-request";
 import Button from "@components/Form/Buttons/Button";
 
@@ -60,7 +60,7 @@ export default function CreateTodoDialog(props: props) {
       return;
     }
     try {
-      await graphQL_request_Client
+      await graphqlClient
         .request(createTodoMutation, {
           data: {
             file_id: props.file,

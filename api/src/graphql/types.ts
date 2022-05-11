@@ -2,11 +2,12 @@ import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from '
 import { user, folders, document, todo, files, priority } from '.prisma/client';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -86,6 +87,7 @@ export type Mutation = {
   updateDocument: Scalars['Boolean'];
   updatePriority: Priority;
   updateTodo: Todo;
+  verifyHash?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -147,6 +149,11 @@ export type MutationUpdatePriorityArgs = {
 
 export type MutationUpdateTodoArgs = {
   data: UpdateTodoInput;
+};
+
+
+export type MutationVerifyHashArgs = {
+  hash: Scalars['String'];
 };
 
 export enum Permissions {
@@ -269,16 +276,16 @@ export type ChangeTodoPriorityInput = {
 };
 
 export type CreateFileInput = {
-  fileType?: Maybe<FileType>;
+  fileType?: InputMaybe<FileType>;
   folder_id: Scalars['ID'];
   name: Scalars['String'];
 };
 
 export type CreateFolderInput = {
-  color?: Maybe<Scalars['String']>;
-  color_style?: Maybe<ColorStyle>;
+  color?: InputMaybe<Scalars['String']>;
+  color_style?: InputMaybe<ColorStyle>;
   name: Scalars['String'];
-  parent_id?: Maybe<Scalars['ID']>;
+  parent_id?: InputMaybe<Scalars['ID']>;
 };
 
 export type CreatePriorityInput = {
@@ -287,7 +294,7 @@ export type CreatePriorityInput = {
 };
 
 export type CreateTodoInput = {
-  file?: Maybe<Scalars['ID']>;
+  file?: InputMaybe<Scalars['ID']>;
   name: Scalars['String'];
   priority: Scalars['ID'];
 };
@@ -323,16 +330,16 @@ export type ReturnFolders = {
 };
 
 export type UpdatePriorityInput = {
-  color?: Maybe<Scalars['String']>;
+  color?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateTodoInput = {
-  file?: Maybe<Scalars['ID']>;
+  file?: InputMaybe<Scalars['ID']>;
   id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  priority?: Maybe<Scalars['ID']>;
+  name?: InputMaybe<Scalars['String']>;
+  priority?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -357,7 +364,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -527,6 +534,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateDocument?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateDocumentArgs, 'content' | 'id'>>;
   updatePriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationUpdatePriorityArgs, 'data'>>;
   updateTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationUpdateTodoArgs, 'data'>>;
+  verifyHash?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationVerifyHashArgs, 'hash'>>;
 };
 
 export type PriorityResolvers<ContextType = any, ParentType extends ResolversParentTypes['Priority'] = ResolversParentTypes['Priority']> = {

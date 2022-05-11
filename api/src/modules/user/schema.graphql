@@ -9,6 +9,7 @@ type Mutation {
   register(data: RegisterInput!): String
   login(data: LoginInput!): String
   logout: Boolean
+  verifyHash(hash: String!): Boolean
 }
 
 input RegisterInput {

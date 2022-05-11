@@ -1,5 +1,6 @@
 import { GraphQLError } from "graphql";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 
@@ -8,6 +9,7 @@ export const config = {
   TOKEN_SECRET: process.env.TOKEN_SECRET || "secret",
   SESSION_SECRET: process.env.SESSION_SECRET || "secret",
   PORT: process.env.PORT || "5000",
+  ARGON_SECRET: bcrypt.hash(process.env.ARGON_SECRET || "secret", 10),
 };
 
 export type Depromisify<T extends (...args: any) => any> = T extends (

@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from "../graphql/graphql";
-import { graphQL_request_Client } from "../libs/graphql-request";
+import { graphqlClient } from "../libs/graphql-request";
 import { accessGlobalState } from "../libs/Apollo";
 import { routes } from "../functions/routes";
 
@@ -59,7 +59,7 @@ const AuthProvider = ({ children }: Props) => {
     /* Temporary storage for user info */
     const values: AuthType = {};
     /* Call GraphQL API */
-    await graphQL_request_Client
+    await graphqlClient
       .request(getUserQuery)
       .then((res) => {
         /* Set the is_logged according to token if valid */

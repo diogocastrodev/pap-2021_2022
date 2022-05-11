@@ -85,14 +85,15 @@ export const DocumentResolver: Resolvers<ResolverContext> = {
   },
   Subscription: {
     updatedDocumentContent: {
+      // @ts-ignore
+
       subscribe: async (_parent, args, context, test) => {
-        /* console.log(context);
+        console.log(context);
 
         if (!context.is_authed || !context.user_id) {
           throw new Error("User not authenticated");
-        } */
+        }
 
-        // Check if user can access the file
         try {
           const isUserFile = await db.files.findUnique({
             where: {
@@ -127,8 +128,8 @@ export const DocumentResolver: Resolvers<ResolverContext> = {
           if (isUserFile.fileType !== FileType.Document)
             throw new Error("File is not a document");
 
-          /*  if (isUserFile.folders.user.public_user_id !== context.user_id)
-            throw new Error("You cannot update other people's files"); */
+          if (isUserFile.folders.user.public_user_id !== context.user_id)
+            throw new Error("You cannot update other people's files");
 
           return pubsub.asyncIterator("updatedDocumentContent");
         } catch (err) {

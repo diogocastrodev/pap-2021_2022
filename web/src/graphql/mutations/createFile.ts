@@ -4,7 +4,7 @@
 
 import { gql } from "@apollo/client";
 import { CreateFileInput, Files, FileType } from "@graphql/graphql";
-import { graphQL_request_Client } from "@libs/graphql-request";
+import { graphqlClient } from "@libs/graphql-request";
 import { FoldersContext } from "@src/context/FoldersContext";
 import { NextRouter, useRouter } from "next/router";
 import { useContext } from "react";
@@ -42,7 +42,7 @@ export default async function createFile({
   fileType,
   redirect,
 }: props): Promise<response> {
-  const data = await graphQL_request_Client
+  const data = await graphqlClient
     .request(mutation, {
       data: {
         folder_id,

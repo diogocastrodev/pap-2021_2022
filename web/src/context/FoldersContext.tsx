@@ -2,7 +2,7 @@ import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { routes } from "@src/functions/routes";
 import { folderChildrenFragment } from "@src/graphql/fragments";
 import { ExportedData, Folders, ReturnFolders } from "@src/graphql/graphql";
-import { graphQL_request_Client } from "@src/libs/graphql-request";
+import { graphqlClient } from "@src/libs/graphql-request";
 import { createContext, useEffect, useState } from "react";
 
 interface props {

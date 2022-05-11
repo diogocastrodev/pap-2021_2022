@@ -2,7 +2,12 @@ import { AuthenticationError } from "apollo-server-errors";
 import { ResolverContext } from "../../context";
 import { Resolvers } from "../../graphql/types";
 import { db } from "../../database";
-import { verifyPassword, createPassword, getUserByPublicId } from "./helpers";
+import {
+  verifyPassword,
+  createPassword,
+  getUserByPublicId,
+  createHash,
+} from "./helpers";
 import * as jwt from "jsonwebtoken";
 import { config } from "../../utils";
 
@@ -78,12 +83,12 @@ export const UserResolvers: Resolvers<ResolverContext> = {
       )
         throw new Error("Email or password is missing");
 
-      const hash = bcrypt.hashSync(args.data.email, 2);
+      const hash = await createHash(args.data.email);
 
       const createdUser = await db.user.create({
         data: {
           email: args.data.email.toString(),
-          password: createPassword(args.data.password.toString()),
+          password: await createPassword(args.data.password.toString()),
           username: args.data.username.toString(),
           hash: hash.toString(),
         },

@@ -1,3 +1,5 @@
+scalar DateTime
+
 type Query {
   getDocumentContent(id: ID!): String!
 }
