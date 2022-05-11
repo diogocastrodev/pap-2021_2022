@@ -3,6 +3,7 @@ scalar DateTime
 type Query {
   userFolders: returnFolders
   getFilesByFolder(folderId: ID!): [Files]
+  getFolderById(folderId: ID!): Folders
 }
 
 type Mutation {
@@ -14,6 +15,11 @@ input createFolderInput {
   parent_id: ID
   color: String
   color_style: ColorStyle
+}
+
+type getFolder {
+  folder: Folders
+  children: [Folders]!
 }
 
 type returnFolders {
@@ -49,10 +55,7 @@ type Folders {
   parent_folder: Folders
   folders: [Folders]
 
-  user_id: String!
   user: User
-
-  todos: [Todo]
 
   files: [Files]
 }

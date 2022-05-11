@@ -1,6 +1,7 @@
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import Loader from "@src/components/Loader/Loader";
 import { Files, FileType } from "@src/graphql/graphql";
+import { gqlClient } from "@src/libs/graphql-request";
 import { useEffect, useState } from "react";
 import DocumentPage from "./DocumentPage";
 import TodoPage from "./TodoPage";
@@ -22,17 +23,22 @@ const fileQuery = gql`
 
 export default function ItemsToPage(props: props) {
   const [FileData, setFileData] = useState<Files>();
-  const [getNewFile, { loading }] = useLazyQuery(fileQuery, {
-    variables: {
-      data: {
-        fileId: props.id,
-      },
-    },
-  });
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    getNewFile().then((data) => {
-      setFileData(data.data.getFileContent);
-    });
+    gqlClient
+      .request(fileQuery, {
+        data: {
+          fileId: props.id,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        setFileData(res.getFileContent);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
     setFileData(undefined);
   }, [props.id]);
 

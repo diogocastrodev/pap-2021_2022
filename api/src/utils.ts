@@ -10,6 +10,7 @@ export const config = {
   SESSION_SECRET: process.env.SESSION_SECRET || "secret",
   PORT: process.env.PORT || "5000",
   ARGON_SECRET: bcrypt.hash(process.env.ARGON_SECRET || "secret", 10),
+  env: process.env.NODE_ENV || "development",
 };
 
 export type Depromisify<T extends (...args: any) => any> = T extends (

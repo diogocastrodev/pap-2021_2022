@@ -13,6 +13,10 @@ import { v4 as uuidv4 } from "uuid";
 import bodyParser from "body-parser";
 import { router } from "./router/routes";
 import { consoleLogColors } from "./beauty";
+import {
+  ApolloServerPluginLandingPageProductionDefault,
+  ApolloServerPluginLandingPageGraphQLPlayground,
+} from "apollo-server-core";
 
 export const app = express();
 
@@ -26,6 +30,7 @@ const corsOptions: CorsOptions = {
     "http://localhost:3000",
     "https://castro.pap12m.pt",
     "http://51.68.197.137:3000",
+    config.env === "development" && "https://studio.apollographql.com",
   ],
 };
 
@@ -106,6 +111,7 @@ async function start() {
     schema,
     context: ({ req, res }) => context({ req, res }),
     formatError: formatError,
+    introspection: true,
     plugins: [
       {
         async serverWillStart() {
@@ -116,6 +122,17 @@ async function start() {
           };
         },
       },
+
+      process.env.NODE_ENV === "production"
+        ? ApolloServerPluginLandingPageProductionDefault({
+            graphRef: "my-graph-id@my-graph-variant",
+            footer: false,
+          })
+        : ApolloServerPluginLandingPageGraphQLPlayground({
+            settings: {
+              "request.credentials": "include",
+            },
+          }),
     ],
   });
 

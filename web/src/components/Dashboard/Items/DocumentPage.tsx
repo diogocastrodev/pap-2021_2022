@@ -24,6 +24,7 @@ import {
 } from "@apollo/client";
 import Loader from "@src/components/Loader/Loader";
 import htmlToDraft from "html-to-draftjs";
+import $ from "jquery";
 interface props {
   id: string;
 }
@@ -151,6 +152,7 @@ export default function DocumentPage(props: props) {
     var timer = 0;
     return function (callback: () => void | Promise<void>, ms: number) {
       clearTimeout(timer);
+      // @ts-ignore
       timer = setTimeout(callback, ms);
     };
   })();
@@ -161,6 +163,9 @@ export default function DocumentPage(props: props) {
       /* setTimeout(() => {
       }, 1000); */
       /* delay(setDocumentContent(), 1000); */
+      $("#editor-editor").on("keyup", () => {
+        delay(setDocumentContent(), 1000);
+      });
     }
   }, [content]);
 

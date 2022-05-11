@@ -31,7 +31,7 @@ type User {
   email: String!
   password: String!
 
-  permissions: Permissions!
+  # permissions: Permissions!
 
   status: UserStatus!
   hash: String

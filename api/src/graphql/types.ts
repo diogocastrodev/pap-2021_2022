@@ -61,10 +61,8 @@ export type Folders = {
   name: Scalars['String'];
   parent_folder?: Maybe<Folders>;
   parent_id?: Maybe<Scalars['ID']>;
-  todos?: Maybe<Array<Maybe<Todo>>>;
   updated_at: Scalars['DateTime'];
   user?: Maybe<User>;
-  user_id: Scalars['String'];
 };
 
 export type LoginInput = {
@@ -178,6 +176,7 @@ export type Query = {
   getDocumentContent: Scalars['String'];
   getFileContent?: Maybe<Files>;
   getFilesByFolder?: Maybe<Array<Maybe<Files>>>;
+  getFolderById?: Maybe<Folders>;
   getTodo?: Maybe<Todo>;
   getTodos: Array<Maybe<Todo>>;
   getTodosByFolder: Array<Maybe<Todo>>;
@@ -199,6 +198,11 @@ export type QueryGetFileContentArgs = {
 
 
 export type QueryGetFilesByFolderArgs = {
+  folderId: Scalars['ID'];
+};
+
+
+export type QueryGetFolderByIdArgs = {
   folderId: Scalars['ID'];
 };
 
@@ -256,7 +260,6 @@ export type User = {
   email: Scalars['String'];
   hash?: Maybe<Scalars['String']>;
   password: Scalars['String'];
-  permissions: Permissions;
   public_user_id: Scalars['ID'];
   status: UserStatus;
   updated_at: Scalars['DateTime'];
@@ -321,6 +324,12 @@ export type ExportedData = {
 
 export type GetFileContentInput = {
   fileId: Scalars['ID'];
+};
+
+export type GetFolder = {
+  __typename?: 'getFolder';
+  children: Array<Maybe<Folders>>;
+  folder?: Maybe<Folders>;
 };
 
 export type ReturnFolders = {
@@ -441,6 +450,7 @@ export type ResolversTypes = {
   deleteTodoInput: DeleteTodoInput;
   exportedData: ResolverTypeWrapper<Omit<ExportedData, 'children' | 'files'> & { children?: Maybe<Array<Maybe<ResolversTypes['exportedData']>>>, files: Array<Maybe<ResolversTypes['Files']>> }>;
   getFileContentInput: GetFileContentInput;
+  getFolder: ResolverTypeWrapper<Omit<GetFolder, 'children' | 'folder'> & { children: Array<Maybe<ResolversTypes['Folders']>>, folder?: Maybe<ResolversTypes['Folders']> }>;
   returnFolders: ResolverTypeWrapper<Omit<ReturnFolders, 'folders'> & { folders: Array<Maybe<ResolversTypes['exportedData']>> }>;
   updatePriorityInput: UpdatePriorityInput;
   updateTodoInput: UpdateTodoInput;
@@ -473,6 +483,7 @@ export type ResolversParentTypes = {
   deleteTodoInput: DeleteTodoInput;
   exportedData: Omit<ExportedData, 'children' | 'files'> & { children?: Maybe<Array<Maybe<ResolversParentTypes['exportedData']>>>, files: Array<Maybe<ResolversParentTypes['Files']>> };
   getFileContentInput: GetFileContentInput;
+  getFolder: Omit<GetFolder, 'children' | 'folder'> & { children: Array<Maybe<ResolversParentTypes['Folders']>>, folder?: Maybe<ResolversParentTypes['Folders']> };
   returnFolders: Omit<ReturnFolders, 'folders'> & { folders: Array<Maybe<ResolversParentTypes['exportedData']>> };
   updatePriorityInput: UpdatePriorityInput;
   updateTodoInput: UpdateTodoInput;
@@ -513,10 +524,8 @@ export type FoldersResolvers<ContextType = any, ParentType extends ResolversPare
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   parent_folder?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType>;
   parent_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  todos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Todo']>>>, ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  user_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -553,6 +562,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getDocumentContent?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryGetDocumentContentArgs, 'id'>>;
   getFileContent?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<QueryGetFileContentArgs, 'data'>>;
   getFilesByFolder?: Resolver<Maybe<Array<Maybe<ResolversTypes['Files']>>>, ParentType, ContextType, RequireFields<QueryGetFilesByFolderArgs, 'folderId'>>;
+  getFolderById?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType, RequireFields<QueryGetFolderByIdArgs, 'folderId'>>;
   getTodo?: Resolver<Maybe<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodoArgs, 'id'>>;
   getTodos?: Resolver<Array<Maybe<ResolversTypes['Todo']>>, ParentType, ContextType>;
   getTodosByFolder?: Resolver<Array<Maybe<ResolversTypes['Todo']>>, ParentType, ContextType, RequireFields<QueryGetTodosByFolderArgs, 'folder'>>;
@@ -582,7 +592,6 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   hash?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  permissions?: Resolver<ResolversTypes['Permissions'], ParentType, ContextType>;
   public_user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['UserStatus'], ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -600,6 +609,12 @@ export type ExportedDataResolvers<ContextType = any, ParentType extends Resolver
   folder_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   parent_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GetFolderResolvers<ContextType = any, ParentType extends ResolversParentTypes['getFolder'] = ResolversParentTypes['getFolder']> = {
+  children?: Resolver<Array<Maybe<ResolversTypes['Folders']>>, ParentType, ContextType>;
+  folder?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -621,6 +636,7 @@ export type Resolvers<ContextType = any> = {
   Todo?: TodoResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   exportedData?: ExportedDataResolvers<ContextType>;
+  getFolder?: GetFolderResolvers<ContextType>;
   returnFolders?: ReturnFoldersResolvers<ContextType>;
 };
 

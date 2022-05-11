@@ -1,4 +1,9 @@
-import { Resolvers, ReturnFolders } from "../../graphql/types";
+import {
+  Folders,
+  GetFolder,
+  Resolvers,
+  ReturnFolders,
+} from "../../graphql/types";
 import { ResolverContext } from "../../context";
 import { AuthenticationError } from "apollo-server-errors";
 import { db } from "../../database";
@@ -80,6 +85,34 @@ export const FolderResolver: Resolvers<ResolverContext> = {
       }
 
       return files;
+    },
+    getFolderById: async (_parent, args, context) => {
+      if (!context.is_authed || typeof context.user_id === "undefined")
+        throw new Error("no login");
+
+      try {
+        const folder = await db.folders.findUnique({
+          where: {
+            folder_id: args.folderId,
+          },
+          include: {
+            user: true,
+            files: true,
+            folders: true,
+          },
+        });
+
+        if (!folder) throw new Error("folder not found");
+
+        if (
+          folder.user.public_user_id.toString() !== context.user_id.toString()
+        )
+          throw new Error("no access");
+
+        return folder;
+      } catch (err) {
+        throw new Error(err as string);
+      }
     },
   },
   Mutation: {
