@@ -2,7 +2,7 @@ import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { routes } from "@src/functions/routes";
 import { folderChildrenFragment } from "@src/graphql/fragments";
 import { ExportedData, Folders, ReturnFolders } from "@src/graphql/graphql";
-import { graphqlClient } from "@src/libs/graphql-request";
+import { gqlClient } from "@src/libs/graphql-request";
 import { createContext, useEffect, useState } from "react";
 
 interface props {
@@ -46,8 +46,6 @@ const FoldersProvider = ({ children }: props) => {
     loading: true,
   });
 
-  const [getFoldersFunction] = useLazyQuery(getFoldersMutation);
-
   const refreshFolders = async () => {
     /* Temporary storage for user info */
     var values: ReturnFolders = {
@@ -55,9 +53,10 @@ const FoldersProvider = ({ children }: props) => {
       folders_amount: 0,
     };
     /* Call GraphQL API */
-    await getFoldersFunction()
+    await gqlClient
+      .request(getFoldersMutation)
       .then((res) => {
-        values = res.data.userFolders as ReturnFolders;
+        values = res.userFolders as ReturnFolders;
       })
       .catch((err) => {
         values.folders_amount = 0;

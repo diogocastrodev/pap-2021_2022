@@ -9,7 +9,7 @@ const token =
     ? (localStorage.getItem("token") as string)
     : Token.get();
 
-export const graphQL_request_Client = new GraphQLClient(graphQL_Endpoint, {
+export const gqlClient = new GraphQLClient(graphQL_Endpoint, {
   headers: {
     authorization: accessGlobalState().get()
       ? `Bearer ${accessGlobalState().get()}`

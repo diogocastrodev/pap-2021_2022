@@ -57,9 +57,13 @@ export default function DocumentPage(props: props) {
 
   const setNewContent = async (newContent: string) => {
     console.log("newContent", newContent);
-    setContent(
-      EditorState.createWithContent(convertFromRaw(JSON.parse(newContent)))
-    );
+    if (newContent === "") {
+      setContent(EditorState.createEmpty());
+    } else {
+      setContent(
+        EditorState.createWithContent(convertFromRaw(JSON.parse(newContent)))
+      );
+    }
     /* const blocksFromHtml = htmlToDraft(newContent);
     const { contentBlocks, entityMap } = blocksFromHtml;
     const contentState = ContentState.createFromBlockArray(
@@ -143,9 +147,20 @@ export default function DocumentPage(props: props) {
     getNewDocumentText();
   }, [props.id]);
 
+  var delay = (function () {
+    var timer = 0;
+    return function (callback: () => void | Promise<void>, ms: number) {
+      clearTimeout(timer);
+      timer = setTimeout(callback, ms);
+    };
+  })();
+
   useEffect(() => {
     if (!loading) {
-      setDocumentContent();
+      //  Once data is changed, wait a second to see if user changes it again
+      /* setTimeout(() => {
+      }, 1000); */
+      /* delay(setDocumentContent(), 1000); */
     }
   }, [content]);
 
@@ -154,7 +169,9 @@ export default function DocumentPage(props: props) {
       <div className="p-2 rounded-md shadow-md min-h-full relative">
         {loading && <Loader size="medium" />}
         {!loading && (
+          /* @ts-ignore */
           <Editor
+            /* @ts-ignore */
             editorState={content}
             onEditorStateChange={(e: EditorState) => setContent(e)}
             toolbarClassName="editor-toolbar"

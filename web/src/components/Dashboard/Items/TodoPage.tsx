@@ -6,7 +6,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/outline";
 import { Todo, TodoStatus } from "@src/graphql/graphql";
-import { graphqlClient } from "@src/libs/graphql-request";
+import { gqlClient } from "@src/libs/graphql-request";
 import { gql } from "graphql-request";
 import { ReactElement, useEffect, useState } from "react";
 import Button from "@components/Form/Buttons/Button";
@@ -35,7 +35,7 @@ export default function TodoPage(props: props) {
   const [todos, setTodos] = useState<Todo[]>([]);
 
   const getTodos = async () => {
-    await graphqlClient
+    await gqlClient
       .request(getTodosQuery, {
         data: {
           fileId: props.id,

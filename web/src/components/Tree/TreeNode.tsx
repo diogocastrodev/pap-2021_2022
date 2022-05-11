@@ -77,10 +77,10 @@ export default function TreeNode({
                     {folder.files?.map((file) => (
                       <Link
                         href={`/dashboard/i/${file?.file_id}`}
-                        key={file?.file_id}
+                        key={file!.file_id}
                       >
                         <div
-                          key={file?.file_id}
+                          key={file!.file_id}
                           className="mx-1 flex flex-row items-center last:pb-2"
                           onContextMenu={(e) => {
                             e.preventDefault();

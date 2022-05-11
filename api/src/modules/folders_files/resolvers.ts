@@ -71,7 +71,7 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
         if (args.data.fileType === fileType.Document) {
           const newDocument = await db.document.create({
             data: {
-              content: "# New Document!",
+              content: "",
               file_id: newFile.file_id,
             },
           });

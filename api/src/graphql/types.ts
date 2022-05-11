@@ -81,9 +81,9 @@ export type Mutation = {
   createTodo: Todo;
   deletePriority: Scalars['Boolean'];
   deleteTodo: Scalars['Boolean'];
-  login?: Maybe<Scalars['String']>;
+  login?: Maybe<Scalars['Boolean']>;
   logout?: Maybe<Scalars['Boolean']>;
-  register?: Maybe<Scalars['String']>;
+  register?: Maybe<Scalars['Boolean']>;
   updateDocument: Scalars['Boolean'];
   updatePriority: Priority;
   updateTodo: Todo;
@@ -528,9 +528,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationCreateTodoArgs, 'data'>>;
   deletePriority?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePriorityArgs, 'data'>>;
   deleteTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'data'>>;
-  login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
+  login?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
   logout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  register?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
+  register?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
   updateDocument?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateDocumentArgs, 'content' | 'id'>>;
   updatePriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationUpdatePriorityArgs, 'data'>>;
   updateTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationUpdateTodoArgs, 'data'>>;

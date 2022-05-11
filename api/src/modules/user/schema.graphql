@@ -6,8 +6,8 @@ type Query {
 }
 
 type Mutation {
-  register(data: RegisterInput!): String
-  login(data: LoginInput!): String
+  register(data: RegisterInput!): Boolean
+  login(data: LoginInput!): Boolean
   logout: Boolean
   verifyHash(hash: String!): Boolean
 }

@@ -14,45 +14,46 @@ export default function indexPage() {
         <div className="flex flex-col min-w-fit w-full lg:mt-16 text-3xl pl-10 md:pl-48 z-10">
           <div>
             <span>
-              <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-blue-400 select-none pr-2">
+              <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-blue-400 pr-2">
                 note.so
               </span>
               aplicação de notas para ajudar você a organizar suas anotações
             </span>
           </div>
           <Stack type="row" className="mt-4 space-x-4">
-            {!user.AuthData.is_logged ? (
-              <>
+            {!user.AuthData.loading &&
+              (!user.AuthData.is_logged ? (
+                <>
+                  <Button
+                    type="button"
+                    className="bg-gradient-to-r from-violet-500 to-blue-400 text-xl"
+                    onClick={() => {
+                      router.push("/auth/register");
+                    }}
+                  >
+                    Criar Conta
+                  </Button>
+                  <Button
+                    type="button"
+                    className="bg-blue-500 text-xl"
+                    onClick={() => {
+                      router.push("/auth/login");
+                    }}
+                  >
+                    Entrar
+                  </Button>
+                </>
+              ) : (
                 <Button
                   type="button"
                   className="bg-gradient-to-r from-violet-500 to-blue-400 text-xl"
                   onClick={() => {
-                    router.push("/auth/register");
+                    router.push("/dashboard");
                   }}
                 >
-                  Criar Conta
+                  Avançar para a Dashboard
                 </Button>
-                <Button
-                  type="button"
-                  className="bg-blue-500 text-xl"
-                  onClick={() => {
-                    router.push("/auth/register");
-                  }}
-                >
-                  Entrar
-                </Button>
-              </>
-            ) : (
-              <Button
-                type="button"
-                className="bg-gradient-to-r from-violet-500 to-blue-400 text-xl"
-                onClick={() => {
-                  router.push("/dashboard");
-                }}
-              >
-                Avançar para a Dashboard
-              </Button>
-            )}
+              ))}
           </Stack>
         </div>
         <div className="ml-8">

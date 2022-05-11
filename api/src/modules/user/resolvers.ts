@@ -71,7 +71,7 @@ export const UserResolvers: Resolvers<ResolverContext> = {
 
       /* console.log(context.request.session); */
 
-      return token;
+      return true;
     },
 
     register: async (_parent, args, _context) => {
@@ -96,7 +96,7 @@ export const UserResolvers: Resolvers<ResolverContext> = {
 
       if (!createdUser) throw new Error("Error creating user");
 
-      return "Success";
+      return true;
     },
     logout: async (_parent, _args, context) => {
       if (!context.is_authed || !context.user_id)
