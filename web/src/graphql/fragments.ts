@@ -10,7 +10,7 @@ export const folderFragment = gql`
 `;
 
 export const folderChildrenFragment = gql`
-  fragment folderData on exportedData {
+  fragment folderToData on exportedData {
     folder_id
     color
     color_style
@@ -23,21 +23,21 @@ export const folderChildrenFragment = gql`
   }
 
   fragment children on exportedData {
-    ...folderData
+    ...folderToData
     children {
-      ...folderData
+      ...folderToData
       children {
-        ...folderData
+        ...folderToData
         children {
-          ...folderData
+          ...folderToData
           children {
-            ...folderData
+            ...folderToData
             children {
-              ...folderData
+              ...folderToData
               children {
-                ...folderData
+                ...folderToData
                 children {
-                  ...folderData
+                  ...folderToData
                 }
               }
             }

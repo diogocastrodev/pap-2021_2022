@@ -125,7 +125,6 @@ async function start() {
 
       process.env.NODE_ENV === "production"
         ? ApolloServerPluginLandingPageProductionDefault({
-            graphRef: "my-graph-id@my-graph-variant",
             footer: false,
           })
         : ApolloServerPluginLandingPageGraphQLPlayground({

@@ -13,6 +13,7 @@ type folderType = {
   lastUpdate: Date;
   loading: boolean;
   folders: ExportedData[] | undefined | [];
+  straightFolders: Folders[] | undefined | [];
 };
 
 /* Set the ContextTypes */
@@ -43,6 +44,7 @@ const FoldersProvider = ({ children }: props) => {
   const [folderData, setFolderData] = useState<folderType>({
     lastUpdate: new Date(),
     folders: undefined,
+    straightFolders: undefined,
     loading: true,
   });
 

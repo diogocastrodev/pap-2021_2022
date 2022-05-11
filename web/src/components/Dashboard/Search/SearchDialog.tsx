@@ -133,7 +133,7 @@ export default function SearchDialog() {
               Search.toLowerCase() === ""
             );
           }).map((item, i) => (
-            <Link href={item.href ? item.href : `#`}>
+            <Link href={item.href ? item.href : `#`} key={i}>
               <div
                 className={`focus:outline-none px-4 py-2 flex flex-row items-center rounded-md cursor-pointer ${
                   SearchSelected === i && `bg-blue-200`
