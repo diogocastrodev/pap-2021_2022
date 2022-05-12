@@ -112,7 +112,6 @@ const AuthProvider = ({ children }: Props) => {
       })
       .then((res) => {
         /* There is data */
-        console.log(res.login);
         if (res.login) {
           setAuthData({
             ...AuthData,
@@ -146,10 +145,6 @@ const AuthProvider = ({ children }: Props) => {
     /* Get user Data */
     getUserData();
   }, []);
-
-  useEffect(() => {
-    console.log(AuthData);
-  }, [AuthData]);
 
   return (
     <AuthContext.Provider value={{ AuthData, login, logout }}>
