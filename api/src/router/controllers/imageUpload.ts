@@ -6,6 +6,8 @@ import { pathName, pathNameForPaths } from "../services/uploadImagesService";
 import { context } from "../../context";
 import FormData from "form-data";
 import folderDestroyer from "../helpers/folderDestroyer";
+import { cdnImages } from "@prisma/client";
+import { db } from "../../database";
 
 export async function imageUpload(req: Request, res: Response) {
   if (req.files) {
@@ -45,11 +47,23 @@ export async function imageUpload(req: Request, res: Response) {
             files,
           });
           if (response.status === 200) {
-            console.log(response.data);
-            // Success
-            console.log("Success");
+            const imgs = response.data as cdnImages[];
+            if (imgs.length > 0) {
+              try {
+                const storedImages = await db.cdnImages.createMany({
+                  data: imgs,
+                });
+
+                if (storedImages.count > 0) {
+                  res.status(200).json({
+                    data: storedImages,
+                  });
+                }
+              } catch (e) {
+                console.log(e);
+              }
+            }
           }
-          console.log(response.status);
         })
         .catch((e) => {
           console.log(e);

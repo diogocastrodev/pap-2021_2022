@@ -16,7 +16,7 @@ export async function UploadImages(req: Request, res: Response) {
 
     files.map((file) => {
       fileNameArray.push({
-        name: file.originalname,
+        name: file.filename,
         path: pathName + req.body.pubUserId,
         type: file.mimetype,
         pathWithName: pathName + req.body.pubUserId + "/" + file.filename,
