@@ -17,7 +17,11 @@ export default function loginPage() {
         <Form
           onSubmit={(e) => {
             e.preventDefault();
-            Auth.login(Email, Password);
+            try {
+              Auth.login(Email, Password);
+            } catch (err) {
+              console.log(err);
+            }
           }}
           className="h-full"
         >

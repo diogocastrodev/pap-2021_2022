@@ -15,7 +15,6 @@ import { FoldersProvider } from "@src/context/FoldersContext";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  checkDarkMode();
   return (
     <ApolloProvider client={client}>
       <AuthProvider>

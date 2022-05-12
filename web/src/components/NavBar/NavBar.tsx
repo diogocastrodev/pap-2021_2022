@@ -4,16 +4,13 @@ import {
   UserIcon,
   LogoutIcon,
   ArchiveIcon,
+  MenuIcon,
 } from "@heroicons/react/solid";
 import Input from "../Form/Inputs/Input";
 import { Menu } from "@headlessui/react";
 import { getTheme } from "@src/functions/changeTheme";
 import { useContext, useEffect, useState } from "react";
 import { changeTheme } from "../../functions/changeTheme";
-import ThemeButton from "./ThemeButton/ThemeButton";
-import NotificationsButton, {
-  notificationsProps,
-} from "./Notifications/NotificationsButton";
 import { AuthContext } from "@src/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -38,23 +35,6 @@ type DropDownProps = {
 
 export default function Navbar(props: props) {
   const user = useContext(AuthContext);
-
-  const dummyNotifications: notificationsProps = [
-    {
-      notificationId: 3,
-      title: "Product Check",
-      message: "Notification Test",
-      isNew: true,
-      date: "2022-01-04 20:01:00",
-    },
-    {
-      notificationId: 4,
-      title: "Product Check",
-      message: "Notification Test",
-      isNew: false,
-      date: "2021-12-10 18:06:13",
-    },
-  ];
 
   const DropDownItems: DropDownProps = [
     {
@@ -116,15 +96,10 @@ export default function Navbar(props: props) {
           )}
         </div>
         <div className="justify-self-end justify-end w-full h-full flex flex-row items-center pr-4">
-          {user.AuthData.is_logged && (
-            <div className="mr-4">
-              <NotificationsButton notifications={dummyNotifications} />
-            </div>
-          )}
           {user.AuthData.is_logged ? (
             <Menu as="div" className={"relative"}>
               <Menu.Button as="div">
-                <UserAvatar className="w-8 h-8 cursor-pointer" />
+                <MenuIcon className="h-5 w-5 cursor-pointer" />
               </Menu.Button>
               <Menu.Items
                 as="div"

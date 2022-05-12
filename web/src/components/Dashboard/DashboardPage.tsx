@@ -31,6 +31,8 @@ import LastUpdateTimeFolders from "./LastUpdateTime/LastUpdateTime";
 import ItemContextMenu from "./Item/ContextMenu/ContextMenu";
 import FoldersContextMenu from "./Folders/ContextMenu/FoldersContextMenu";
 import SearchDialog from "./Search/SearchDialog";
+import CreateFolderDialog from "./Folders/Create Folder/CreateFolder";
+import OrganizeFolderDialog from "./Folders/Organize Folders/OrganizeFolder";
 
 const getFolders = gql`
   ${folderChildrenFragment}
@@ -158,24 +160,18 @@ export default function DashboardPage(props: props) {
         }}
         pos={LastUpdateTimePos}
       />
-      <Dialog
-        as="div"
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        className="fixed inset-0 overflow-y-auto z-[999]"
-      >
-        <Dialog.Overlay
-          className={"fixed inset-0 bg-gray-700 bg-opacity-20 z-[999]"}
+      {dialogType === "organize" && dialogOpen && (
+        <OrganizeFolderDialog
+          isOpen={dialogOpen}
+          onClose={() => setDialogOpen(false)}
         />
-        <div className="h-screen w-screen flex items-center justify-center">
-          <div className="bg-white w-2/3 z-[1000] px-8 py-4 rounded-lg min-h-min flex flex-col">
-            {dialogType === "create" && (
-              <CreateFolder folders={data?.userFolders.folders} />
-            )}
-            {dialogType === "organize" && <OrganizeFolder />}
-          </div>
-        </div>
-      </Dialog>
+      )}
+      {dialogType === "create" && dialogOpen && (
+        <CreateFolderDialog
+          isOpen={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+        />
+      )}
 
       {/* Menu */}
       <div className="flex flex-1 max-h-[91.5vh] max-w-[100vw]">
@@ -197,10 +193,6 @@ export default function DashboardPage(props: props) {
                 <div className="w-full flex items-center cursor-not-allowed">
                   <CheckIcon className="w-5" />
                   <span className="ml-2">Apontamentos</span>
-                </div>
-                <div className="w-full flex items-center cursor-not-allowed">
-                  <BookOpenIcon className="w-5" />
-                  <span className="ml-2">Diário</span>
                 </div>
               </div>
               {/* Folders Section */}

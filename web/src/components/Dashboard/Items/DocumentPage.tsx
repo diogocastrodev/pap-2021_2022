@@ -25,6 +25,9 @@ import {
 import Loader from "@src/components/Loader/Loader";
 import htmlToDraft from "html-to-draftjs";
 import $ from "jquery";
+import { gqlClient } from "@libs/graphql-request";
+import Stack from "@components/Form/Stack/Stack";
+import Button from "@components/Form/Buttons/Button";
 interface props {
   id: string;
 }
@@ -32,16 +35,11 @@ interface props {
 const getDocumentTextQuery = gql`
   query ($data: getFileContentInput!) {
     getFileContent(data: $data) {
+      name
       document {
         content
       }
     }
-  }
-`;
-
-const subDocumentText = gql`
-  subscription ($updatedDocumentContentId: ID!) {
-    updatedDocumentContent(id: $updatedDocumentContentId)
   }
 `;
 
@@ -52,12 +50,12 @@ const setDocumentTextMutation = gql`
 `;
 
 export default function DocumentPage(props: props) {
-  const [content, setContent] = useState<EditorState>(
-    EditorState.createEmpty()
-  );
+  const [content, setContent] = useState<EditorState>();
+  const [loading, setLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [fileName, setFileName] = useState("");
 
   const setNewContent = async (newContent: string) => {
-    console.log("newContent", newContent);
     if (newContent === "") {
       setContent(EditorState.createEmpty());
     } else {
@@ -65,14 +63,6 @@ export default function DocumentPage(props: props) {
         EditorState.createWithContent(convertFromRaw(JSON.parse(newContent)))
       );
     }
-    /* const blocksFromHtml = htmlToDraft(newContent);
-    const { contentBlocks, entityMap } = blocksFromHtml;
-    const contentState = ContentState.createFromBlockArray(
-      contentBlocks,
-      entityMap
-    );
-    const editorState = EditorState.createWithContent(contentState);
-    setContent(editorState); */
   };
 
   const convertToHtml = () => {
@@ -80,61 +70,51 @@ export default function DocumentPage(props: props) {
       trigger: "#",
       separator: " ",
     };
-    const markup = draftToHtml(
-      convertToRaw(content.getCurrentContent()),
-      hashConfig,
-      false
-    );
+    if (content) {
+      const markup = draftToHtml(
+        convertToRaw(content.getCurrentContent()),
+        hashConfig,
+        false
+      );
 
-    return markup;
+      return markup;
+    }
   };
 
   const convertToJson = () => {
-    const markup = convertToRaw(content.getCurrentContent());
-    return JSON.stringify(markup);
+    if (content) {
+      const markup = convertToRaw(content.getCurrentContent());
+      return JSON.stringify(markup);
+    }
   };
 
-  const [setDocumentContent] = useMutation(setDocumentTextMutation, {
-    variables: {
-      updateDocumentId: props.id,
-      content: convertToJson(),
-    },
-  });
-
-  const { data } = useSubscription(subDocumentText, {
-    variables: {
-      updatedDocumentContentId: props.id,
-    },
-    onSubscriptionData: ({ client, subscriptionData }) => {
-      const { data } = subscriptionData;
-      if (data) {
-        setNewContent(data.updatedDocumentContent);
-      }
-    },
-  });
-
-  const [getDocumentText, { loading }] = useLazyQuery(getDocumentTextQuery, {
-    variables: {
-      data: {
-        fileId: props.id,
-      },
-    },
-  });
+  const uploadNewDocumentContent = async () => {
+    gqlClient
+      .request(setDocumentTextMutation, {
+        updateDocumentId: props.id,
+        content: convertToJson(),
+      })
+      .then((res) => {
+        if (res.updateDocument) {
+          setLastUpdate(new Date());
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const getNewDocumentText = async () => {
-    getDocumentText()
+    gqlClient
+      .request(getDocumentTextQuery, {
+        data: {
+          fileId: props.id,
+        },
+      })
       .then((res) => {
-        /* console.log(res.data.getFileContent.document.content);
-        const dbContent = res.data.getFileContent.document.content;
-        const blocksFromHtml = htmlToDraft(dbContent);
-        const { contentBlocks, entityMap } = blocksFromHtml;
-        const contentState = ContentState.createFromBlockArray(
-          contentBlocks,
-          entityMap
-        );
-        const editorState = EditorState.createWithContent(contentState);
-        setContent(editorState); */
-        setNewContent(res.data.getFileContent.document.content);
+        setLoading(false);
+        setFileName(res.getFileContent.name);
+        setNewContent(res.getFileContent.document.content);
       })
       .catch((error) => {
         console.log(error);
@@ -148,76 +128,93 @@ export default function DocumentPage(props: props) {
     getNewDocumentText();
   }, [props.id]);
 
-  var delay = (function () {
-    var timer = 0;
-    return function (callback: () => void | Promise<void>, ms: number) {
-      clearTimeout(timer);
-      // @ts-ignore
-      timer = setTimeout(callback, ms);
-    };
-  })();
-
   useEffect(() => {
     if (!loading) {
-      //  Once data is changed, wait a second to see if user changes it again
-      /* setTimeout(() => {
-      }, 1000); */
-      /* delay(setDocumentContent(), 1000); */
-      $("#editor-editor").on("keyup", () => {
-        delay(setDocumentContent(), 1000);
-      });
+      const timeOutId = setTimeout(() => {
+        uploadNewDocumentContent();
+      }, 600);
+      return () => clearTimeout(timeOutId);
     }
   }, [content]);
 
+  const clickToDownload = () => {
+    const html = convertToHtml();
+    if (html) {
+      const blob = new Blob([html], {
+        type: "text/html;charset=utf-8",
+      });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+    }
+  };
+
   return (
     <>
-      <div className="p-2 rounded-md shadow-md min-h-full relative">
+      <div className="p-2 rounded-md min-h-full relative">
         {loading && <Loader size="medium" />}
         {!loading && (
-          /* @ts-ignore */
-          <Editor
-            /* @ts-ignore */
-            editorState={content}
-            onEditorStateChange={(e: EditorState) => setContent(e)}
-            toolbarClassName="editor-toolbar"
-            wrapperClassName="editor-wrapper"
-            editorClassName="editor-editor"
-            toolbar={{
-              options: [
-                "inline",
-                "blockType",
-                "fontSize",
-                "fontFamily",
-                "list",
-                "textAlign",
-                "colorPicker",
-                "link",
-                "embedded",
-                "emoji",
-                "image",
-              ],
-              inline: { inDropdown: true },
-              list: { inDropdown: true },
-              textAlign: { inDropdown: true },
-              link: { inDropdown: true },
-              image: {
-                urlEnabled: true,
-                uploadEnabled: true,
-                previewImage: true,
-                alt: { present: false, mandatory: false },
-              },
-            }}
-          ></Editor>
+          <>
+            <div className="mb-3">
+              <Stack type="row" className="items-center">
+                <div className="font-bold text-xl flex flex-row text-ellipsis overflow-hidden">
+                  Ficheiro: <div className="font-medium ml-2">{fileName}</div>
+                </div>
+                <div className="pl-3 ml-auto">
+                  <Button type="button" onClick={clickToDownload}>
+                    Transferir
+                  </Button>
+                </div>
+              </Stack>
+              <div>
+                {lastUpdate && (
+                  <span className="text-sm">
+                    Última actualização:{" "}
+                    <span className="font-medium">
+                      {lastUpdate.toLocaleString("pt-PT")}
+                    </span>
+                  </span>
+                )}
+              </div>
+            </div>
+            {/* @ts-ignore */}
+            <Editor
+              /* @ts-ignore */
+              editorState={content}
+              onEditorStateChange={(e: EditorState) => setContent(e)}
+              toolbarClassName="editor-toolbar"
+              wrapperClassName="editor-wrapper"
+              editorClassName="editor-editor"
+              toolbar={{
+                options: [
+                  "inline",
+                  "blockType",
+                  "fontSize",
+                  "fontFamily",
+                  "list",
+                  "textAlign",
+                  "colorPicker",
+                  "link",
+                  "embedded",
+                  "emoji",
+                  "image",
+                ],
+                inline: { inDropdown: true },
+                list: { inDropdown: true },
+                textAlign: { inDropdown: true },
+                link: { inDropdown: true },
+                image: {
+                  urlEnabled: true,
+                  uploadEnabled: true,
+                  previewImage: true,
+                  alt: { present: false, mandatory: false },
+                },
+              }}
+            ></Editor>
+          </>
         )}
       </div>
     </>
-  );
-}
-
-function FormatBarItem(props: { children: ReactNode }) {
-  return (
-    <div className="h-6 w-6 rounded-md bg-gray-100 flex items-center justify-center">
-      {props.children}
-    </div>
   );
 }

@@ -6,5 +6,10 @@
   @apply sticky top-0 bg-gray-50 z-20;
 }
 
+.editor-editor {
+  @apply break-words max-w-full overflow-hidden;
+}
+
 .editor-wrapper {
+  @apply w-full;
 }
