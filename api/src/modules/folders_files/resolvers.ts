@@ -27,8 +27,6 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
           },
         });
 
-        console.log(fileContent);
-
         // Check if user can access the file
         if (
           fileContent &&

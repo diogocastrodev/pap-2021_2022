@@ -17,7 +17,6 @@ const registerMutation = gql`
 
 export default function RegisterPage() {
   const [Email, setEmail] = useState("");
-  const [Username, setUsername] = useState("");
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
   const [PhoneNumber, setPhoneNumber] = useState("");
@@ -39,7 +38,6 @@ export default function RegisterPage() {
                   variables: {
                     data: {
                       email: Email,
-                      username: Username,
                       password: Password,
                     },
                   },
@@ -58,53 +56,38 @@ export default function RegisterPage() {
               Register
             </div>
             <Stack type="col">
-              <Stack type="row" className="space-x-4">
-                <InputGroup>
-                  <Label text="Email" />
-                  <Input
-                    input={{
-                      type: "text",
-                      placeholder: "Email",
-                      onChange: (e) => setEmail(e.target.value),
-                      value: Email,
-                    }}
-                  />
-                </InputGroup>
-                <InputGroup>
-                  <Label text="Username" />
-                  <Input
-                    input={{
-                      type: "text",
-                      placeholder: "Username",
-                      onChange: (e) => setUsername(e.target.value),
-                      value: Username,
-                    }}
-                  />
-                </InputGroup>
-              </Stack>
-              <Stack type="row" className="space-x-4">
-                <InputGroup>
-                  <Label text="Password" />
-                  <Input
-                    input={{
-                      type: "password",
-                      placeholder: "Password",
-                      onChange: (e) => setPassword(e.target.value),
-                      autoComplete: "on",
-                    }}
-                  />
-                </InputGroup>
-                <InputGroup>
-                  <Label text="Confirmar Password" />
-                  <Input
-                    input={{
-                      type: "password",
-                      placeholder: "Confirmar Password",
-                      onChange: (e) => setConfPassword(e.target.value),
-                    }}
-                  />
-                </InputGroup>
-              </Stack>
+              <InputGroup>
+                <Label text="Email" />
+                <Input
+                  input={{
+                    type: "text",
+                    placeholder: "Email",
+                    onChange: (e) => setEmail(e.target.value),
+                    value: Email,
+                  }}
+                />
+              </InputGroup>
+              <InputGroup>
+                <Label text="Password" />
+                <Input
+                  input={{
+                    type: "password",
+                    placeholder: "Password",
+                    onChange: (e) => setPassword(e.target.value),
+                    autoComplete: "on",
+                  }}
+                />
+              </InputGroup>
+              <InputGroup>
+                <Label text="Confirmar Password" />
+                <Input
+                  input={{
+                    type: "password",
+                    placeholder: "Confirmar Password",
+                    onChange: (e) => setConfPassword(e.target.value),
+                  }}
+                />
+              </InputGroup>
               <Button type="submit" className="mt-4">
                 Register
               </Button>
