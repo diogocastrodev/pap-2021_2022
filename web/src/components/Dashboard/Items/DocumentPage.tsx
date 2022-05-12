@@ -132,7 +132,7 @@ export default function DocumentPage(props: props) {
     if (!loading) {
       const timeOutId = setTimeout(() => {
         uploadNewDocumentContent();
-      }, 600);
+      }, 400);
       return () => clearTimeout(timeOutId);
     }
   }, [content]);

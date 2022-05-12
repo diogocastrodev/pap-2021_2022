@@ -1,5 +1,4 @@
 /node_modules
-/images/products/*
-/images/user/*
+/images/*
 
 .env

@@ -1,55 +1,20 @@
-import express, {
-  NextFunction,
-  Request,
-  Response,
-  ErrorRequestHandler,
-} from "express";
-
-import { avatarUpload } from "./controllers/avatarUpload";
-import { productUpload } from "./controllers/productUpload";
+import express, { Request, Response, Router } from "express";
 
 import { checkLogin } from "./libs/checkLogin";
 
-import { uploadAvatar } from "./services/uploadAvatarService";
-import { uploadProducts } from "./services/uploadProductsService";
+import { uploadImages } from "./services/uploadImagesService";
+import { imageUpload } from "./controllers/imageUpload";
 
-import { context } from "../context";
-import { schema } from "../modules";
-import { formatError } from "../utils";
-
-export const router = express.Router();
+export const router = Router();
 
 // Debug
 router.get("/", (req: Request, res: Response) => {
   res.status(200).send("API is alive ✅");
 });
 
-/* GraphQL */
-/* router.use("/graphql", async (req: Request, res: Response) =>
-  graphqlHTTP({
-    context: await context({ req, res }),
-    schema,
-    customFormatErrorFn: formatError,
-    pretty: true,
-  })(req, res)
-); */
-
-/* Image Upload */
-/* router.post(
-  "/upload/avatar",
-  checkLogin,
-  uploadAvatar.single("avatar"),
-  avatarUpload
-);
-
 router.post(
-  "/upload/products",
+  "/upload/images",
   checkLogin,
-  uploadProducts.array("products", 30),
-  productUpload
-); */
-
-/* 404 when page doesn't exist */
-/* router.use("*", (req: Request, res: Response) => {
-  res.status(404).end();
-}); */
+  uploadImages.array("images", 30),
+  imageUpload
+);

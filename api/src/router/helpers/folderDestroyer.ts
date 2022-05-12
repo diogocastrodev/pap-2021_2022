@@ -1,27 +1,31 @@
 import fs from "fs";
 import path from "path";
+import { pathNameForPaths } from "../services/uploadImagesService";
 
 interface props {
-  pathToFolder: string;
   files: Express.Multer.File | Express.Multer.File[];
 }
 
-export default function folderDestroyer({ pathToFolder, files }: props) {
+export default function folderDestroyer({ files }: props) {
   if (Array.isArray(files)) {
     files.forEach((file) => {
-      fs.unlink(path.join(file.path), (err) => {
-        if (err) {
-          console.error(err);
-        }
+      fs.unlinkSync(path.resolve(file.path));
+    });
+
+    files.forEach((file) => {
+      fs.rmSync(path.resolve(file.destination), {
+        recursive: true,
+        force: true,
       });
-      fs.rmSync(file.destination, { recursive: true });
     });
   } else {
-    fs.unlink(path.join(files.path), (err) => {
+    /* fs.unlink(path.join(files.path), (err) => {
       if (err) {
         console.error(err);
+        throw new Error(err.message);
       }
-    });
-    fs.rmSync(files.destination, { recursive: true });
+    }); */
+    console.log("teste");
+    // fs.rmSync(files.destination, { recursive: true });
   }
 }

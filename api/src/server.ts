@@ -39,12 +39,9 @@ const corsOptions: CorsOptions = {
 /*                                 Middleware                                 */
 /* -------------------------------------------------------------------------- */
 
-app.use(router);
-
-// app.use(cors());
-
 app.use(cookieParser());
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 /* -------------------------------------------------------------------------- */
@@ -82,6 +79,12 @@ app.use(
     unset: "destroy",
   })
 );
+
+/* -------------------------------------------------------------------------- */
+/*                                   Router                                   */
+/* -------------------------------------------------------------------------- */
+
+app.use(router);
 
 /* -------------------------------------------------------------------------- */
 /*                                Start Server                                */
@@ -158,3 +161,8 @@ async function start() {
 /* ------------------------------ Start Server ------------------------------ */
 
 start();
+
+// prevent from crashing
+process.on("uncaughtException", (err) => {
+  console.log(err);
+});

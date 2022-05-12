@@ -12,20 +12,18 @@ function fileFilter(
 ) {
   if (
     file.mimetype.split("/")[0] === "image" &&
-    config.images.allowedTypes.includes(
-      file.mimetype.split("/")[1].toLowerCase()
-    )
+    config.images.types.includes(file.mimetype.split("/")[1].toLowerCase())
   ) {
     cb(null, true);
   } else {
     cb(null, false);
     console.log(
-      `✨ Products ✨ Attempt to upload the file: ${file.originalname} (${file.size}) failed`
+      `✨ Products ✨ Attempt to upload the file: ${file.originalname} | type: ${file.mimetype} (${file.size}) failed`
     );
   }
 }
 
-export const pathName = "tmp/products";
+export const pathName = "tmp/images";
 export const pathNameForPaths = "../../../" + pathName;
 
 const storage = multer.diskStorage({
@@ -59,7 +57,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const id = shortid.generate();
     const fileExtension = file.mimetype.split("/")[1];
-    if (config.images.allowedTypes.includes(fileExtension)) {
+    if (config.images.types.includes(fileExtension)) {
       const fileName = `${id}.${fileExtension}`;
       cb(null, fileName);
     } else {
@@ -68,10 +66,10 @@ const storage = multer.diskStorage({
   },
 });
 
-export const uploadProducts = multer({
+export const uploadImages = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: config.images.avatar.maxSize,
+    fileSize: config.images.maxSize,
   },
 });

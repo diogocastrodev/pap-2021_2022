@@ -10,7 +10,6 @@ datasource db {
 model user {
   user_id        String     @id @default(uuid()) @db.VarChar(255)
   public_user_id String     @unique @default(cuid()) @db.VarChar(255)
-  username       String     @unique @db.VarChar(33)
   email          String     @unique @db.VarChar(255)
   password       String     @db.VarChar(255)
   roles          Roles      @default(USER)
@@ -82,6 +81,15 @@ model priority {
   userId      String   @db.VarChar(255)
   user        user     @relation(fields: [userId], references: [user_id])
   todos       todo[]
+}
+
+model cdnImages {
+  image_id     String   @id @default(uuid()) @db.VarChar(255)
+  name         String   @db.Text
+  path         String   @db.Text
+  type         String   @db.VarChar(255)
+  pathWithName String   @db.Text
+  created_at   DateTime @default(now()) @db.Timestamp()
 }
 
 enum Roles {

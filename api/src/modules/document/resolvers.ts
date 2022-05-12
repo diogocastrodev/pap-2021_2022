@@ -86,71 +86,14 @@ export const DocumentResolver: Resolvers<ResolverContext> = {
   Subscription: {
     updatedDocumentContent: {
       // @ts-ignore
-
-      subscribe: async (_parent, args, context, test) => {
-        console.log(context);
-
-        if (!context.is_authed || !context.user_id) {
-          throw new Error("User not authenticated");
-        }
-
-        try {
-          const isUserFile = await db.files.findUnique({
-            where: {
-              file_id: args.id,
-            },
-            select: {
-              fileType: true,
-              document: {
-                select: {
-                  document_id: true,
-                },
-              },
-              folders: {
-                select: {
-                  user: {
-                    select: {
-                      public_user_id: true,
-                    },
-                  },
-                },
-              },
-            },
-          });
-
-          if (
-            !isUserFile ||
-            !isUserFile.document ||
-            !isUserFile.document.document_id
-          )
-            throw new Error("File not found");
-
-          if (isUserFile.fileType !== FileType.Document)
-            throw new Error("File is not a document");
-
-          if (isUserFile.folders.user.public_user_id !== context.user_id)
-            throw new Error("You cannot update other people's files");
-
-          return pubsub.asyncIterator("updatedDocumentContent");
-        } catch (err) {
-          if (err) {
-            const error = err as string;
-
-            if (error.includes("Error: \nInvalid `db.files.findUnique()`")) {
-              throw new Error("File not found");
-            }
-
-            throw new Error(err as string);
-          }
-
-          throw new Error(err as string);
-        }
+      subscribe: (parent, args, context) => {
+        return pubsub.asyncIterator("updatedDocumentContent");
       },
       resolve: async (
         payload: SubUpdatedDocumentContentPayload,
         args: SubUpdatedDocumentContentArgs
       ) => {
-        if (payload.document_id !== args.id) {
+        if (payload.file_id !== args.id) {
           throw new Error("Document ID does not match");
         }
 

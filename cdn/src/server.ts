@@ -16,7 +16,7 @@ const app = express();
 app.use(cors());
 
 const corsOptions: CorsOptions = {
-  origin: config.backend,
+  origin: ["http://localhost:4000", "http://51.68.197.137:4000/"],
 };
 
 app.post(
@@ -26,16 +26,8 @@ app.post(
   uploadImages.array("images"),
   UploadImages
 );
-app.post(
-  "/upload/avatar",
-  cors(corsOptions),
-  checkPrivateKeyAPI_CDN,
-  uploadAvatar.single("avatar"),
-  UploadAvatar
-);
 
-app.use("/img/images/:folder/:id", imagesPage);
-app.use("/img/avatar/:folder", avatarPage);
+app.use("/images/upload/:folder/:id", imagesPage);
 
 app.use((req, res, next) => {
   res.status(404).end();
@@ -43,4 +35,9 @@ app.use((req, res, next) => {
 
 app.listen(config.port, () => {
   console.log(`🚀 Server started at http://localhost:${config.port}`);
+});
+
+// prevent from crashing
+process.on("uncaughtException", (err) => {
+  console.log(err);
 });

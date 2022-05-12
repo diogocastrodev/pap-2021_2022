@@ -9,9 +9,14 @@ export async function checkLogin(
   const ctx = await context({ req, res });
 
   /* Check if user's authed */
-  if (!ctx.is_authed || !ctx.user_id || typeof ctx.user_id === "undefined")
-    res.status(401).send("Unauthorized");
-
-  /* User authenticated */
-  next();
+  if (
+    ctx.is_authed &&
+    typeof ctx.is_authed !== "undefined" &&
+    ctx.user_id &&
+    typeof ctx.user_id !== "undefined"
+  ) {
+    next();
+  } else {
+    res.status(401).send("Unauthorized").end();
+  }
 }

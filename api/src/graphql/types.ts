@@ -224,7 +224,6 @@ export type QueryGetTodosByPriorityArgs = {
 export type RegisterInput = {
   email: Scalars['String'];
   password: Scalars['String'];
-  username: Scalars['String'];
 };
 
 export type Subscription = {
@@ -264,7 +263,6 @@ export type User = {
   status: UserStatus;
   updated_at: Scalars['DateTime'];
   user_id: Scalars['ID'];
-  username: Scalars['String'];
 };
 
 export enum UserStatus {
@@ -596,7 +594,6 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   status?: Resolver<ResolversTypes['UserStatus'], ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

@@ -75,12 +75,7 @@ export const UserResolvers: Resolvers<ResolverContext> = {
     },
 
     register: async (_parent, args, _context) => {
-      if (
-        !args.data ||
-        !args.data.email ||
-        !args.data.password ||
-        !args.data.username
-      )
+      if (!args.data || !args.data.email || !args.data.password)
         throw new Error("Email or password is missing");
 
       const hash = await createHash(args.data.email);
@@ -89,7 +84,6 @@ export const UserResolvers: Resolvers<ResolverContext> = {
         data: {
           email: args.data.email.toString(),
           password: await createPassword(args.data.password.toString()),
-          username: args.data.username.toString(),
           hash: hash.toString(),
         },
       });
