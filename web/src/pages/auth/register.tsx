@@ -34,10 +34,8 @@ export default function RegisterPage() {
               if (Password === ConfPassword) {
                 gqlClient
                   .request(registerMutation, {
-                    variables: {
-                      email: Email,
-                      password: Password,
-                    },
+                    email: Email,
+                    password: Password,
                   })
                   .then(() => {
                     routes.redirect("/auth/login");

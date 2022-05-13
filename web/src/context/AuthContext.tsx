@@ -105,10 +105,8 @@ const AuthProvider = ({ children }: Props) => {
     /* Login mutation, the Backend will check if user inserted Email or Username, so we don't need to check there  */
     await gqlClient
       .request(loginMutation, {
-        data: {
-          email: EmailUsername,
-          password: password,
-        },
+        email: EmailUsername,
+        password: password,
       })
       .then((res) => {
         /* There is data */

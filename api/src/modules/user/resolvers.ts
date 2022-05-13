@@ -15,25 +15,6 @@ export const UserResolvers: Resolvers<ResolverContext> = {
           where: {
             public_user_id: user_id,
           },
-          include: {
-            todo: {
-              include: {
-                priority: true,
-                files: true,
-              },
-            },
-            priority: true,
-            folders: {
-              include: {
-                files: {
-                  include: {
-                    document: true,
-                    todos: true,
-                  },
-                },
-              },
-            },
-          },
         });
 
         if (!user) throw new Error("User not found");
