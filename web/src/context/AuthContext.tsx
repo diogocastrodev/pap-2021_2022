@@ -126,15 +126,24 @@ const AuthProvider = ({ children }: Props) => {
         throw new Error(err as string);
       });
   };
-  const logout = () => {
+  const logout = async () => {
     // Destroy the session
-    gqlClient.request(logoutMutation);
-    /* Not logged in anymore */
-    AuthData.is_logged = false;
-    /* Delete user previous data */
-    AuthData.user = undefined;
-    /* Reload Page and then the page will redirect automatic */
-    routes.redirect("/");
+    await gqlClient
+      .request(logoutMutation)
+      .then((res) => {
+        if (res.logout) {
+          setAuthData({
+            is_logged: false,
+            user: undefined,
+            loading: false,
+          });
+          /* Reload Page and then the page will redirect automatic */
+          routes.redirect("/");
+        }
+      })
+      .catch((err) => {
+        throw new Error(err as string);
+      });
   };
 
   /* Run every time opens any page */
