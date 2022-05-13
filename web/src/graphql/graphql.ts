@@ -14,18 +14,12 @@ export type Scalars = {
   DateTime: any;
 };
 
-export enum ColorStyle {
-  Hex = 'HEX',
-  Rgb = 'RGB',
-  Rgba = 'RGBA'
-}
-
 export type Document = {
   __typename?: 'Document';
   content: Scalars['String'];
   created_at?: Maybe<Scalars['DateTime']>;
   document_id: Scalars['ID'];
-  file_id: Scalars['ID'];
+  files?: Maybe<Files>;
   updated_at?: Maybe<Scalars['DateTime']>;
 };
 
@@ -37,10 +31,10 @@ export enum FileType {
 export type Files = {
   __typename?: 'Files';
   created_at: Scalars['DateTime'];
-  document?: Maybe<Array<Maybe<Document>>>;
+  document?: Maybe<Document>;
   fileType: FileType;
   file_id: Scalars['ID'];
-  folder_id: Scalars['ID'];
+  folders?: Maybe<Folders>;
   name: Scalars['String'];
   todos?: Maybe<Array<Maybe<Todo>>>;
   updated_at: Scalars['DateTime'];
@@ -49,7 +43,6 @@ export type Files = {
 export type Folders = {
   __typename?: 'Folders';
   color: Scalars['String'];
-  color_style: ColorStyle;
   created_at: Scalars['DateTime'];
   files?: Maybe<Array<Maybe<Files>>>;
   folder_id: Scalars['ID'];
@@ -57,15 +50,8 @@ export type Folders = {
   name: Scalars['String'];
   parent_folder?: Maybe<Folders>;
   parent_id?: Maybe<Scalars['ID']>;
-  todos?: Maybe<Array<Maybe<Todo>>>;
   updated_at: Scalars['DateTime'];
   user?: Maybe<User>;
-  user_id: Scalars['String'];
-};
-
-export type LoginInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
 };
 
 export type Mutation = {
@@ -73,63 +59,104 @@ export type Mutation = {
   createFile?: Maybe<Files>;
   createFolder?: Maybe<Folders>;
   createPriority: Priority;
-  createTodo?: Maybe<Todo>;
+  createTodo: Todo;
   deletePriority: Scalars['Boolean'];
-  login?: Maybe<Scalars['String']>;
-  register?: Maybe<Scalars['String']>;
+  deleteTodo: Scalars['Boolean'];
+  login?: Maybe<Scalars['Boolean']>;
+  logout?: Maybe<Scalars['Boolean']>;
+  register?: Maybe<Scalars['Boolean']>;
+  updateDocument: Scalars['Boolean'];
   updatePriority: Priority;
+  updateTodo: Todo;
+  verifyHash?: Maybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateFileArgs = {
-  data: CreateFileInput;
+  fileType: FileType;
+  folder_id: Scalars['ID'];
+  name: Scalars['String'];
 };
 
 
 export type MutationCreateFolderArgs = {
-  data: CreateFolderInput;
+  color?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  parent_id?: InputMaybe<Scalars['ID']>;
 };
 
 
 export type MutationCreatePriorityArgs = {
-  data: CreatePriorityInput;
+  color: Scalars['String'];
+  name: Scalars['String'];
+  order: Scalars['Int'];
 };
 
 
 export type MutationCreateTodoArgs = {
-  data: CreateTodoInput;
+  date?: InputMaybe<Scalars['DateTime']>;
+  file?: InputMaybe<Scalars['ID']>;
+  name: Scalars['String'];
+  priority?: InputMaybe<Scalars['ID']>;
 };
 
 
 export type MutationDeletePriorityArgs = {
-  data: DeletePriorityInput;
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteTodoArgs = {
+  id: Scalars['ID'];
 };
 
 
 export type MutationLoginArgs = {
-  data: LoginInput;
+  email: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
 export type MutationRegisterArgs = {
-  data: RegisterInput;
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+
+export type MutationUpdateDocumentArgs = {
+  content: Scalars['String'];
+  id: Scalars['ID'];
 };
 
 
 export type MutationUpdatePriorityArgs = {
-  data: UpdatePriorityInput;
+  color?: InputMaybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name?: InputMaybe<Scalars['String']>;
+  order?: InputMaybe<Scalars['Int']>;
 };
 
-export enum Permissions {
-  Admin = 'ADMIN',
-  User = 'USER'
-}
+
+export type MutationUpdateTodoArgs = {
+  date?: InputMaybe<Scalars['DateTime']>;
+  file?: InputMaybe<Scalars['ID']>;
+  id: Scalars['ID'];
+  name?: InputMaybe<Scalars['String']>;
+  priority?: InputMaybe<Scalars['ID']>;
+  status?: InputMaybe<TodoStatus>;
+};
+
+
+export type MutationVerifyHashArgs = {
+  hash: Scalars['String'];
+};
 
 export type Priority = {
   __typename?: 'Priority';
   color: Scalars['String'];
   created_at: Scalars['DateTime'];
   name: Scalars['String'];
+  order: Scalars['Int'];
   priority_id: Scalars['ID'];
   todos?: Maybe<Array<Maybe<Todo>>>;
   updated_at: Scalars['DateTime'];
@@ -139,17 +166,27 @@ export type Priority = {
 export type Query = {
   __typename?: 'Query';
   checkToken?: Maybe<Scalars['Boolean']>;
-  getAllTodos?: Maybe<Array<Maybe<Todo>>>;
+  getDocumentContent: Scalars['String'];
   getFileContent?: Maybe<Files>;
   getFilesByFolder?: Maybe<Array<Maybe<Files>>>;
+  getFolderById?: Maybe<Folders>;
+  getTodo?: Maybe<Todo>;
+  getTodos: Array<Maybe<Todo>>;
+  getTodosByFolder: Array<Maybe<Todo>>;
+  getTodosByPriority: Array<Maybe<Todo>>;
   me?: Maybe<User>;
   priorities: Array<Maybe<Priority>>;
-  userFolders?: Maybe<ReturnFolders>;
+  userFolders: Array<Maybe<ExportedData>>;
+};
+
+
+export type QueryGetDocumentContentArgs = {
+  id: Scalars['ID'];
 };
 
 
 export type QueryGetFileContentArgs = {
-  data: GetFileContentInput;
+  fileId: Scalars['ID'];
 };
 
 
@@ -157,18 +194,49 @@ export type QueryGetFilesByFolderArgs = {
   folderId: Scalars['ID'];
 };
 
-export type RegisterInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-  username: Scalars['String'];
+
+export type QueryGetFolderByIdArgs = {
+  folderId: Scalars['ID'];
+};
+
+
+export type QueryGetTodoArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryGetTodosByFolderArgs = {
+  folder: Scalars['ID'];
+};
+
+
+export type QueryGetTodosByPriorityArgs = {
+  priority: Scalars['ID'];
+};
+
+export enum Roles {
+  Admin = 'ADMIN',
+  User = 'USER'
+}
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  updatedDocumentContent: Scalars['String'];
+};
+
+
+export type SubscriptionUpdatedDocumentContentArgs = {
+  id: Scalars['ID'];
 };
 
 export type Todo = {
   __typename?: 'Todo';
   created_at?: Maybe<Scalars['DateTime']>;
-  file_id: Scalars['ID'];
-  status?: Maybe<TodoStatus>;
-  todoText: Scalars['String'];
+  date?: Maybe<Scalars['DateTime']>;
+  files?: Maybe<Array<Maybe<Files>>>;
+  priority?: Maybe<Priority>;
+  status: TodoStatus;
+  text: Scalars['String'];
   todo_id: Scalars['ID'];
   updated_at?: Maybe<Scalars['DateTime']>;
   user?: Maybe<User>;
@@ -177,21 +245,22 @@ export type Todo = {
 export enum TodoStatus {
   Active = 'ACTIVE',
   Deleted = 'DELETED',
-  Done = 'DONE'
+  Done = 'DONE',
+  Dumped = 'DUMPED'
 }
 
 export type User = {
   __typename?: 'User';
   created_at: Scalars['DateTime'];
   email: Scalars['String'];
+  folders?: Maybe<Array<Maybe<Folders>>>;
   hash?: Maybe<Scalars['String']>;
-  password: Scalars['String'];
-  permissions: Permissions;
+  priority?: Maybe<Array<Maybe<Priority>>>;
   public_user_id: Scalars['ID'];
+  roles: Roles;
   status: UserStatus;
+  todo?: Maybe<Array<Maybe<Todo>>>;
   updated_at: Scalars['DateTime'];
-  user_id: Scalars['ID'];
-  username: Scalars['String'];
 };
 
 export enum UserStatus {
@@ -200,57 +269,17 @@ export enum UserStatus {
   Pending = 'PENDING'
 }
 
-export type CreateFileInput = {
-  fileType?: InputMaybe<FileType>;
-  folder_id: Scalars['ID'];
-  name: Scalars['String'];
-};
-
-export type CreateFolderInput = {
-  color?: InputMaybe<Scalars['String']>;
-  color_style?: InputMaybe<ColorStyle>;
-  name: Scalars['String'];
-  parent_id?: InputMaybe<Scalars['ID']>;
-};
-
-export type CreatePriorityInput = {
-  color: Scalars['String'];
-  name: Scalars['String'];
-};
-
-export type CreateTodoInput = {
-  file_id?: InputMaybe<Scalars['ID']>;
-  todoText: Scalars['String'];
-};
-
-export type DeletePriorityInput = {
-  id: Scalars['ID'];
-};
-
 export type ExportedData = {
   __typename?: 'exportedData';
   children?: Maybe<Array<Maybe<ExportedData>>>;
   color: Scalars['String'];
-  color_style: ColorStyle;
-  depth: Scalars['Int'];
-  files: Array<Maybe<Files>>;
+  files?: Maybe<Array<Maybe<Files>>>;
   folder_id: Scalars['ID'];
   name: Scalars['String'];
-  parent_id: Scalars['ID'];
-};
-
-export type GetFileContentInput = {
-  fileId: Scalars['ID'];
+  parent_id?: Maybe<Scalars['ID']>;
 };
 
 export type ReturnFolders = {
   __typename?: 'returnFolders';
   folders: Array<Maybe<ExportedData>>;
-  folders_amount: Scalars['Int'];
-};
-
-export type UpdatePriorityInput = {
-  color?: InputMaybe<Scalars['String']>;
-  id: Scalars['ID'];
-  name?: InputMaybe<Scalars['String']>;
 };

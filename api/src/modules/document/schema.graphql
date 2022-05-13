@@ -20,5 +20,5 @@ type Document {
   created_at: DateTime
   updated_at: DateTime
 
-  file_id: ID!
+  files: Files
 }

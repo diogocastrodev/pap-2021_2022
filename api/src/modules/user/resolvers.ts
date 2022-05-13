@@ -2,70 +2,81 @@ import { AuthenticationError } from "apollo-server-errors";
 import { ResolverContext } from "../../context";
 import { Resolvers } from "../../graphql/types";
 import { db } from "../../database";
-import {
-  verifyPassword,
-  createPassword,
-  getUserByPublicId,
-  createHash,
-} from "./helpers";
-import * as jwt from "jsonwebtoken";
-import { config } from "../../utils";
-
-// @ts-ignore
-import cookie from "cookie";
-// @ts-ignore
-import bcrypt from "bcrypt";
+import { verifyPassword, createPassword, getUserByPublicId } from "./helpers";
 
 // TODO: Add context to resolver
 export const UserResolvers: Resolvers<ResolverContext> = {
   Query: {
-    me: async (_parent, _args, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new AuthenticationError("no login");
+    me: async (_, __, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new AuthenticationError("no login");
 
-      const user = await getUserByPublicId(context.user_id.toString());
+      try {
+        const user = await db.user.findUnique({
+          where: {
+            public_user_id: user_id,
+          },
+          include: {
+            todo: {
+              include: {
+                priority: true,
+                files: true,
+              },
+            },
+            priority: true,
+            folders: {
+              include: {
+                files: {
+                  include: {
+                    document: true,
+                    todos: true,
+                  },
+                },
+              },
+            },
+          },
+        });
 
-      if (!user) throw new Error("User not found");
+        if (!user) throw new Error("User not found");
 
-      return user;
+        return user;
+      } catch (e) {
+        throw new Error(e as string);
+      }
     },
-    checkToken: async (_parent, _args, context) => {
+    checkToken: async (_, __, context) => {
       return context.is_authed;
     },
   },
   Mutation: {
-    login: async (_parent, args, context) => {
-      if (!args.data || !args.data.email || !args.data.password)
-        throw new Error("Email or password is missing");
+    login: async (_, { email, password }, { is_authed, user_id, request }) => {
+      if (is_authed && user_id)
+        throw new AuthenticationError("already logged in");
 
       const userData = await db.user.findUnique({
         where: {
-          email: args.data.email.toString(),
+          email: email.toString(),
         },
       });
 
       if (!userData) throw new Error("User not found");
 
-      const isPasswordValid = verifyPassword(
-        args.data.password,
-        userData.password
-      );
+      const isPasswordValid = verifyPassword(password, userData.password);
 
       if (!isPasswordValid) throw new Error("Invalid password");
 
-      const token = jwt.sign(
+      /* const token = jwt.sign(
         {
           user_id: userData.public_user_id,
         },
         config.TOKEN_SECRET
       );
 
-      if (!token) throw new Error("Error signing token");
+      if (!token) throw new Error("Error signing token"); */
 
-      context.request.session.is_logged = true;
-      context.request.session.public_user_id = userData.public_user_id;
+      request.session.is_logged = true;
+      request.session.public_user_id = userData.public_user_id;
 
-      context.request.session.save();
+      request.session.save();
 
       //createSessionInDb(context.request.session.id, userData.public_user_id);
 
@@ -74,17 +85,14 @@ export const UserResolvers: Resolvers<ResolverContext> = {
       return true;
     },
 
-    register: async (_parent, args, _context) => {
-      if (!args.data || !args.data.email || !args.data.password)
-        throw new Error("Email or password is missing");
-
-      const hash = await createHash(args.data.email);
+    register: async (_, { email, password }, { is_authed, user_id }) => {
+      if (is_authed && user_id)
+        throw new AuthenticationError("already logged in");
 
       const createdUser = await db.user.create({
         data: {
-          email: args.data.email.toString(),
-          password: await createPassword(args.data.password.toString()),
-          hash: hash.toString(),
+          email: email.toString(),
+          password: await createPassword(password.toString()),
         },
       });
 
@@ -92,11 +100,10 @@ export const UserResolvers: Resolvers<ResolverContext> = {
 
       return true;
     },
-    logout: async (_parent, _args, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("User not logged in");
+    logout: async (_, __, { is_authed, user_id, request }) => {
+      if (!is_authed || !user_id) throw new Error("User not logged in");
 
-      context.request.session.destroy((err) => {
+      request.session.destroy((err) => {
         if (err) throw new Error(err);
       });
 

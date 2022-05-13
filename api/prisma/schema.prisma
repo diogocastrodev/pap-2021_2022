@@ -13,7 +13,7 @@ model user {
   email          String     @unique @db.VarChar(255)
   password       String     @db.VarChar(255)
   roles          Roles      @default(USER)
-  status         UserStatus @default(PENDING)
+  status         UserStatus @default(ACTIVE)
   hash           String?    @default(uuid())
   created_at     DateTime   @default(now()) @db.Timestamp(6)
   updated_at     DateTime   @updatedAt @db.Timestamp(6)
@@ -23,18 +23,17 @@ model user {
 }
 
 model folders {
-  folder_id     String     @id @default(uuid()) @db.VarChar(255)
-  name          String     @db.VarChar(80)
-  color         String     @default("0 0 0 0") @db.VarChar(20)
-  color_style   ColorStyle @default(RGBA)
-  created_at    DateTime   @default(now()) @db.Timestamp(6)
-  updated_at    DateTime   @updatedAt @db.Timestamp(6)
-  parent_id     String?    @db.VarChar(255)
-  user_id       String     @db.VarChar(255)
-  parent_folder folders?   @relation("subfolder", fields: [parent_id], references: [folder_id])
-  user          user       @relation(fields: [user_id], references: [user_id])
+  folder_id     String    @id @default(uuid()) @db.VarChar(255)
+  name          String    @db.VarChar(80)
+  color         String    @default("#5F5F5F") @db.VarChar(7)
+  created_at    DateTime  @default(now()) @db.Timestamp(6)
+  updated_at    DateTime  @updatedAt @db.Timestamp(6)
+  parent_id     String?   @db.VarChar(255)
+  user_id       String    @db.VarChar(255)
+  parent_folder folders?  @relation("subfolder", fields: [parent_id], references: [folder_id])
+  user          user      @relation(fields: [user_id], references: [user_id])
   files         files[]
-  folders       folders[]  @relation("subfolder")
+  folders       folders[] @relation("subfolder")
 }
 
 model files {
@@ -51,7 +50,7 @@ model files {
 
 model document {
   document_id String   @id @default(uuid()) @db.VarChar(255)
-  content     String
+  content     String   @db.Text
   created_at  DateTime @default(now()) @db.Timestamp(6)
   updated_at  DateTime @updatedAt @db.Timestamp(6)
   file_id     String   @unique @db.VarChar(255)
@@ -60,8 +59,9 @@ model document {
 
 model todo {
   todo_id             String     @id @default(uuid()) @db.VarChar(255)
-  todoText            String
-  status              TodoStatus
+  text                String     @db.Text
+  date                DateTime?  @db.Timestamp(6)
+  status              TodoStatus @default(ACTIVE)
   created_at          DateTime   @default(now()) @db.Timestamp(6)
   updated_at          DateTime   @updatedAt @db.Timestamp(6)
   user_id             String     @db.VarChar(255)
@@ -75,7 +75,8 @@ model todo {
 model priority {
   priority_id String   @id @default(uuid()) @db.VarChar(255)
   name        String   @db.VarChar(80)
-  color       String   @db.VarChar(6)
+  color       String   @default("#5F5F5F") @db.VarChar(7)
+  order       Int      @default(0) @db.SmallInt()
   created_at  DateTime @default(now()) @db.Timestamp(6)
   updated_at  DateTime @updatedAt @db.Timestamp(6)
   userId      String   @db.VarChar(255)
@@ -93,29 +94,24 @@ model cdnImages {
 }
 
 enum Roles {
-  ADMIN
-  USER
+  ADMIN // admin user
+  USER // normal user
 }
 
 enum UserStatus {
-  ACTIVE
-  INACTIVE
-  PENDING
-}
-
-enum ColorStyle {
-  RGBA
-  RGB
-  HEX
+  ACTIVE // Available to login
+  INACTIVE // Not available to login
+  PENDING // Pending email confirmation
 }
 
 enum fileType {
-  TODO
-  Document
+  TODO // List of Todos
+  Document // Document type
 }
 
 enum TodoStatus {
-  ACTIVE
-  DONE
-  DELETED
+  ACTIVE // To be done
+  DONE // DONE
+  DELETED // deleted by user but can be restored
+  DUMPED // After deleted
 }

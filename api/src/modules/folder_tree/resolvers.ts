@@ -1,61 +1,53 @@
-import {
-  Folders,
-  GetFolder,
-  Resolvers,
-  ReturnFolders,
-} from "../../graphql/types";
+import { Folders, Resolvers, ReturnFolders } from "../../graphql/types";
 import { ResolverContext } from "../../context";
 import { AuthenticationError } from "apollo-server-errors";
 import { db } from "../../database";
-import { createDataTree, getDepth } from "./helpers";
+import { createDataTree } from "./helpers";
 import { files, folders } from "@prisma/client";
 import { getUserByPublicId } from "../user/helpers";
 
 export const FolderResolver: Resolvers<ResolverContext> = {
   Query: {
-    userFolders: async (_parent, _args, context) => {
-      if (!context.is_authed || typeof context.user_id === "undefined")
+    // @ts-ignore
+    userFolders: async (_, __, { is_authed, user_id }) => {
+      if (!is_authed || typeof user_id === "undefined")
         throw new AuthenticationError("no login");
 
-      const userFolders: (folders & {
-        files: files[];
-      })[] = await db.folders.findMany({
-        where: {
-          user: {
-            public_user_id: context.user_id.toString(),
+      try {
+        const userFolders = await db.folders.findMany({
+          where: {
+            user: {
+              public_user_id: user_id.toString(),
+            },
           },
-        },
-        orderBy: {
-          name: "asc",
-        },
-        include: {
-          files: true,
-        },
-      });
+          orderBy: {
+            name: "asc",
+          },
+          include: {
+            files: true,
+          },
+        });
 
-      // replace parent_id null with empty string
-      userFolders.forEach((folder) => {
-        if (folder.parent_id === null) folder.parent_id = "";
-      });
+        // replace parent_id null with empty string
+        userFolders.forEach((folder) => {
+          if (folder.parent_id === null) folder.parent_id = "";
+        });
 
-      let userFolders_array: ReturnFolders = {
-        folders: [],
-        folders_amount: 0,
-      };
+        const finalFolders = createDataTree(userFolders as Folders[]);
 
-      userFolders_array.folders = createDataTree(userFolders);
-      userFolders_array.folders_amount = getDepth(userFolders_array.folders);
-
-      return userFolders_array;
+        return finalFolders;
+      } catch (e) {
+        throw new Error(e as string);
+      }
     },
-    getFilesByFolder: async (_parent, args, context) => {
-      if (!context.is_authed || typeof context.user_id === "undefined")
+    getFilesByFolder: async (_, { folderId }, { is_authed, user_id }) => {
+      if (!is_authed || typeof user_id === "undefined")
         throw new AuthenticationError("no login");
 
       try {
         const folder = await db.folders.findUnique({
           where: {
-            folder_id: args.folderId,
+            folder_id: folderId,
           },
           select: {
             user: {
@@ -68,37 +60,30 @@ export const FolderResolver: Resolvers<ResolverContext> = {
 
         if (!folder) throw new Error("folder not found");
 
-        if (
-          folder.user.public_user_id.toString() !== context.user_id.toString()
-        )
+        if (folder.user.public_user_id.toString() !== user_id.toString())
           throw new AuthenticationError("no access");
-      } catch (err) {
-        throw new Error(err as string);
-      }
 
-      let files: files[] = [];
-      try {
-        files = await db.files.findMany({
+        const files = await db.files.findMany({
           where: {
-            folder_id: args.folderId,
+            folder_id: folderId,
           },
         });
 
         if (!files) throw new Error("folder not found");
+
+        return files;
       } catch (err) {
         throw new Error(err as string);
       }
-
-      return files;
     },
-    getFolderById: async (_parent, args, context) => {
-      if (!context.is_authed || typeof context.user_id === "undefined")
+    getFolderById: async (_, { folderId }, { is_authed, user_id }) => {
+      if (!is_authed || typeof user_id === "undefined")
         throw new Error("no login");
 
       try {
         const folder = await db.folders.findUnique({
           where: {
-            folder_id: args.folderId,
+            folder_id: folderId,
           },
           include: {
             user: true,
@@ -109,9 +94,7 @@ export const FolderResolver: Resolvers<ResolverContext> = {
 
         if (!folder) throw new Error("folder not found");
 
-        if (
-          folder.user.public_user_id.toString() !== context.user_id.toString()
-        )
+        if (folder.user.public_user_id.toString() !== user_id.toString())
           throw new Error("no access");
 
         return folder;
@@ -121,19 +104,21 @@ export const FolderResolver: Resolvers<ResolverContext> = {
     },
   },
   Mutation: {
-    createFolder: async (_parent, args, context) => {
-      if (!context.is_authed || context.user_id === undefined)
+    createFolder: async (
+      _,
+      { name, color, parent_id },
+      { is_authed, user_id }
+    ) => {
+      if (!is_authed || user_id === undefined)
         throw new AuthenticationError("no login");
 
-      if (args.data.name === "") throw new Error("name is empty");
-
-      let folder: folders;
+      if (name === "") throw new Error("name is empty");
 
       try {
-        if (args.data.parent_id) {
+        if (parent_id) {
           const parent = await db.folders.findUnique({
             where: {
-              folder_id: args.data.parent_id,
+              folder_id: parent_id,
             },
             select: {
               user: {
@@ -146,30 +131,56 @@ export const FolderResolver: Resolvers<ResolverContext> = {
 
           if (!parent) throw new Error("Parent folder not found");
 
-          if (parent.user.public_user_id !== context.user_id.toString())
+          if (parent.user.public_user_id !== user_id.toString())
             throw new Error("You can't create folder in this folder");
         }
 
-        const userId = await getUserByPublicId(context.user_id.toString());
+        interface CreateFolder {
+          name: string;
+          color?: string;
+          user: {
+            connect: {
+              public_user_id: string;
+            };
+          };
+          parent_folder?: {
+            connect: {
+              folder_id: string;
+            };
+          };
+        }
 
-        if (!userId) throw new Error("User not found");
-
-        folder = await db.folders.create({
-          data: {
-            user_id: userId.user_id,
-            name: args.data.name,
-            parent_id: args.data.parent_id || null,
-            color: args.data.color ? args.data.color : "#AAA",
-            color_style: args.data.color_style ? args.data.color_style : "HEX",
+        let data: CreateFolder = {
+          name,
+          color: color || undefined,
+          user: {
+            connect: {
+              public_user_id: user_id,
+            },
           },
+        };
+
+        if (parent_id) {
+          data = {
+            ...data,
+            parent_folder: {
+              connect: {
+                folder_id: parent_id,
+              },
+            },
+          };
+        }
+
+        const folder = await db.folders.create({
+          data,
         });
+
+        if (!folder) throw new Error("Failed creating folder");
+
+        return folder;
       } catch (e) {
         throw new Error("Failed creating folder");
       }
-
-      if (!folder) throw new Error("Failed creating folder");
-
-      return folder;
     },
   },
 };

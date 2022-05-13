@@ -8,55 +8,20 @@ type Query {
 }
 
 type Mutation {
-  createPriority(data: createPriorityInput!): Priority!
-  updatePriority(data: updatePriorityInput!): Priority!
-  deletePriority(data: deletePriorityInput!): Boolean!
+  createPriority(name: String!, color: String!, order: Int!): Priority!
+  updatePriority(id: ID!, name: String, color: String, order: Int): Priority!
+  deletePriority(id: ID!): Boolean!
 
-  createTodo(data: createTodoInput!): Todo!
-  updateTodo(data: updateTodoInput!): Todo!
-  deleteTodo(data: deleteTodoInput!): Boolean!
-  changeTodoPriority(data: changeTodoPriorityInput!): Todo!
-}
-
-# Mutation - Priorities - Inputs
-
-input createPriorityInput {
-  name: String!
-  color: String!
-}
-
-input updatePriorityInput {
-  id: ID!
-  name: String
-  color: String
-}
-
-input deletePriorityInput {
-  id: ID!
-}
-
-# Mutation - Todo - Inputs
-
-input createTodoInput {
-  name: String!
-  priority: ID!
-  file: ID
-}
-
-input updateTodoInput {
-  id: ID!
-  name: String
-  priority: ID
-  file: ID
-}
-
-input deleteTodoInput {
-  id: ID!
-}
-
-input changeTodoPriorityInput {
-  id: ID!
-  priority: ID!
+  createTodo(name: String!, date: DateTime, priority: ID, file: ID): Todo!
+  updateTodo(
+    id: ID!
+    name: String
+    date: DateTime
+    status: TodoStatus
+    priority: ID
+    file: ID
+  ): Todo!
+  deleteTodo(id: ID!): Boolean!
 }
 
 # Types
@@ -64,28 +29,31 @@ input changeTodoPriorityInput {
 type Todo {
   todo_id: ID!
 
-  todoText: String!
-
-  status: TodoStatus
+  text: String!
+  date: DateTime
+  status: TodoStatus!
 
   created_at: DateTime
   updated_at: DateTime
 
+  files: [Files]
   user: User
-
-  file_id: ID!
+  priority: Priority
 }
 
 enum TodoStatus {
   ACTIVE
   DONE
   DELETED
+  DUMPED
 }
 
 type Priority {
   priority_id: ID!
+
   name: String!
   color: String!
+  order: Int!
 
   created_at: DateTime!
   updated_at: DateTime!

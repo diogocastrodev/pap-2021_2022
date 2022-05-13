@@ -1,44 +1,29 @@
 scalar DateTime
 
 type Query {
-  userFolders: returnFolders
+  userFolders: [exportedData]!
   getFilesByFolder(folderId: ID!): [Files]
   getFolderById(folderId: ID!): Folders
 }
 
 type Mutation {
-  createFolder(data: createFolderInput!): Folders
-}
-
-input createFolderInput {
-  name: String!
-  parent_id: ID
-  color: String
-  color_style: ColorStyle
-}
-
-type getFolder {
-  folder: Folders
-  children: [Folders]!
+  createFolder(name: String!, parent_id: ID, color: String): Folders
 }
 
 type returnFolders {
   folders: [exportedData]!
-  folders_amount: Int!
 }
 
 type exportedData {
   folder_id: ID!
-  parent_id: ID!
+  parent_id: ID
   name: String!
 
   color: String!
-  color_style: ColorStyle!
 
   children: [exportedData]
-  depth: Int!
 
-  files: [Files]!
+  files: [Files]
 }
 
 type Folders {
@@ -46,7 +31,6 @@ type Folders {
   name: String!
 
   color: String!
-  color_style: ColorStyle!
 
   created_at: DateTime!
   updated_at: DateTime!
@@ -58,10 +42,4 @@ type Folders {
   user: User
 
   files: [Files]
-}
-
-enum ColorStyle {
-  RGBA
-  RGB
-  HEX
 }

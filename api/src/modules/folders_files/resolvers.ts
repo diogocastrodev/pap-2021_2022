@@ -1,20 +1,19 @@
 import { document, files, fileType, folders, todo, user } from "@prisma/client";
 import { ResolverContext } from "../../context";
 import { db } from "../../database";
-import { Resolvers } from "../../graphql/types";
+import { Files, FileType, Resolvers } from "../../graphql/types";
 import { getUserByPublicId } from "../user/helpers";
 
 export const FolderFilesResolver: Resolvers<ResolverContext> = {
   Query: {
-    getFileContent: async (_parent, args, context) => {
-      if (!context.user_id || !context.is_authed)
-        throw new Error("User not authenticated");
+    getFileContent: async (_, { fileId }, { is_authed, user_id }) => {
+      if (!user_id || !is_authed) throw new Error("User not authenticated");
 
       // Get File Content
       try {
         const fileContent = await db.files.findUnique({
           where: {
-            file_id: args.data.fileId,
+            file_id: fileId,
           },
           include: {
             folders: {
@@ -28,10 +27,7 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
         });
 
         // Check if user can access the file
-        if (
-          fileContent &&
-          fileContent.folders.user.public_user_id !== context.user_id
-        )
+        if (fileContent && fileContent.folders.user.public_user_id !== user_id)
           throw new Error("You cannot check other people's files content");
 
         return fileContent;
@@ -51,22 +47,25 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
     },
   },
   Mutation: {
-    createFile: async (_parent, args, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("User not authenticated");
-
-      let newFile: files | null = null;
+    createFile: async (
+      _,
+      { name, fileType, folder_id },
+      { is_authed, user_id }
+    ) => {
+      if (!is_authed || !user_id) throw new Error("User not authenticated");
 
       try {
-        newFile = await db.files.create({
+        const newFile = await db.files.create({
           data: {
-            name: args.data.name,
-            fileType: args.data.fileType || fileType.Document,
-            folder_id: args.data.folder_id,
+            name: name,
+            fileType: fileType,
+            folder_id: folder_id,
           },
         });
 
-        if (args.data.fileType === fileType.Document) {
+        if (!newFile) throw new Error("Internal Error");
+
+        if (fileType === FileType.Document) {
           const newDocument = await db.document.create({
             data: {
               content: "",
@@ -79,12 +78,8 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
 
         return newFile;
       } catch (err) {
-        console.log(err);
+        throw new Error(err as string);
       }
-
-      if (!newFile) throw new Error("Internal Error");
-
-      return newFile;
     },
   },
 };

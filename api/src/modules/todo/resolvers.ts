@@ -4,23 +4,21 @@ import { db } from "../../database";
 
 export const TodoResolver: Resolvers<ResolverContext> = {
   Query: {
-    priorities: async (_, __, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    priorities: async (_, __, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       const priorities = await db.priority.findMany({
         where: {
           user: {
-            public_user_id: context.user_id,
+            public_user_id: user_id,
           },
         },
       });
 
       return priorities;
     },
-    getTodo: async (_, { id }, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    getTodo: async (_, { id }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       const todo = await db.todo.findUnique({
         where: {
@@ -38,19 +36,17 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       if (!todo) throw new Error("Todo not found");
 
-      if (todo.user.public_user_id !== context.user_id)
-        throw new Error("Unauthorized");
+      if (todo.user.public_user_id !== user_id) throw new Error("Unauthorized");
 
       return todo;
     },
-    getTodos: async (_, __, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    getTodos: async (_, __, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       const todos = await db.todo.findMany({
         where: {
           user: {
-            public_user_id: context.user_id,
+            public_user_id: user_id,
           },
         },
         include: {
@@ -61,9 +57,8 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       return todos;
     },
-    getTodosByPriority: async (_, { priority }, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    getTodosByPriority: async (_, { priority }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       const todos = await db.todo.findMany({
         where: {
@@ -71,7 +66,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
             priority_id: priority,
           },
           user: {
-            public_user_id: context.user_id,
+            public_user_id: user_id,
           },
         },
         include: {
@@ -82,9 +77,8 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       return todos;
     },
-    getTodosByFolder: async (_, { folder }, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    getTodosByFolder: async (_, { folder }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       const todos = await db.todo.findMany({
         where: {
@@ -94,7 +88,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
             },
           },
           user: {
-            public_user_id: context.user_id,
+            public_user_id: user_id,
           },
         },
         include: {
@@ -107,9 +101,8 @@ export const TodoResolver: Resolvers<ResolverContext> = {
     },
   },
   Mutation: {
-    createPriority: async (_, { data: { name, color } }, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    createPriority: async (_, { name, color }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       const priority = await db.priority.create({
         data: {
@@ -117,7 +110,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
           color,
           user: {
             connect: {
-              public_user_id: context.user_id,
+              public_user_id: user_id,
             },
           },
         },
@@ -125,9 +118,8 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       return priority;
     },
-    updatePriority: async (_, { data: { id, name, color } }, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    updatePriority: async (_, { id, name, color }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       const isUpdatable = await db.priority.findUnique({
         where: {
@@ -144,7 +136,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       if (!isUpdatable) throw new Error("Priority not found");
 
-      if (isUpdatable.user.public_user_id !== context.user_id)
+      if (isUpdatable.user.public_user_id !== user_id)
         throw new Error("Unauthorized");
 
       const newPriority = await db.priority.update({
@@ -161,9 +153,8 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       return newPriority;
     },
-    deletePriority: async (_, { data: { id } }, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    deletePriority: async (_, { id }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       const isDeletable = await db.priority.findUnique({
         where: {
@@ -180,7 +171,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       if (!isDeletable) throw new Error("Priority not found");
 
-      if (isDeletable.user.public_user_id !== context.user_id)
+      if (isDeletable.user.public_user_id !== user_id)
         throw new Error("Unauthorized");
 
       const deletedPriority = await db.priority.delete({
@@ -193,14 +184,18 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       return true;
     },
-    createTodo: async (_, { data: { name, priority, file } }, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    createTodo: async (
+      _,
+      { name, priority, file, date },
+      { is_authed, user_id }
+    ) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       interface INewData {
-        todoText: string;
+        text: string;
         status: TodoStatus;
-        priority: {
+        date?: Date;
+        priority?: {
           connect: {
             priority_id: string;
           };
@@ -218,19 +213,26 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       }
 
       let newData: INewData = {
-        todoText: name,
+        text: name,
+        date: date,
         status: TodoStatus.Active,
-        priority: {
-          connect: {
-            priority_id: priority,
-          },
-        },
         user: {
           connect: {
-            public_user_id: context.user_id,
+            public_user_id: user_id,
           },
         },
       };
+
+      if (priority && typeof priority === "string") {
+        newData = {
+          ...newData,
+          priority: {
+            connect: {
+              priority_id: priority,
+            },
+          },
+        };
+      }
 
       if (file && typeof file !== null)
         newData = {
@@ -250,9 +252,12 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       return todo;
     },
-    updateTodo: async (_, { data: { id, name, priority, file } }, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    updateTodo: async (
+      _,
+      { id, name, priority, file },
+      { is_authed, user_id }
+    ) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       const isUpdatable = await db.todo.findUnique({
         where: {
@@ -269,7 +274,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       if (!isUpdatable) throw new Error("Todo not found");
 
-      if (isUpdatable.user.public_user_id !== context.user_id)
+      if (isUpdatable.user.public_user_id !== user_id)
         throw new Error("Unauthorized");
 
       if (name === "") name = null;
@@ -313,9 +318,8 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       return newTodo;
     },
-    deleteTodo: async (_, { data: { id } }, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
+    deleteTodo: async (_, { id }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       const isDeletable = await db.todo.findUnique({
         where: {
@@ -332,7 +336,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       if (!isDeletable) throw new Error("Todo not found");
 
-      if (isDeletable.user.public_user_id !== context.user_id)
+      if (isDeletable.user.public_user_id !== user_id)
         throw new Error("Unauthorized");
 
       const deletedTodo = await db.todo.delete({
@@ -344,45 +348,6 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       if (!deletedTodo) throw new Error("Todo not found");
 
       return true;
-    },
-    changeTodoPriority: async (_, { data: { id, priority } }, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("Unauthorized");
-
-      const isUpdatable = await db.todo.findUnique({
-        where: {
-          todo_id: id,
-        },
-        include: {
-          user: {
-            select: {
-              public_user_id: true,
-            },
-          },
-        },
-      });
-
-      if (!isUpdatable) throw new Error("Todo not found");
-
-      if (isUpdatable.user.public_user_id !== context.user_id)
-        throw new Error("Unauthorized");
-
-      const newTodo = await db.todo.update({
-        where: {
-          todo_id: id,
-        },
-        data: {
-          priority: {
-            connect: {
-              priority_id: priority,
-            },
-          },
-        },
-      });
-
-      if (!newTodo) throw new Error("Todo not found");
-
-      return newTodo;
     },
   },
 };

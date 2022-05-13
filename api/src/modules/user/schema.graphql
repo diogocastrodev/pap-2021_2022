@@ -6,39 +6,31 @@ type Query {
 }
 
 type Mutation {
-  register(data: RegisterInput!): Boolean
-  login(data: LoginInput!): Boolean
+  register(email: String!, password: String!): Boolean
+  login(email: String!, password: String!): Boolean
   logout: Boolean
   verifyHash(hash: String!): Boolean
 }
 
-input RegisterInput {
-  email: String!
-  password: String!
-}
-
-input LoginInput {
-  email: String!
-  password: String!
-}
-
 type User {
-  user_id: ID!
   public_user_id: ID!
 
   email: String!
-  password: String!
 
-  # permissions: Permissions!
+  roles: Roles!
 
   status: UserStatus!
   hash: String
 
   created_at: DateTime!
   updated_at: DateTime!
+
+  folders: [Folders]
+  priority: [Priority]
+  todo: [Todo]
 }
 
-enum Permissions {
+enum Roles {
   ADMIN
   USER
 }

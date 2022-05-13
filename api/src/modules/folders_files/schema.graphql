@@ -1,21 +1,11 @@
 scalar DateTime
 
 type Query {
-  getFileContent(data: getFileContentInput!): Files
+  getFileContent(fileId: ID!): Files
 }
 
 type Mutation {
-  createFile(data: createFileInput!): Files
-}
-
-input createFileInput {
-  fileType: FileType
-  name: String!
-  folder_id: ID!
-}
-
-input getFileContentInput {
-  fileId: ID!
+  createFile(fileType: FileType!, name: String!, folder_id: ID!): Files
 }
 
 enum FileType {
@@ -30,7 +20,7 @@ type Files {
 
   fileType: FileType!
 
-  folder_id: ID!
+  folders: Folders
 
   created_at: DateTime!
   updated_at: DateTime!

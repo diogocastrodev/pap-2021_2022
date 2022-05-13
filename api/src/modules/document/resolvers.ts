@@ -11,14 +11,13 @@ import { pubsub } from "../../pubsub";
 export const DocumentResolver: Resolvers<ResolverContext> = {
   Query: {},
   Mutation: {
-    updateDocument: async (_parent, args, context) => {
-      if (!context.is_authed || !context.user_id)
-        throw new Error("User not authenticated");
+    updateDocument: async (_, { id, content }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("User not authenticated");
 
       try {
         const userFile = await db.files.findUnique({
           where: {
-            file_id: args.id,
+            file_id: id,
           },
           select: {
             fileType: true,
@@ -45,7 +44,7 @@ export const DocumentResolver: Resolvers<ResolverContext> = {
         if (userFile.fileType !== FileType.Document)
           throw new Error("File is not a document");
 
-        if (userFile.folders.user.public_user_id !== context.user_id)
+        if (userFile.folders.user.public_user_id !== user_id)
           throw new Error("You cannot update other people's files");
 
         let updatedDocument = await db.document.update({
@@ -53,7 +52,7 @@ export const DocumentResolver: Resolvers<ResolverContext> = {
             document_id: userFile.document!.document_id,
           },
           data: {
-            content: args.content,
+            content: content,
           },
         });
 
@@ -93,7 +92,7 @@ export const DocumentResolver: Resolvers<ResolverContext> = {
         payload: SubUpdatedDocumentContentPayload,
         args: SubUpdatedDocumentContentArgs
       ) => {
-        if (payload.file_id !== args.id) {
+        if (payload.files?.file_id !== args.id) {
           throw new Error("Document ID does not match");
         }
 
