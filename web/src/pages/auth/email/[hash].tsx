@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Loader from "@src/components/Loader/Loader";
 import { useEffect, useState } from "react";
 import { gqlClient } from "@libs/graphql-request";
+import Head from "next/head";
 
 const verifyEmailMutation = gql`
   mutation verifyEmail($hash: String!) {
@@ -36,6 +37,9 @@ export default function VerifyEmailByHash() {
 
   return (
     <>
+      <Head>
+        <title>Verificação de email | note.so</title>
+      </Head>
       <div className="h-full w-full flex items-center justify-center absolute">
         {loading ? (
           <Loader size="large" />

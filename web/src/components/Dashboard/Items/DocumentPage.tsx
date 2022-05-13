@@ -38,7 +38,9 @@ const setDocumentTextMutation = gql`
 `;
 
 export default function DocumentPage(props: props) {
-  const [content, setContent] = useState<EditorState>();
+  const [content, setContent] = useState<EditorState>(
+    EditorState.createEmpty()
+  );
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const [fileName, setFileName] = useState("");

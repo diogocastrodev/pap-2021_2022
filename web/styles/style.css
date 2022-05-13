@@ -13,3 +13,27 @@
 .editor-wrapper {
   @apply w-full;
 }
+
+#auth-layout {
+  @apply bg-gray-400;
+  background-image: url(../public/logoNoBorder.svg);
+  background-repeat: space;
+  background-attachment: fixed;
+  background-size: 160px 160px;
+  background-position: center;
+  background-blend-mode: multiply;
+  background-clip: content-box;
+  background-origin: padding-box, content-box;
+  opacity: 0.3;
+  -webkit-transform: rotate(16deg);
+  -moz-transform: rotate(16deg);
+  -ms-transform: rotate(16deg);
+  -o-transform: rotate(16deg);
+  transform: rotate(16deg);
+  position: fixed;
+  z-index: 10;
+  min-width: 150%;
+  min-height: 150%;
+  left: -12%;
+  top: -20%;
+}

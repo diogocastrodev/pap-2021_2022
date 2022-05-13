@@ -6,7 +6,7 @@ import Document, {
   DocumentContext,
 } from "next/document";
 
-import favIcon from "@public/favicon.ico";
+import logo from "@public/favicon.ico";
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -21,7 +21,8 @@ class MyDocument extends Document {
         <Head />
         <head>
           <meta charSet="utf-8" />
-          <link rel="shortcut icon" href="favicon.gif" type="image/x-icon" />
+          <link rel="icon" href={`/logo.svg`} type="image/x-icon" />
+          <title>note.so</title>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link
             rel="preconnect"

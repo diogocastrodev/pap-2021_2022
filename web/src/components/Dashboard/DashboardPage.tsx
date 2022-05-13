@@ -26,6 +26,7 @@ import SearchDialog from "./Search/SearchDialog";
 import CreateFolderDialog from "./Folders/Create Folder/CreateFolder";
 import OrganizeFolderDialog from "./Folders/Organize Folders/OrganizeFolder";
 import ItemsToPage from "./Items/Items";
+import Head from "next/head";
 
 interface props {
   folder?: {
@@ -119,6 +120,9 @@ export default function DashboardPage(props: props) {
 
   return (
     <>
+      <Head>
+        <title>Dashboard | note.so</title>
+      </Head>
       <SearchDialog />
       <FoldersContextMenu
         folder={folderFocused}

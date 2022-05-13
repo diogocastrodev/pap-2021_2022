@@ -2,8 +2,9 @@ import Link from "next/link";
 import Stack from "@components/Form/Stack/Stack";
 import { BanIcon, CogIcon } from "@heroicons/react/outline";
 import { AuthContext } from "@src/context/AuthContext";
-import { useContext, useEffect } from "react";
+import { forwardRef, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 interface props {
   children: React.ReactNode | React.ReactNode[];
@@ -29,6 +30,21 @@ const SettingsList: ISettingsList[] = [
   },
 ];
 
+type Props = { children: React.ReactNode; href: string };
+
+const CustomLink = forwardRef<HTMLAnchorElement, Props>((props, ref) => {
+  const { href, children, ...rest } = props;
+  return (
+    <>
+      <Link href={href}>
+        <a ref={ref} {...rest}>
+          {children}
+        </a>
+      </Link>
+    </>
+  );
+});
+
 export default function SettingsPageLayout({ children }: props) {
   const { AuthData } = useContext(AuthContext);
   const router = useRouter();
@@ -40,6 +56,9 @@ export default function SettingsPageLayout({ children }: props) {
   }, [AuthData.loading || AuthData.is_logged]);
   return (
     <>
+      <Head>
+        <title>Definições | note.so</title>
+      </Head>
       {!AuthData.loading && AuthData.user && AuthData.is_logged && (
         <div className="w-full grid grid-cols-4 gap-2">
           <div className="col-span-1">
@@ -49,12 +68,12 @@ export default function SettingsPageLayout({ children }: props) {
               </div>
               <Stack type="col" className="mt-1 space-y-1">
                 {SettingsList.map((item, i) => (
-                  <Link key={i} href={item.href}>
+                  <CustomLink key={i} href={item.href}>
                     <Stack type="row" className="items-center cursor-pointer">
                       <div className="w-5 mr-1">{item.icon}</div>
                       {item.text}
                     </Stack>
-                  </Link>
+                  </CustomLink>
                 ))}
               </Stack>
             </div>

@@ -26,7 +26,7 @@ export default function indexPage() {
                 <>
                   <Button
                     type="button"
-                    className="bg-gradient-to-r from-violet-500 to-blue-400 text-xl"
+                    className="transition-all duration-500  bg-gradient-to-br from-violet-400 via-blue-400 to-violet-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-xl"
                     onClick={() => {
                       router.push("/auth/register");
                     }}
@@ -35,7 +35,7 @@ export default function indexPage() {
                   </Button>
                   <Button
                     type="button"
-                    className="bg-blue-500 text-xl"
+                    className="transition-all duration-500 bg-blue-400 hover:bg-blue-500 text-xl"
                     onClick={() => {
                       router.push("/auth/login");
                     }}
@@ -46,7 +46,7 @@ export default function indexPage() {
               ) : (
                 <Button
                   type="button"
-                  className="bg-gradient-to-r from-violet-500 to-blue-400 text-xl"
+                  className="transition-all duration-500  bg-gradient-to-br from-violet-400 via-blue-400 to-violet-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-xl"
                   onClick={() => {
                     router.push("/dashboard");
                   }}

@@ -77,7 +77,7 @@ export default function Navbar(props: props) {
         <div className="w-full flex flex-row items-center">
           <div className="text-black font-extrabold text-3xl">
             <Link href={"/"}>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-blue-400 select-none cursor-pointer">
+              <span className="transition-all duration-500 bg-clip-text text-transparent bg-gradient-to-r from-violet-500 via-blue-400 to-violet-400 bg-size-200 bg-pos-0 hover:bg-pos-100 select-none cursor-pointer">
                 {"note.so"}
               </span>
             </Link>
@@ -156,9 +156,17 @@ export default function Navbar(props: props) {
                 </Menu.Items>
               </Menu>
             ) : (
-              <div className="flex flex-row space-x-4 text-black">
-                <Link href={"/auth/login"}>Login</Link>
-                <Link href={"/auth/register"}>Register</Link>
+              <div className="flex flex-row items-center space-x-4 text-black">
+                <Link href={"/auth/login"}>
+                  <div className="transition-all duration-500 hover:bg-blue-400 hover:text-white rounded-md px-2 py-1 cursor-pointer">
+                    Entrar
+                  </div>
+                </Link>
+                <Link href={"/auth/register"}>
+                  <div className="transition-all duration-500  bg-gradient-to-br from-violet-400 via-blue-400 to-violet-500 bg-size-200 bg-pos-0 hover:bg-pos-100  px-2 py-1 rounded-md text-white cursor-pointer">
+                    Registar
+                  </div>
+                </Link>
               </div>
             ))}
         </div>
