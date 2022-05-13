@@ -3,13 +3,16 @@
  */
 
 import { gql } from "@apollo/client";
-import { CreateFileInput, Files, FileType } from "@graphql/graphql";
+import { Files, FileType } from "@graphql/graphql";
 import { gqlClient } from "@libs/graphql-request";
 import { FoldersContext } from "@src/context/FoldersContext";
 import { NextRouter, useRouter } from "next/router";
 import { useContext } from "react";
 
-interface props extends CreateFileInput {
+interface props {
+  fileType: FileType;
+  folderId: string;
+  name: string;
   redirect?: {
     router: NextRouter;
   };
@@ -26,29 +29,29 @@ interface response {
 }
 
 const mutation = gql`
-  mutation newFile($data: createFileInput!) {
-    createFile(data: $data) {
+  mutation newFile($fileType: FileType!, $name: String!, $folder_id: ID!) {
+    createFile(fileType: $fileType, name: $name, folder_id: $folder_id) {
       file_id
       name
       fileType
-      folder_id
+      folders {
+        folder_id
+      }
     }
   }
 `;
 
 export default async function createFile({
-  folder_id,
+  folderId,
   name,
   fileType,
   redirect,
 }: props): Promise<response> {
   const data = await gqlClient
     .request(mutation, {
-      data: {
-        folder_id,
-        name,
-        fileType,
-      },
+      folder_id: folderId,
+      name,
+      fileType,
     })
     .then((res) => res.createFile as Files);
 
@@ -57,13 +60,13 @@ export default async function createFile({
       file_id: data.file_id,
       fileType: data.fileType,
       name: data.name,
-      folder_id: data.folder_id,
+      folder_id: data.folders!.folder_id,
     },
   };
 
   if (typeof redirect !== "undefined") {
     /* TODO: Router from NextJS -> most responsive */
-    redirect.router.push(`/dashboard/i/${data.folder_id}`);
+    redirect.router.push(`/dashboard/i/${organizedData.data.file_id}`);
   }
 
   return organizedData;

@@ -18,12 +18,12 @@ interface props {
 }
 
 const getTodosQuery = gql`
-  query ($data: getFileContentInput!) {
-    getFileContent(data: $data) {
+  query ($fileId: ID!) {
+    getFileContent(fileId: $fileId) {
       name
       todos {
         todo_id
-        todoText
+        text
         status
       }
     }
@@ -37,9 +37,7 @@ export default function TodoPage(props: props) {
   const getTodos = async () => {
     await gqlClient
       .request(getTodosQuery, {
-        data: {
-          fileId: props.id,
-        },
+        fileId: props.id,
       })
       .then((res) => {
         setFileName(res.getFileContent.name);
@@ -52,8 +50,8 @@ export default function TodoPage(props: props) {
   const addTodo = async (id: string, text: string, status: TodoStatus) => {
     const todo = {
       todo_id: id,
-      todoText: text,
-      status: status,
+      text,
+      status,
     } as Todo;
     setTodos([...todos, todo]);
   };
@@ -155,7 +153,7 @@ export default function TodoPage(props: props) {
                           className={`flex flex-row items-center hover:font-bold`}
                         >
                           <div className="break-all overflow-x-hidden">
-                            {todo.todoText}
+                            {todo.text}
                           </div>
                           <Stack type="row" className="ml-auto pl-3 space-x-1">
                             <Buttons
@@ -214,7 +212,7 @@ export default function TodoPage(props: props) {
                           className={`flex flex-row items-center hover:font-bold`}
                         >
                           <div className="break-all overflow-x-hidden">
-                            {todo.todoText}
+                            {todo.text}
                           </div>
                           <Stack type="row" className="ml-auto pl-3 space-x-1">
                             <Buttons
@@ -270,7 +268,7 @@ export default function TodoPage(props: props) {
                           className={`flex flex-row items-center hover:font-bold`}
                         >
                           <div className="break-all overflow-x-hidden">
-                            {todo.todoText}
+                            {todo.text}
                           </div>
                           <Stack type="row" className="ml-auto pl-3 space-x-1">
                             <Buttons

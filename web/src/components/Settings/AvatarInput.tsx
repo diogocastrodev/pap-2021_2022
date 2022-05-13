@@ -19,7 +19,7 @@ export default function AvatarInput() {
 
       axios({
         method: "POST",
-        url: `${config.API.protocol}://${config.API.URL}/upload/avatar`,
+        url: `${config.API.secure}://${config.API.URL}/upload/avatar`,
         headers: {
           Authorization: `Bearer ${accessGlobalState().get()}`,
         },
@@ -44,7 +44,7 @@ export default function AvatarInput() {
           <div className="relative">
             {false ? (
               <img
-                src={`${config.CDN.protocol}://${config.CDN.URL}/img/avatar/${user.AuthData.user?.public_user_id}`}
+                src={`${config.CDN.secure}://${config.CDN.URL}/img/avatar/${user.AuthData.user?.public_user_id}`}
                 className="rounded-full object-cover box-border min-w-full min-h-full w-full h-full bg-bgWhite "
               />
             ) : (

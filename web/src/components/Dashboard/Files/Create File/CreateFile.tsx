@@ -40,7 +40,6 @@ export default function CreateFileDialog({ isOpen, onClose, folderId }: props) {
       const div = nameInput.current;
       if (div) {
         const classes = div.className;
-        console.log(classes);
         if (classes.indexOf(errorClasses) !== -1) {
           div.className = classes.replace(errorClasses, "");
         }
@@ -61,10 +60,7 @@ export default function CreateFileDialog({ isOpen, onClose, folderId }: props) {
       const { data, error } = await createFile({
         name: name,
         fileType: type,
-        folder_id: folderId,
-        /* redirect: {
-          router,
-        }, */
+        folderId,
       }).then((res) => {
         refreshFolders();
         return res;

@@ -10,8 +10,8 @@ import { gql } from "graphql-request";
 import Button from "@components/Form/Buttons/Button";
 
 const createTodoMutation = gql`
-  mutation ($data: createTodoInput!) {
-    createTodo(data: $data) {
+  mutation ($name: String!, $date: DateTime, $priority: ID, $file: ID) {
+    createTodo(name: $name, date: $date, priority: $priority, file: $file) {
       file_id
       status
       todoText
@@ -71,7 +71,7 @@ export default function CreateTodoDialog(props: props) {
           const newTodo = res.createTodo as Todo;
           props.onCreate(
             newTodo.todo_id,
-            newTodo.todoText,
+            newTodo.text,
             newTodo.status as TodoStatus
           );
           setText("");

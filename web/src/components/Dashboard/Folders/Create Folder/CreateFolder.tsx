@@ -1,16 +1,14 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { PencilIcon, XIcon } from "@heroicons/react/solid";
 import Label from "@src/components/Form/Inputs/Label";
-import { routes } from "@src/functions/routes";
 import { folderFragment } from "@src/graphql/fragments";
-import { ColorStyle, ExportedData } from "@src/graphql/graphql";
+import { ExportedData } from "@src/graphql/graphql";
 import { useContext, useState } from "react";
 import Input from "@components/Form/Inputs/Input";
 import InputGroup from "@components/Form/Inputs/InputGroup";
 import Stack from "@components/Form/Stack/Stack";
 import Button from "@components/Form/Buttons/Button";
 import Form from "@components/Form/Form/Form";
-import Tree from "@components/Tree/Tree";
 import TreeNode from "@src/components/Tree/TreeNode";
 import { gqlClient } from "@libs/graphql-request";
 import { FoldersContext } from "@src/context/FoldersContext";
@@ -24,8 +22,8 @@ interface props extends preMadeDialogNeeded {}
 const createFolderMutation = gql`
   ${folderFragment}
 
-  mutation ($data: createFolderInput!) {
-    createFolder(data: $data) {
+  mutation ($name: String!, $parent_id: ID, $color: String) {
+    createFolder(name: $name, parent_id: $parent_id, color: $color) {
       ...folderData
     }
   }
@@ -41,7 +39,6 @@ export default function CreateFolderDialog(props: props) {
 
   const [name, setName] = useState<string>("");
   const [color, setColor] = useState<string>("");
-  const [colorStyle, setColorStyle] = useState<ColorStyle>(ColorStyle.Rgb);
   const [LastClicked, setLastClicked] = useState<ILastClicked>();
   const [error, setError] = useState<"empty name" | undefined>(undefined);
 
@@ -55,12 +52,9 @@ export default function CreateFolderDialog(props: props) {
   const createFolderFunction = async () => {
     gqlClient
       .request(createFolderMutation, {
-        data: {
-          name,
-          parent_id: LastClicked?.folder_id,
-          color,
-          color_style: colorStyle,
-        },
+        name,
+        parent_id: LastClicked?.folder_id,
+        color,
       })
       .then(() => {
         setName("");

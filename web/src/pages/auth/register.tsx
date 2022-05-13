@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import Button from "@src/components/Form/Buttons/Button";
 import Form from "@src/components/Form/Form/Form";
 import Input from "@src/components/Form/Inputs/Input";
@@ -8,10 +8,11 @@ import { routes } from "@src/functions/routes";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Label from "../../components/Form/Inputs/Label";
+import { gqlClient } from "@libs/graphql-request";
 
 const registerMutation = gql`
-  mutation register($data: RegisterInput!) {
-    register(data: $data)
+  mutation register($email: String!, $password: String!) {
+    register(email: $email, password: $password)
   }
 `;
 
@@ -19,9 +20,6 @@ export default function RegisterPage() {
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
-  const [PhoneNumber, setPhoneNumber] = useState("");
-
-  const [registerFunction] = useMutation(registerMutation);
 
   const router = useRouter();
 
@@ -34,14 +32,13 @@ export default function RegisterPage() {
               e.preventDefault();
               /* TODO: Register */
               if (Password === ConfPassword) {
-                registerFunction({
-                  variables: {
-                    data: {
+                gqlClient
+                  .request(registerMutation, {
+                    variables: {
                       email: Email,
                       password: Password,
                     },
-                  },
-                })
+                  })
                   .then(() => {
                     routes.redirect("/auth/login");
                   })

@@ -1,7 +1,8 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { useRouter } from "next/router";
 import Loader from "@src/components/Loader/Loader";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { gqlClient } from "@libs/graphql-request";
 
 const verifyEmailMutation = gql`
   mutation verifyEmail($hash: String!) {
@@ -11,14 +12,20 @@ const verifyEmailMutation = gql`
 
 export default function VerifyEmailByHash() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | undefined>();
   const hash = router.query.hash;
 
-  const [verifyEmail, { loading, error }] = useMutation(verifyEmailMutation);
-
   function execVerifyEmail(hash: string) {
-    verifyEmail({ variables: { hash } }).then(() => {
-      !error && router.push("/auth/login");
-    });
+    gqlClient
+      .request(verifyEmailMutation, { hash })
+      .then((res) => {
+        if (res.verifyEmail) router.push("/auth/login");
+      })
+      .catch((err) => {
+        console.log(err);
+        setError(err);
+      });
   }
 
   useEffect(() => {
@@ -35,7 +42,7 @@ export default function VerifyEmailByHash() {
         ) : (
           <div>
             <h1 className="text-3xl font-bold">
-              {error ? "Error" : "Success"}
+              {error ? "Error" : "Success... redirecting"}
             </h1>
           </div>
         )}

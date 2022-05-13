@@ -1,50 +1,31 @@
-import { gql, useQuery } from "@apollo/client";
-import { Menu, Dialog } from "@headlessui/react";
+import { Menu } from "@headlessui/react";
 import {
   CheckIcon,
   DotsHorizontalIcon,
   FolderIcon,
 } from "@heroicons/react/solid";
 import {
-  BookOpenIcon,
   CalendarIcon,
   CloudDownloadIcon,
   FolderAddIcon,
   FolderOpenIcon,
 } from "@heroicons/react/outline";
-import { folderChildrenFragment } from "@src/graphql/fragments";
 import { useEffect, useState, useContext, MouseEvent } from "react";
 import Loader from "../Loader/Loader";
-import CreateFolder from "./Folders/Create Folder/CreateFolder";
 import Item from "./Item/Item";
 import LargeItem from "./LargeItem/Largeitem";
 import TinyItem from "./TinyItem/TinyItem";
-import OrganizeFolder from "./Folders/Organize Folders/OrganizeFolder";
 import { AuthContext } from "@src/context/AuthContext";
 import { useRouter } from "next/router";
 import TreeNode from "../Tree/TreeNode";
 import DashboardListFiles from "./Folders/Page/ListFiles";
-import { FoldersContext, FoldersProvider } from "@src/context/FoldersContext";
-import moment from "moment";
-import ItemsToPage from "./Items/Items";
+import { FoldersContext } from "@src/context/FoldersContext";
 import LastUpdateTimeFolders from "./LastUpdateTime/LastUpdateTime";
-import ItemContextMenu from "./Item/ContextMenu/ContextMenu";
 import FoldersContextMenu from "./Folders/ContextMenu/FoldersContextMenu";
 import SearchDialog from "./Search/SearchDialog";
 import CreateFolderDialog from "./Folders/Create Folder/CreateFolder";
 import OrganizeFolderDialog from "./Folders/Organize Folders/OrganizeFolder";
-
-const getFolders = gql`
-  ${folderChildrenFragment}
-  query userFolders {
-    userFolders {
-      folders {
-        ...children
-      }
-      folders_amount
-    }
-  }
-`;
+import ItemsToPage from "./Items/Items";
 
 interface props {
   folder?: {
@@ -132,7 +113,6 @@ export default function DashboardPage(props: props) {
     }
   }, [props.folder?.id]);
 
-  const { data, loading, error } = useQuery(getFolders);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<dialogTypes>("create");
 
@@ -174,8 +154,8 @@ export default function DashboardPage(props: props) {
       )}
 
       {/* Menu */}
-      <div className="flex flex-1 max-h-[91.5vh] max-w-[100vw]">
-        <TinyItem className="flex-none mx-1 w-80 max-h-full overscroll-y-auto overflow-hidden">
+      <div className="w-full max-h-[91.9vh] grid grid-cols-4 gap-2">
+        <TinyItem className="flex-none overscroll-y-auto overflow-hidden">
           <Item
             extra={{
               onContextMenu: (e: MouseEvent<HTMLDivElement>) => {
@@ -239,6 +219,7 @@ export default function DashboardPage(props: props) {
                     >
                       {foldersThreeDotOptions.map((item, i: number) => (
                         <Menu.Item key={i}>
+                          {/* @ts-ignore */}
                           {({ active }) => (
                             <div
                               className={`${
@@ -297,7 +278,7 @@ export default function DashboardPage(props: props) {
         </TinyItem> */}
         {/* Folder Area */}
         {folderSelected && (
-          <LargeItem className="mx-1 basis-auto shrink">
+          <LargeItem className="">
             <Item className="p-2">
               <DashboardListFiles folderId={folderSelected} />
             </Item>
@@ -305,7 +286,7 @@ export default function DashboardPage(props: props) {
         )}
         {/* Item Area */}
         {itemSelected && (
-          <LargeItem className="mx-1 shrink ">
+          <LargeItem className="">
             <Item className="p-2 overflow-y-auto overflow-hidden">
               <ItemsToPage id={itemSelected} />
             </Item>

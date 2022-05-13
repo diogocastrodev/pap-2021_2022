@@ -1,10 +1,5 @@
-import { ReactNode, useEffect, useState } from "react";
-import {
-  convertToRaw,
-  EditorState,
-  ContentState,
-  convertFromRaw,
-} from "draft-js";
+import { useEffect, useState } from "react";
+import { convertToRaw, EditorState, convertFromRaw } from "draft-js";
 import dynamic from "next/dynamic";
 
 const Editor = dynamic(
@@ -16,15 +11,8 @@ const Editor = dynamic(
 /* const htmlToDraft = dynamic(() => import("html-to-draftjs"), { ssr: false });
  */ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import draftToHtml from "draftjs-to-html";
-import {
-  gql,
-  useLazyQuery,
-  useMutation,
-  useSubscription,
-} from "@apollo/client";
+import { gql } from "@apollo/client";
 import Loader from "@src/components/Loader/Loader";
-import htmlToDraft from "html-to-draftjs";
-import $ from "jquery";
 import { gqlClient } from "@libs/graphql-request";
 import Stack from "@components/Form/Stack/Stack";
 import Button from "@components/Form/Buttons/Button";
@@ -33,8 +21,8 @@ interface props {
 }
 
 const getDocumentTextQuery = gql`
-  query ($data: getFileContentInput!) {
-    getFileContent(data: $data) {
+  query ($fileId: ID!) {
+    getFileContent(fileId: $fileId) {
       name
       document {
         content
@@ -107,9 +95,7 @@ export default function DocumentPage(props: props) {
   const getNewDocumentText = async () => {
     gqlClient
       .request(getDocumentTextQuery, {
-        data: {
-          fileId: props.id,
-        },
+        fileId: props.id,
       })
       .then((res) => {
         setLoading(false);

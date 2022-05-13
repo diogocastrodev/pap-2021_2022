@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from "../graphql/graphql";
 import { gqlClient } from "../libs/graphql-request";
@@ -19,8 +19,8 @@ export type AuthType = {
 
 /* Login Mutation */
 const loginMutation = gql`
-  mutation login($data: LoginInput!) {
-    login(data: $data)
+  mutation login($email: String!, $password: String!) {
+    login(email: $email, password: $password)
   }
 `;
 

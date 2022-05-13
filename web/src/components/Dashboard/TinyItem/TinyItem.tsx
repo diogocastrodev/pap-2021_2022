@@ -8,7 +8,7 @@ export default function TinyItem(props: props) {
   return (
     <>
       <div
-        className={`w-1/4 ${
+        className={`col-start-1 col-end-2 ${
           props.className &&
           props.className.concat(props.extra?.className ?? "")
         }`}

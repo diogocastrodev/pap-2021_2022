@@ -1,4 +1,4 @@
-import { gql, useLazyQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
 import Stack from "@src/components/Form/Stack/Stack";
 import Loader from "@src/components/Loader/Loader";
 import { FoldersContext } from "@src/context/FoldersContext";
@@ -6,7 +6,6 @@ import { Files, FileType, Folders } from "@src/graphql/graphql";
 import { useContext, useEffect, useState } from "react";
 import Button from "../../../Form/Buttons/Button";
 import CreateFileDialog from "../../Files/Create File/CreateFile";
-import { ExportedData, Maybe } from "@graphql/graphql";
 import Input from "@components/Form/Inputs/Input";
 import { Listbox } from "@headlessui/react";
 import {
@@ -20,23 +19,6 @@ import { gqlClient } from "@libs/graphql-request";
 interface props {
   folderId: string;
 }
-
-const getFilesByFolder = gql`
-  query getFilesByFolder($folderId: ID!) {
-    getFolderById(folderId: $folderId) {
-      folder_id
-      name
-      files {
-        file_id
-        name
-      }
-      folders {
-        folder_id
-        name
-      }
-    }
-  }
-`;
 
 export default function DashboardListFiles({ folderId }: props) {
   const { folderData } = useContext(FoldersContext);
@@ -57,25 +39,14 @@ export default function DashboardListFiles({ folderId }: props) {
   const updateVars = () => {
     setChildrenFolders([]);
     setFileList([]);
+    setParentId(undefined);
     const folder = filterFolderData(folderId);
     if (folder) {
-      setParentId(folder.parent_id);
+      if (folder.parent_id && folder.parent_id !== "")
+        setParentId(folder.parent_id);
       setChildrenFolders(folder.children as unknown as Folders[]);
       setFileList(folder.files as Files[]);
     }
-  };
-
-  const queryFromAPI = () => {
-    gqlClient
-      .request(getFilesByFolder, { folderId })
-      .then((res) => {
-        setLoading(false);
-        setChildrenFolders(res.getFolderById.folders);
-        setFileList(res.getFolderById.files);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   function sortAscending(arr: any[]) {
@@ -153,7 +124,6 @@ export default function DashboardListFiles({ folderId }: props) {
 
   useEffect(() => {
     setLoading(false);
-    //queryFromAPI();
     setFileSearch("");
     updateVars();
   }, [folderId]);
@@ -164,7 +134,6 @@ export default function DashboardListFiles({ folderId }: props) {
 
   useEffect(() => {
     setLoading(false);
-    //queryFromAPI();
     setFileSearch("");
     updateVars();
   }, []);
@@ -198,31 +167,32 @@ export default function DashboardListFiles({ folderId }: props) {
         </Stack>
         {loading && <Loader size="medium" />}
         <div className="space-y-4">
-          {!loading && (childrenFolders.length > 0 || parentId !== "") && (
-            <>
-              <div className="text-xl mb-2">Pastas</div>
-              <Stack type="row" className="flex-wrap gap-2">
-                {parentId && parentId !== "" && (
-                  <Link href={`/dashboard/f/${parentId}`}>
-                    <div className="flex items-center justify-center bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md px-2 py-1 w-8 h-8 break-all text-ellipsis overflow-hidden ">
-                      <ArrowLeftIcon className="w-6" />
-                    </div>
-                  </Link>
-                )}
-                {childrenFolders.length > 0 &&
-                  childrenFolders.map((it) => (
-                    <Link
-                      href={`/dashboard/f/${it.folder_id}`}
-                      key={it.folder_id}
-                    >
-                      <div className="bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md px-2 py-1 w-48 break-all text-ellipsis overflow-hidden ">
-                        {it.name}
+          {!loading &&
+            (childrenFolders.length > 0 || (parentId && parentId !== "")) && (
+              <>
+                <div className="text-xl mb-2">Pastas</div>
+                <Stack type="row" className="flex-wrap gap-2">
+                  {parentId && parentId !== "" && (
+                    <Link href={`/dashboard/f/${parentId}`}>
+                      <div className="flex items-center justify-center bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md px-2 py-1 w-8 h-8 break-all text-ellipsis overflow-hidden ">
+                        <ArrowLeftIcon className="w-6" />
                       </div>
                     </Link>
-                  ))}
-              </Stack>
-            </>
-          )}
+                  )}
+                  {childrenFolders.length > 0 &&
+                    childrenFolders.map((it) => (
+                      <Link
+                        href={`/dashboard/f/${it.folder_id}`}
+                        key={it.folder_id}
+                      >
+                        <div className="bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md px-2 py-1 w-48 break-all text-ellipsis overflow-hidden ">
+                          {it.name}
+                        </div>
+                      </Link>
+                    ))}
+                </Stack>
+              </>
+            )}
           {!loading && fileList.length > 0 && (
             <Stack type="col" className="">
               <Stack type="row" className="items-center  space-x-2">
@@ -306,14 +276,6 @@ export default function DashboardListFiles({ folderId }: props) {
             </Stack>
           )}
         </div>
-        {!loading &&
-          fileList.length === 0 &&
-          childrenFolders.length === 0 &&
-          parentId === "" && (
-            <div className="text-center font-semibold mt-4">
-              Não foram encotrados resultados
-            </div>
-          )}
       </div>
     </>
   );

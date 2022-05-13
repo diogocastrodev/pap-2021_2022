@@ -6,7 +6,11 @@ interface props {
 export default function TinyItem(props: props) {
   return (
     <>
-      <div className={`w-[72%] ${props.className && props.className}`}>
+      <div
+        className={`col-start-2 col-end-5 ${
+          props.className && props.className
+        }`}
+      >
         {props.children}
       </div>
     </>

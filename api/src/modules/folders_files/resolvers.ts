@@ -61,6 +61,9 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
             fileType: fileType,
             folder_id: folder_id,
           },
+          include: {
+            folders: true,
+          },
         });
 
         if (!newFile) throw new Error("Internal Error");

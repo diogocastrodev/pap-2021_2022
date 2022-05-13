@@ -1,4 +1,4 @@
-import { gql, useLazyQuery, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
 import Loader from "@src/components/Loader/Loader";
 import { Files, FileType } from "@src/graphql/graphql";
 import { gqlClient } from "@src/libs/graphql-request";
@@ -11,11 +11,8 @@ interface props {
 }
 
 const fileQuery = gql`
-  query ($data: getFileContentInput!) {
-    getFileContent(data: $data) {
-      name
-      file_id
-      folder_id
+  query ($fileId: ID!) {
+    getFileContent(fileId: $fileId) {
       fileType
     }
   }
@@ -27,9 +24,7 @@ export default function ItemsToPage(props: props) {
   useEffect(() => {
     gqlClient
       .request(fileQuery, {
-        data: {
-          fileId: props.id,
-        },
+        fileId: props.id,
       })
       .then((res) => {
         setLoading(false);

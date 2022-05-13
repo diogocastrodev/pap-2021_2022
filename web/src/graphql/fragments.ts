@@ -4,7 +4,6 @@ export const folderFragment = gql`
   fragment folderData on Folders {
     folder_id
     color
-    color_style
     name
   }
 `;
@@ -14,7 +13,6 @@ export const folderChildrenFragment = gql`
     folder_id
     parent_id
     color
-    color_style
     name
     files {
       file_id
