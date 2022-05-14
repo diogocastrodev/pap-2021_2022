@@ -38,3 +38,22 @@
   top: -20%;
   filter: blur(2px);
 }
+
+.folders-scroll::-webkit-scrollbar {
+  @apply w-3;
+}
+
+/* Track */
+.folders-scroll::-webkit-scrollbar-track {
+  @apply bg-gray-300 rounded-full;
+}
+
+/* Handle */
+.folders-scroll::-webkit-scrollbar-thumb {
+  @apply bg-gray-500 rounded-full;
+}
+
+/* Handle on hover */
+.folders-scroll::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
+}

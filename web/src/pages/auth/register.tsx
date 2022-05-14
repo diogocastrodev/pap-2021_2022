@@ -6,7 +6,7 @@ import InputGroup from "@components/Form/Inputs/InputGroup";
 import Stack from "@components/Form/Stack/Stack";
 import { routes } from "@functions/routes";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Label from "@components/Form/Inputs/Label";
 import { gqlClient } from "@libs/graphql-request";
 import Head from "next/head";
@@ -24,6 +24,11 @@ export default function RegisterPage() {
   const [ConfPassword, setConfPassword] = useState("");
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (Password.length < 8 || Password.length > 32) {
+    }
+  }, [Password]);
 
   return (
     <>
@@ -69,28 +74,28 @@ export default function RegisterPage() {
                   />
                 </InputGroup>
                 <InputGroup>
-                  <Label text="Password" />
+                  <Label text="Senha" />
                   <Input
                     input={{
                       type: "password",
-                      placeholder: "Password",
+                      placeholder: "Senha",
                       onChange: (e) => setPassword(e.target.value),
                       autoComplete: "on",
                     }}
                   />
                 </InputGroup>
                 <InputGroup>
-                  <Label text="Confirmar Password" />
+                  <Label text="Confirmar Senha" />
                   <Input
                     input={{
                       type: "password",
-                      placeholder: "Confirmar Password",
+                      placeholder: "Confirmar Senha",
                       onChange: (e) => setConfPassword(e.target.value),
                     }}
                   />
                 </InputGroup>
                 <Button type="submit" className="mt-4">
-                  Register
+                  Registar
                 </Button>
               </Stack>
             </Form>

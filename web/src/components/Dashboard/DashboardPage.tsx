@@ -10,7 +10,7 @@ import {
   FolderAddIcon,
   FolderOpenIcon,
 } from "@heroicons/react/outline";
-import { useEffect, useState, useContext, MouseEvent } from "react";
+import { useEffect, useState, useContext, MouseEvent, ReactChild } from "react";
 import Loader from "../Loader/Loader";
 import Item from "./Item/Item";
 import LargeItem from "./LargeItem/Largeitem";
@@ -28,6 +28,7 @@ import OrganizeFolderDialog from "./Folders/Organize Folders/OrganizeFolder";
 import ItemsToPage from "./Items/Items";
 import Head from "next/head";
 import NeedLogin from "../Login/NeedLogin";
+import Link from "next/link";
 
 interface props {
   folder?: {
@@ -36,6 +37,7 @@ interface props {
   item?: {
     id: string;
   };
+  children?: React.ReactNode | React.ReactNode[];
 }
 
 type dialogTypes = "create" | "organize";
@@ -63,14 +65,6 @@ const foldersThreeDotOptions: FolderThreeDotType = [
 export default function DashboardPage(props: props) {
   const router = useRouter();
   const folders = useContext(FoldersContext);
-
-  const { AuthData } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (!AuthData.loading && !AuthData.user && !AuthData.is_logged) {
-      router.push("/auth/login");
-    }
-  }, [AuthData.loading || AuthData.is_logged]);
 
   const [ShowLastUpdateTime, setShowLastUpdateTime] = useState(false);
   const [LastUpdateTimePos, setLastUpdateTimePos] = useState({
@@ -153,7 +147,7 @@ export default function DashboardPage(props: props) {
 
       {/* Menu */}
       <NeedLogin>
-        <div className="w-full max-h-[91.9vh] grid grid-cols-4 gap-2">
+        <div className="w-full h-[91.9vh] grid grid-cols-4 gap-2">
           <TinyItem className="flex-none overscroll-y-auto overflow-hidden">
             <Item
               extra={{
@@ -165,13 +159,21 @@ export default function DashboardPage(props: props) {
             >
               <div className="w-full flex flex-1 h-full flex-col pt-2 px-2">
                 <div className="mb-4 mt-2">
-                  <div className="w-full flex items-center cursor-not-allowed">
-                    <CalendarIcon className="w-5" />
-                    <span className="ml-2">Calendario</span>
+                  <div className="w-full flex items-center cursor-pointer">
+                    <Link href={`/dashboard/calendar`}>
+                      <div className="flex items-center">
+                        <CalendarIcon className="w-5" />
+                        <span className="ml-2">Calendario</span>
+                      </div>
+                    </Link>
                   </div>
-                  <div className="w-full flex items-center cursor-not-allowed">
-                    <CheckIcon className="w-5" />
-                    <span className="ml-2">Apontamentos</span>
+                  <div className="w-full flex items-center cursor-pointer">
+                    <Link href={`/dashboard/todos`}>
+                      <div className="flex items-center">
+                        <CheckIcon className="w-5" />
+                        <span className="ml-2">Apontamentos</span>
+                      </div>
+                    </Link>
                   </div>
                 </div>
                 {/* Folders Section */}
@@ -241,7 +243,8 @@ export default function DashboardPage(props: props) {
                 </div>
                 {/* Folders Wrapper */}
                 <div
-                  className="h-full mb-2 overflow-y-auto "
+                  className="h-full mb-2 overflow-y-auto folders-scroll"
+                  id="folders-scroll"
                   onContextMenu={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -288,6 +291,13 @@ export default function DashboardPage(props: props) {
             <LargeItem className="">
               <Item className="p-2 overflow-y-auto overflow-hidden">
                 <ItemsToPage id={itemSelected} />
+              </Item>
+            </LargeItem>
+          )}
+          {props.children && (
+            <LargeItem className="">
+              <Item className="p-2 overflow-y-auto overflow-hidden">
+                {props.children as ReactChild[]}
               </Item>
             </LargeItem>
           )}

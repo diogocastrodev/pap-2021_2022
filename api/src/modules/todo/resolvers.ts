@@ -14,6 +14,9 @@ export const TodoResolver: Resolvers<ResolverContext> = {
             public_user_id: user_id,
           },
         },
+        include: {
+          todos: true,
+        },
       });
 
       return priorities;
