@@ -12,22 +12,23 @@ import AuthLayout from "@components/Auth/AuthLayout";
 export default function loginPage() {
   const [Email, setEmail] = useState<string>("");
   const [Password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string | undefined>(undefined);
   const Auth = useContext(AuthContext);
   return (
     <>
       <Head>
-        <title>Login | note.so</title>
+        <title>Entrar | note.so</title>
       </Head>
       <AuthLayout>
         <div className="h-full w-full flex items-center justify-center absolute z-20">
           <div className="h-108 w-96 bg-neutral-50 shadow-xl inset-x-auto -top-20 rounded-xl">
             <Form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 try {
-                  Auth.login(Email, Password);
+                  await Auth.login(Email, Password);
                 } catch (err) {
-                  console.log(err);
+                  setError("Login inválido");
                 }
               }}
               className="h-full"
@@ -61,6 +62,7 @@ export default function loginPage() {
                 <Button type="submit" color="blue">
                   Login
                 </Button>
+                {error && <div className="text-red-500">{error}</div>}
               </Stack>
             </Form>
           </div>

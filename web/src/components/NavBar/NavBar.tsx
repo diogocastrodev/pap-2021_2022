@@ -1,22 +1,9 @@
-import {
-  SearchIcon,
-  CogIcon,
-  UserIcon,
-  LogoutIcon,
-  ArchiveIcon,
-  MenuIcon,
-} from "@heroicons/react/solid";
-import Input from "../Form/Inputs/Input";
+import { CogIcon, LogoutIcon, MenuIcon } from "@heroicons/react/outline";
 import { Menu } from "@headlessui/react";
-import { getTheme } from "@src/functions/changeTheme";
 import { useContext, useEffect, useState } from "react";
-import { changeTheme } from "../../functions/changeTheme";
 import { AuthContext } from "@src/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useHookstate } from "@hookstate/core";
-import Image from "next/image";
-import UserAvatar from "../user/items/Avatar/UserAvatar";
 
 interface props {
   initialPage?: boolean;
@@ -41,12 +28,12 @@ export default function Navbar(props: props) {
       text: "Preferences",
       items: [
         {
-          text: "Settings",
+          text: "Definições",
           href: "/user/settings",
           icon: <CogIcon />,
         },
         {
-          text: "Logout",
+          text: "Sair",
           href: "#",
           icon: <LogoutIcon />,
           onClick: () => {

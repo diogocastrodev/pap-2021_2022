@@ -32,7 +32,6 @@ export default function ItemsToPage(props: props) {
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
       });
     setFileData(undefined);
   }, [props.id]);

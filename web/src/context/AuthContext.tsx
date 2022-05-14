@@ -76,13 +76,16 @@ const AuthProvider = ({ children }: Props) => {
           });
         } else {
           setAuthData({
-            user: AuthData.user,
+            user: undefined,
             is_logged: false,
           });
         }
       })
       .catch((err) => {
-        console.log(err);
+        setAuthData({
+          user: undefined,
+          is_logged: false,
+        });
       });
   };
 
@@ -97,7 +100,7 @@ const AuthProvider = ({ children }: Props) => {
         });
       })
       .catch((err) => {
-        console.log(err);
+        // Not logged
       });
   };
 

@@ -24,7 +24,6 @@ export default function VerifyEmailByHash() {
         if (res.verifyEmail) router.push("/auth/login");
       })
       .catch((err) => {
-        console.log(err);
         setError(err);
       });
   }

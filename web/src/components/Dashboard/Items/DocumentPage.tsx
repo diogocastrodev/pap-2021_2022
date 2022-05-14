@@ -90,7 +90,7 @@ export default function DocumentPage(props: props) {
         }
       })
       .catch((err) => {
-        console.log(err);
+        // Error
       });
   };
 
@@ -105,7 +105,7 @@ export default function DocumentPage(props: props) {
         setNewContent(res.getFileContent.document.content);
       })
       .catch((error) => {
-        console.log(error);
+        // Error
       });
   };
 

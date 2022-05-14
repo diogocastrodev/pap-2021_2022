@@ -36,4 +36,5 @@
   min-height: 150%;
   left: -12%;
   top: -20%;
+  filter: blur(2px);
 }

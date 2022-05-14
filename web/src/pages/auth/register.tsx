@@ -47,7 +47,7 @@ export default function RegisterPage() {
                       routes.redirect("/auth/login");
                     })
                     .catch((e) => {
-                      console.log(e);
+                      throw new Error(e as string);
                     });
                 }
               }}

@@ -78,7 +78,7 @@ export default function SettingsPageLayout({ children }: props) {
               </Stack>
             </div>
           </div>
-          <div className="col-start-2 col-end-5 bg-white rounded-md">
+          <div className="col-start-2 col-end-5 bg-white rounded-md p-3">
             {children}
           </div>
         </div>

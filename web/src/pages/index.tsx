@@ -35,7 +35,7 @@ export default function indexPage() {
                   </Button>
                   <Button
                     type="button"
-                    className="transition-all duration-500 bg-blue-400 hover:bg-blue-500 text-xl"
+                    className="transition ease-in-out duration-500 bg-blue-300 hover:bg-blue-500 text-black hover:text-white text-xl"
                     onClick={() => {
                       router.push("/auth/login");
                     }}
