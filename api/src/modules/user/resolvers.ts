@@ -79,6 +79,7 @@ export const UserResolvers: Resolvers<ResolverContext> = {
     register: async (_, { email, password }, { is_authed, user_id }) => {
       if (is_authed && user_id)
         throw new AuthenticationError("already logged in");
+
       try {
         const validEmail = check.chars.email(email);
         const validPassword = check.chars.password(password);

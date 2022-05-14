@@ -14,9 +14,7 @@ const vars = {
 };
 
 const regex = {
-  email: new RegExp(
-    `^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
-  ),
+  email: new RegExp(`^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$`),
   password: new RegExp(
     `^${vars.password.needs.numbers ? `(?=.*[0-9])` : ``}${
       vars.password.needs.letters.lowercase ? `(?=.*[a-z])` : ``
