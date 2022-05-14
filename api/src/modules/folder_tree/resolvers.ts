@@ -151,20 +151,16 @@ export const FolderResolver: Resolvers<ResolverContext> = {
           };
         }
 
-        let color_hex: undefined | string = undefined;
-        if (color) {
-          color_hex = check.chars.color(color) || undefined;
-        }
-
         let data: CreateFolder = {
           name,
-          color: color_hex,
           user: {
             connect: {
               public_user_id: user_id,
             },
           },
         };
+
+        if (color) data.color = check.chars.color(color);
 
         if (parent_id) {
           data = {
@@ -185,7 +181,7 @@ export const FolderResolver: Resolvers<ResolverContext> = {
 
         return folder;
       } catch (e) {
-        throw new Error("Failed creating folder");
+        throw new Error(e as string);
       }
     },
   },

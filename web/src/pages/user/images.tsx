@@ -107,15 +107,17 @@ export default function UserImagesPage() {
                       >
                         <ExternalLinkIcon />
                       </a>
-                      <div
-                        className="w-6 cursor-pointer"
-                        title="Copiar Link"
-                        onClick={async () => {
-                          await navigator.clipboard.writeText(`${image.url}`);
-                        }}
-                      >
-                        <ClipboardCopyIcon />
-                      </div>
+                      {window.isSecureContext && (
+                        <div
+                          className="w-6 cursor-pointer"
+                          title="Copiar Link"
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(`${image.url}`);
+                          }}
+                        >
+                          <ClipboardCopyIcon />
+                        </div>
+                      )}
                       <a
                         className="w-6 cursor-pointer"
                         title="Transferir"

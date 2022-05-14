@@ -2,19 +2,31 @@ const vars = {
   password: {
     minLength: 8,
     maxLength: 32,
+    needs: {
+      letters: {
+        lowercase: false,
+        uppercase: false,
+      },
+      numbers: false,
+      symbols: false,
+    },
   },
 };
 
 const regex = {
   email: new RegExp(
-    `/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/`
+    `^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
   ),
   password: new RegExp(
-    `^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{${vars.password.minLength}, ${vars.password.maxLength}}$`
+    `^${vars.password.needs.numbers ? `(?=.*[0-9])` : ``}${
+      vars.password.needs.letters.lowercase ? `(?=.*[a-z])` : ``
+    }${vars.password.needs.letters.uppercase ? `(?=.*[A-Z])` : ``}${
+      vars.password.needs.symbols ? `(?=.*[!@#$%^&-+=()*])` : ``
+    }(?=\\S+$).{${vars.password.minLength},${vars.password.maxLength}}$`
   ),
   hexColor: {
-    threeLetter: new RegExp(`/^#([A-Fa-f0-9]{3})$/`),
-    sixLetter: new RegExp(`/^#([A-Fa-f0-9]{6})$/`),
+    threeLetter: new RegExp(`^#([A-Fa-f0-9]{3})$`),
+    sixLetter: new RegExp(`^#[A-Fa-f0-9]{6}$`),
   },
 };
 

@@ -54,6 +54,8 @@ export const UserResolvers: Resolvers<ResolverContext> = {
 
         if (!isPasswordCorrect) throw new Error(defaultError);
 
+        if (userData.status !== "ACTIVE") throw new Error("User is not active");
+
         /* const token = jwt.sign(
         {
           user_id: userData.public_user_id,
@@ -103,6 +105,105 @@ export const UserResolvers: Resolvers<ResolverContext> = {
       });
 
       return true;
+    },
+    updateUser: async (_, { email }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("User not logged in");
+
+      try {
+        interface IDataToUpdate {
+          email?: string;
+        }
+
+        const dataToUpdate: IDataToUpdate = {};
+
+        if (email) dataToUpdate.email = email;
+
+        const user = await db.user.update({
+          where: {
+            public_user_id: user_id,
+          },
+          data: dataToUpdate,
+        });
+
+        if (!user) throw new Error("Error updating user");
+
+        return true;
+      } catch (e) {
+        throw new Error(e as string);
+      }
+    },
+    updatePassword: async (
+      _,
+      { oldPassword, newPassword },
+      { is_authed, user_id }
+    ) => {
+      if (!is_authed || !user_id) throw new Error("User not logged in");
+
+      try {
+        const validPassword = check.chars.password(newPassword);
+
+        const user = await db.user.findUnique({
+          where: {
+            public_user_id: user_id,
+          },
+        });
+
+        if (!user) throw new Error("User not found");
+
+        const isPasswordCorrect = await verifyPassword(
+          oldPassword,
+          user.password
+        );
+
+        if (!isPasswordCorrect) throw new Error("Invalid password");
+
+        const updatedUser = await db.user.update({
+          where: {
+            public_user_id: user_id,
+          },
+          data: {
+            password: await createPassword(validPassword),
+          },
+        });
+
+        if (!updatedUser) throw new Error("Error updating user");
+
+        return true;
+      } catch (e) {
+        throw new Error(e as string);
+      }
+    },
+    deactivateUser: async (_, { password }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("User not logged in");
+
+      try {
+        const user = await db.user.findUnique({
+          where: {
+            public_user_id: user_id,
+          },
+        });
+
+        if (!user) throw new Error("User not found");
+
+        const isPasswordCorrect = await verifyPassword(password, user.password);
+
+        if (!isPasswordCorrect) throw new Error("Invalid password");
+
+        const updatedUser = await db.user.update({
+          where: {
+            public_user_id: user_id,
+          },
+          data: {
+            status: "INACTIVE",
+          },
+        });
+
+        if (!updatedUser) throw new Error("Error deactivating user");
+
+        return true;
+      } catch (e) {
+        throw new Error(e as string);
+      }
     },
   },
 };

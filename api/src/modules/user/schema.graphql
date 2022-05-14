@@ -10,6 +10,10 @@ type Mutation {
   login(email: String!, password: String!): Boolean
   logout: Boolean
   verifyHash(hash: String!): Boolean
+
+  updateUser(email: String): Boolean
+  updatePassword(oldPassword: String!, newPassword: String!): Boolean
+  deactivateUser(password: String!): Boolean
 }
 
 type User {
