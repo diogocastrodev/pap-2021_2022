@@ -1,4 +1,12 @@
-import { CogIcon, LogoutIcon, MenuIcon } from "@heroicons/react/outline";
+import {
+  CameraIcon,
+  CogIcon,
+  CollectionIcon,
+  LogoutIcon,
+  MenuIcon,
+  SelectorIcon,
+  XIcon,
+} from "@heroicons/react/outline";
 import { Menu } from "@headlessui/react";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@src/context/AuthContext";
@@ -25,7 +33,23 @@ export default function Navbar(props: props) {
 
   const DropDownItems: DropDownProps = [
     {
-      text: "Preferences",
+      text: "Preferências",
+      divider: true,
+      items: [
+        {
+          text: "Prioridades",
+          icon: <SelectorIcon />,
+          href: "/user/priorities",
+        },
+        {
+          text: "Imagens",
+          icon: <CameraIcon />,
+          href: "/user/images",
+        },
+      ],
+    },
+    {
+      text: "Conta",
       items: [
         {
           text: "Definições",
@@ -82,65 +106,77 @@ export default function Navbar(props: props) {
             </div>
           )}
         </div>
-        <div className="justify-self-end justify-end w-full h-full flex flex-row items-center pr-4">
+        <div className="justify-self-end justify-end w-full h-full flex flex-row items-center">
           {!user.AuthData.loading &&
             (user.AuthData.is_logged ? (
               <Menu as="div" className={"relative"}>
-                <Menu.Button as="div">
-                  <MenuIcon className="h-5 w-5 cursor-pointer" />
-                </Menu.Button>
-                <Menu.Items
-                  as="div"
-                  className={
-                    "fixed z-[100] top-11 select-none right-6 w-56 min-h space-y-1 bg-gray-100 py-4 px-4 rounded-lg shadow-lg focus:outline-none"
-                  }
-                >
-                  {DropDownItems.map((item, key: number) => (
-                    <div
-                      className={`w-full h-full bg-transparent ${
-                        item.divider
-                          ? "border-b-2 border-neutral-200 pb-2 mb-2"
-                          : ""
-                      } `}
-                      key={key}
+                {({ open }) => (
+                  <>
+                    <Menu.Button
+                      as="div"
+                      className={`flex items-center mr-3 transition-all duration-300 ${
+                        open &&
+                        `bg-gray-300 rounded-full p-1 mr-[8px] shadow-sm`
+                      }`}
                     >
-                      <span className="text-center text-black text-opacity-60">
-                        {item.text}
-                      </span>
-                      {item.items.map((item, key: number) => (
-                        <Menu.Item
-                          as="div"
+                      <div className="h-5 w-5 cursor-pointer transition-all duration-300">
+                        {open ? <XIcon /> : <MenuIcon />}
+                      </div>
+                    </Menu.Button>
+                    <Menu.Items
+                      as="div"
+                      className={
+                        "fixed z-[100] top-11 select-none right-6 w-56 min-h space-y-1 bg-gray-100 py-4 px-4 rounded-lg shadow-lg focus:outline-none"
+                      }
+                    >
+                      {DropDownItems.map((item, key: number) => (
+                        <div
+                          className={`w-full h-full bg-transparent ${
+                            item.divider
+                              ? "border-b-2 border-neutral-200 pb-2 mb-2"
+                              : ""
+                          } `}
                           key={key}
-                          className={`mt-1`}
-                          onClick={item.onClick}
                         >
-                          {({ active }) => (
-                            <Link href={item.href || "#"}>
-                              <div
-                                className={`${
-                                  active
-                                    ? "bg-neutral-300 text-black  text-opacity-80"
-                                    : "bg-transparent text-black"
-                                } w-full cursor-pointer pl-2 rounded-lg py-0.5 `}
-                              >
-                                {item.icon ? (
-                                  <div className="flex items-center">
-                                    <span className="w-5">{item.icon}</span>
-                                    <span className="ml-1 text-md">
-                                      {item.text}
-                                    </span>
+                          <span className="text-center text-black text-opacity-60">
+                            {item.text}
+                          </span>
+                          {item.items.map((item, key: number) => (
+                            <Menu.Item
+                              as="div"
+                              key={key}
+                              className={`mt-1`}
+                              onClick={item.onClick}
+                            >
+                              {({ active }) => (
+                                <Link href={item.href || "#"}>
+                                  <div
+                                    className={`${
+                                      active
+                                        ? "bg-neutral-300 text-black  text-opacity-80"
+                                        : "bg-transparent text-black"
+                                    } w-full cursor-pointer pl-2 rounded-lg py-0.5 `}
+                                  >
+                                    {item.icon ? (
+                                      <div className="flex items-center">
+                                        <span className="w-5">{item.icon}</span>
+                                        <span className="ml-1 text-md">
+                                          {item.text}
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      <div className="pl-6">{item.text}</div>
+                                    )}
                                   </div>
-                                ) : (
-                                  <div className="pl-6">{item.text}</div>
-                                )}
-                              </div>
-                            </Link>
-                          )}
-                        </Menu.Item>
+                                </Link>
+                              )}
+                            </Menu.Item>
+                          ))}
+                        </div>
                       ))}
-                    </div>
-                  ))}
-                </Menu.Items>
+                    </Menu.Items>
+                  </>
+                )}
               </Menu>
             ) : (
               <div className="flex flex-row items-center space-x-4 text-black">

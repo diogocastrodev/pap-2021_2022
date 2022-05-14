@@ -10,10 +10,10 @@ export default function indexPage() {
   const user = useContext(AuthContext);
   return (
     <div className="w-full flex justify-center mt-48">
-      <div className="w-full grid grid-cols-2 grid-rows-1">
+      <div className="w-full grid grid-cols-2 grid-rows-1 select-none">
         <div className="flex flex-col min-w-fit w-full lg:mt-16 text-3xl pl-10 md:pl-48 z-10">
           <div>
-            <span>
+            <span className="">
               <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-blue-400 pr-2">
                 note.so
               </span>

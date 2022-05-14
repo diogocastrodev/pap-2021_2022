@@ -1,0 +1,22 @@
+scalar DateTime
+
+type Query {
+  allImages: [ImagesWithUrl]
+}
+
+type ImagesWithUrl {
+  image_id: String!
+  url: String!
+  type: String!
+  name: String!
+}
+
+type Images {
+  image_id: ID!
+  name: String!
+  path: String!
+  type: String!
+  pathWithName: String!
+  created_at: DateTime!
+  user: User!
+}

@@ -3,6 +3,7 @@ import { ResolverContext } from "../../context";
 import { Resolvers } from "../../graphql/types";
 import { db } from "../../database";
 import { verifyPassword, createPassword, getUserByPublicId } from "./helpers";
+import { check } from "../../functions/check";
 
 // TODO: Add context to resolver
 export const UserResolvers: Resolvers<ResolverContext> = {
@@ -24,8 +25,8 @@ export const UserResolvers: Resolvers<ResolverContext> = {
         throw new Error(e as string);
       }
     },
-    checkToken: async (_, __, context) => {
-      return context.is_authed;
+    checkToken: async (_, __, { is_authed }) => {
+      return is_authed;
     },
   },
   Mutation: {
@@ -33,22 +34,27 @@ export const UserResolvers: Resolvers<ResolverContext> = {
       if (is_authed && user_id)
         throw new AuthenticationError("already logged in");
 
-      const userData = await db.user.findUnique({
-        where: {
-          email: email.toString(),
-        },
-      });
+      const defaultError = "Invalid email or password";
+      try {
+        const userData = await db.user.findUnique({
+          where: {
+            email: email,
+          },
+        });
 
-      if (!userData) throw new Error("User not found");
+        if (!userData) throw new Error(defaultError);
 
-      /* -------------------------------------------------------------------------- */
-      /*                            Ver se isto funciona                            */
-      /* -------------------------------------------------------------------------- */
-      const isPasswordValid = await verifyPassword(password, userData.password);
+        /* -------------------------------------------------------------------------- */
+        /*                            Ver se isto funciona                            */
+        /* -------------------------------------------------------------------------- */
+        const isPasswordCorrect = await verifyPassword(
+          password,
+          userData.password
+        );
 
-      if (!isPasswordValid) throw new Error("Invalid password");
+        if (!isPasswordCorrect) throw new Error(defaultError);
 
-      /* const token = jwt.sign(
+        /* const token = jwt.sign(
         {
           user_id: userData.public_user_id,
         },
@@ -57,32 +63,37 @@ export const UserResolvers: Resolvers<ResolverContext> = {
 
       if (!token) throw new Error("Error signing token"); */
 
-      request.session.is_logged = true;
-      request.session.public_user_id = userData.public_user_id;
+        request.session.is_logged = true;
+        request.session.public_user_id = userData.public_user_id;
 
-      request.session.save();
+        request.session.save();
 
-      //createSessionInDb(context.request.session.id, userData.public_user_id);
-
-      /* console.log(context.request.session); */
-
-      return true;
+        return true;
+      } catch (e) {
+        throw new Error(defaultError);
+      }
     },
 
     register: async (_, { email, password }, { is_authed, user_id }) => {
       if (is_authed && user_id)
         throw new AuthenticationError("already logged in");
+      try {
+        const validEmail = check.chars.email(email);
+        const validPassword = check.chars.password(password);
 
-      const createdUser = await db.user.create({
-        data: {
-          email: email.toString(),
-          password: await createPassword(password.toString()),
-        },
-      });
+        const createdUser = await db.user.create({
+          data: {
+            email: validEmail,
+            password: await createPassword(validPassword),
+          },
+        });
 
-      if (!createdUser) throw new Error("Error creating user");
+        if (!createdUser) throw new Error("Error creating user");
 
-      return true;
+        return true;
+      } catch (e) {
+        throw new Error(e as string);
+      }
     },
     logout: async (_, __, { is_authed, user_id, request }) => {
       if (!is_authed || !user_id) throw new Error("User not logged in");

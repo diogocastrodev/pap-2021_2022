@@ -36,7 +36,7 @@ export default function loginPage() {
               <div className="text-3xl text-black text-center mt-8 mb-4">
                 Entrar
               </div>
-              <Stack className="flex justify-center items-center flex-col space-y-2">
+              <Stack className="flex justify-center items-center flex-col space-y-2 px-6">
                 <InputGroup>
                   <Label text="Email" required={true} />
                   <Input

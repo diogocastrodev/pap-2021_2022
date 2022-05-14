@@ -11,6 +11,7 @@ import { FolderResolver } from "./modules/folder_tree/resolvers";
 import { FolderFilesResolver } from "./modules/folders_files/resolvers";
 import { TodoResolver } from "./modules/todo/resolvers";
 import { DocumentResolver } from "./modules/document/resolvers";
+import { ImagesResolver } from "./modules/images";
 
 /* Load all modules schemas and merge all them in one */
 const baseSchema = loadSchemaSync(join(__dirname, `modules/**/*.graphql`), {
@@ -30,6 +31,7 @@ export const schema = addResolversToSchema({
     FolderResolver,
     FolderFilesResolver,
     TodoResolver,
-    DocumentResolver
+    DocumentResolver,
+    ImagesResolver
   ),
 });

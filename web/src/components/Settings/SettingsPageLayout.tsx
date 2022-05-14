@@ -5,6 +5,7 @@ import { AuthContext } from "@src/context/AuthContext";
 import { forwardRef, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import NeedLogin from "../Login/NeedLogin";
 
 interface props {
   children: React.ReactNode | React.ReactNode[];
@@ -46,20 +47,12 @@ const CustomLink = forwardRef<HTMLAnchorElement, Props>((props, ref) => {
 });
 
 export default function SettingsPageLayout({ children }: props) {
-  const { AuthData } = useContext(AuthContext);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!AuthData.loading && !AuthData.user && !AuthData.is_logged) {
-      router.push("/auth/login");
-    }
-  }, [AuthData.loading || AuthData.is_logged]);
   return (
     <>
       <Head>
         <title>Definições | note.so</title>
       </Head>
-      {!AuthData.loading && AuthData.user && AuthData.is_logged && (
+      <NeedLogin>
         <div className="w-full grid grid-cols-4 gap-2">
           <div className="col-span-1">
             <div className="py-2 px-2 bg-white rounded-md">
@@ -82,7 +75,7 @@ export default function SettingsPageLayout({ children }: props) {
             {children}
           </div>
         </div>
-      )}
+      </NeedLogin>
     </>
   );
 }

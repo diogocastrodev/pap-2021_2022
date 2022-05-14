@@ -27,6 +27,7 @@ import CreateFolderDialog from "./Folders/Create Folder/CreateFolder";
 import OrganizeFolderDialog from "./Folders/Organize Folders/OrganizeFolder";
 import ItemsToPage from "./Items/Items";
 import Head from "next/head";
+import NeedLogin from "../Login/NeedLogin";
 
 interface props {
   folder?: {
@@ -151,7 +152,7 @@ export default function DashboardPage(props: props) {
       )}
 
       {/* Menu */}
-      {!AuthData.loading && AuthData.user && AuthData.is_logged && (
+      <NeedLogin>
         <div className="w-full max-h-[91.9vh] grid grid-cols-4 gap-2">
           <TinyItem className="flex-none overscroll-y-auto overflow-hidden">
             <Item
@@ -291,7 +292,7 @@ export default function DashboardPage(props: props) {
             </LargeItem>
           )}
         </div>
-      )}
+      </NeedLogin>
     </>
   );
 }

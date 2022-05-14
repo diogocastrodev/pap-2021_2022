@@ -31,7 +31,7 @@ export default function RegisterPage() {
         <title>Registo | note.so</title>
       </Head>
       <AuthLayout>
-        <div className="h-full w-full flex items-center justify-center absolute">
+        <div className="h-full w-full flex items-center justify-center absolute z-20">
           <div className="h-108 w-132 bg-neutral-50 shadow-xl inset-x-auto -top-20 rounded-xl">
             <Form
               onSubmit={(e) => {
@@ -56,7 +56,7 @@ export default function RegisterPage() {
               <div className="text-3xl text-black text-center mt-6 mb-4">
                 Registar
               </div>
-              <Stack type="col">
+              <Stack type="col" className="px-6">
                 <InputGroup>
                   <Label text="Email" />
                   <Input

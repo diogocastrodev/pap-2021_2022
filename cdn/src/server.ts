@@ -27,7 +27,7 @@ app.post(
   UploadImages
 );
 
-app.use("/images/upload/:folder/:id", imagesPage);
+app.use("/images/upload/:pubUserId/:id", imagesPage);
 
 app.use((req, res, next) => {
   res.status(404).end();

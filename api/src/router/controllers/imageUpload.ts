@@ -42,17 +42,39 @@ export async function imageUpload(req: Request, res: Response) {
         data: formData,
       })
         .then(async (response) => {
-          console.log("✨ Images ✨ Uploaded successfully");
           folderDestroyer({
             files,
           });
           if (response.status === 200) {
-            const imgs = response.data as cdnImages[];
+            let imgs = response.data.fileNames as cdnImages[];
             if (imgs.length > 0) {
               try {
+                const getUserId = await db.user.findUnique({
+                  where: {
+                    public_user_id: ctx.user_id,
+                  },
+                  select: {
+                    user_id: true,
+                  },
+                });
+
+                if (!getUserId) {
+                  throw new Error("User not found");
+                }
+
+                // Add the user_id to imgs
+                for (let i = 0; i < imgs.length; i++) {
+                  imgs[i] = {
+                    ...imgs[i],
+                    user_id: getUserId.user_id,
+                  };
+                }
+
                 const storedImages = await db.cdnImages.createMany({
                   data: imgs,
                 });
+
+                console.log("✨ Images ✨ Uploaded successfully");
 
                 if (storedImages.count > 0) {
                   res.status(200).json({

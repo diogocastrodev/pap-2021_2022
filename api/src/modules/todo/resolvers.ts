@@ -1,6 +1,7 @@
 import { ResolverContext } from "../../context";
 import { Resolvers, TodoStatus } from "../../graphql/types";
 import { db } from "../../database";
+import { check } from "../../functions/check";
 
 export const TodoResolver: Resolvers<ResolverContext> = {
   Query: {
@@ -104,19 +105,25 @@ export const TodoResolver: Resolvers<ResolverContext> = {
     createPriority: async (_, { name, color }, { is_authed, user_id }) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
 
-      const priority = await db.priority.create({
-        data: {
-          name,
-          color,
-          user: {
-            connect: {
-              public_user_id: user_id,
+      try {
+        const color_hex = check.chars.color(color);
+
+        const priority = await db.priority.create({
+          data: {
+            name,
+            color: color_hex,
+            user: {
+              connect: {
+                public_user_id: user_id,
+              },
             },
           },
-        },
-      });
+        });
 
-      return priority;
+        return priority;
+      } catch (e) {
+        throw new Error(e as string);
+      }
     },
     updatePriority: async (_, { id, name, color }, { is_authed, user_id }) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");

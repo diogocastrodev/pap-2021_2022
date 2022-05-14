@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { user, folders, document, todo, files, priority } from '.prisma/client';
+import { user, folders, document, todo, files, priority, cdnImages } from '.prisma/client';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -56,6 +56,25 @@ export type Folders = {
   parent_id?: Maybe<Scalars['ID']>;
   updated_at: Scalars['DateTime'];
   user?: Maybe<User>;
+};
+
+export type Images = {
+  __typename?: 'Images';
+  created_at: Scalars['DateTime'];
+  image_id: Scalars['ID'];
+  name: Scalars['String'];
+  path: Scalars['String'];
+  pathWithName: Scalars['String'];
+  type: Scalars['String'];
+  user: User;
+};
+
+export type ImagesWithUrl = {
+  __typename?: 'ImagesWithUrl';
+  image_id: Scalars['String'];
+  name: Scalars['String'];
+  type: Scalars['String'];
+  url: Scalars['String'];
 };
 
 export type Mutation = {
@@ -169,6 +188,7 @@ export type Priority = {
 
 export type Query = {
   __typename?: 'Query';
+  allImages?: Maybe<Array<Maybe<ImagesWithUrl>>>;
   checkToken?: Maybe<Scalars['Boolean']>;
   getDocumentContent: Scalars['String'];
   getFileContent?: Maybe<Files>;
@@ -364,6 +384,8 @@ export type ResolversTypes = {
   Files: ResolverTypeWrapper<files>;
   Folders: ResolverTypeWrapper<folders>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  Images: ResolverTypeWrapper<cdnImages>;
+  ImagesWithUrl: ResolverTypeWrapper<ImagesWithUrl>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   Priority: ResolverTypeWrapper<priority>;
@@ -387,6 +409,8 @@ export type ResolversParentTypes = {
   Files: files;
   Folders: folders;
   ID: Scalars['ID'];
+  Images: cdnImages;
+  ImagesWithUrl: ImagesWithUrl;
   Int: Scalars['Int'];
   Mutation: {};
   Priority: priority;
@@ -438,6 +462,25 @@ export type FoldersResolvers<ContextType = any, ParentType extends ResolversPare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ImagesResolvers<ContextType = any, ParentType extends ResolversParentTypes['Images'] = ResolversParentTypes['Images']> = {
+  created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  image_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  pathWithName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImagesWithUrlResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImagesWithUrl'] = ResolversParentTypes['ImagesWithUrl']> = {
+  image_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createFile?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<MutationCreateFileArgs, 'fileType' | 'folder_id' | 'name'>>;
   createFolder?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType, RequireFields<MutationCreateFolderArgs, 'name'>>;
@@ -467,6 +510,7 @@ export type PriorityResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  allImages?: Resolver<Maybe<Array<Maybe<ResolversTypes['ImagesWithUrl']>>>, ParentType, ContextType>;
   checkToken?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   getDocumentContent?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryGetDocumentContentArgs, 'id'>>;
   getFileContent?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<QueryGetFileContentArgs, 'fileId'>>;
@@ -532,6 +576,8 @@ export type Resolvers<ContextType = any> = {
   Document?: DocumentResolvers<ContextType>;
   Files?: FilesResolvers<ContextType>;
   Folders?: FoldersResolvers<ContextType>;
+  Images?: ImagesResolvers<ContextType>;
+  ImagesWithUrl?: ImagesWithUrlResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Priority?: PriorityResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

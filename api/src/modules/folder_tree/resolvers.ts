@@ -5,6 +5,7 @@ import { db } from "../../database";
 import { createDataTree } from "./helpers";
 import { files, folders } from "@prisma/client";
 import { getUserByPublicId } from "../user/helpers";
+import { check } from "../../functions/check";
 
 export const FolderResolver: Resolvers<ResolverContext> = {
   Query: {
@@ -150,9 +151,14 @@ export const FolderResolver: Resolvers<ResolverContext> = {
           };
         }
 
+        let color_hex: undefined | string = undefined;
+        if (color) {
+          color_hex = check.chars.color(color) || undefined;
+        }
+
         let data: CreateFolder = {
           name,
-          color: color || undefined,
+          color: color_hex,
           user: {
             connect: {
               public_user_id: user_id,

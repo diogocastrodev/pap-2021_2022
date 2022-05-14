@@ -7,6 +7,9 @@ export const config = {
   CDN: {
     URL: process.env.CDN_URL || "localhost:5000",
     secure: process.env.CDN_Secure || false,
+    protocol: (!!process.env.CDN_SECURE as boolean)
+      ? "https"
+      : "http" || "http",
   },
 };
 

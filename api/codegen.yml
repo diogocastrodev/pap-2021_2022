@@ -13,6 +13,7 @@ generates:
         Todo: .prisma/client#todo
         Files: .prisma/client#files
         Priority: .prisma/client#priority
+        Images: .prisma/client#cdnImages
     plugins:
       - typescript
       - typescript-resolvers
