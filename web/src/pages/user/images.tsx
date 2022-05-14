@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import Button from "@components/Form/Buttons/Button";
 import { ImagesWithUrl } from "@src/graphql/graphql";
 import UploadImageDialog from "@src/components/Images/UploadImageDialog";
+import { browser } from "process";
+import axios from "axios";
 
 const getImages = gql`
   query getImages {
@@ -114,21 +116,45 @@ export default function UserImagesPage() {
                       >
                         <ClipboardCopyIcon />
                       </div>
-                      <div
+                      <a
                         className="w-6 cursor-pointer"
                         title="Transferir"
+                        /*                         href={`${image.url}`}
+                        target="_blank" */
                         onClick={() => {
-                          const blob = new Blob([image.url], {
-                            type: `${image.type}`,
-                          });
+                          axios
+                            .post(image.url, undefined, {
+                              responseType: "blob",
+                            })
+                            .then((res) => {
+                              const url = window.URL.createObjectURL(
+                                new Blob([res.data])
+                              );
+                              const link = document.createElement("a");
+                              link.href = url;
+                              link.setAttribute("download", `${image.name}`);
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                            });
+                          /* const url = window.URL.createObjectURL(
+                            new Blob([image.url])
+                          );
+                          const link = document.createElement("a");
+                          link.href = url;
+                          link.setAttribute("download", `${image.name}`);
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link); */
+                          /* const blob = new Blob([image.url]);
                           const link = document.createElement("a");
                           link.href = URL.createObjectURL(blob);
                           link.download = `${image.name}`;
-                          link.click();
+                          link.click(); */
                         }}
                       >
                         <DownloadIcon />
-                      </div>
+                      </a>
                     </div>
                   </div>
                 </div>
