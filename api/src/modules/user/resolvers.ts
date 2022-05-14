@@ -41,7 +41,10 @@ export const UserResolvers: Resolvers<ResolverContext> = {
 
       if (!userData) throw new Error("User not found");
 
-      const isPasswordValid = verifyPassword(password, userData.password);
+      /* -------------------------------------------------------------------------- */
+      /*                            Ver se isto funciona                            */
+      /* -------------------------------------------------------------------------- */
+      const isPasswordValid = await verifyPassword(password, userData.password);
 
       if (!isPasswordValid) throw new Error("Invalid password");
 
