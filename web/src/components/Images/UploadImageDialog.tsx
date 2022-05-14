@@ -40,8 +40,8 @@ export default function UploadImageDialog({
           }
         )
         .then((res) => {
+          onClose();
           if (res.status === 200) {
-            onClose();
             onSuccess();
           }
         })
@@ -62,6 +62,7 @@ export default function UploadImageDialog({
                   onChange: (e) => {
                     setFiles(e.target.files);
                   },
+                  accept: ".jpg, .jpeg, .png",
                 }}
               />
               <Button className="mt-4">Enviar</Button>

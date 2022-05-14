@@ -137,20 +137,6 @@ export default function UserImagesPage() {
                               link.click();
                               document.body.removeChild(link);
                             });
-                          /* const url = window.URL.createObjectURL(
-                            new Blob([image.url])
-                          );
-                          const link = document.createElement("a");
-                          link.href = url;
-                          link.setAttribute("download", `${image.name}`);
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link); */
-                          /* const blob = new Blob([image.url]);
-                          const link = document.createElement("a");
-                          link.href = URL.createObjectURL(blob);
-                          link.download = `${image.name}`;
-                          link.click(); */
                         }}
                       >
                         <DownloadIcon />
