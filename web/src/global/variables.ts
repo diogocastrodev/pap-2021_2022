@@ -4,13 +4,6 @@ export const config = {
     URL: process.env.API_URL || "localhost:4000",
     secure: process.env.API_Secure || false,
   },
-  CDN: {
-    URL: process.env.CDN_URL || "localhost:5000",
-    secure: process.env.CDN_Secure || false,
-    protocol: (!!process.env.CDN_SECURE as boolean)
-      ? "https"
-      : "http" || "http",
-  },
 };
 
 const httpProtocolSecure = config.API.secure ? "https" : "http";

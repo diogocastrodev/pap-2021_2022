@@ -11,6 +11,7 @@ import { gql } from "graphql-request";
 import { useEffect, useState } from "react";
 import Button from "@components/Form/Buttons/Button";
 import { ImagesWithUrl } from "@src/graphql/graphql";
+import UploadImageDialog from "@src/components/Images/UploadImageDialog";
 
 const getImages = gql`
   query getImages {
@@ -24,39 +25,45 @@ const getImages = gql`
 
 export default function UserImagesPage() {
   const [images, setImages] = useState<ImagesWithUrl[]>([]);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
 
-  useEffect(() => {
-    gqlClient.request(getImages).then((res) => {
+  const fetchImages = async () => {
+    await gqlClient.request(getImages).then((res) => {
       if (res.allImages) {
         setImages(res.allImages as ImagesWithUrl[]);
       }
     });
-  }, []);
-
-  const uploadImage = () => {
-    const formData = new FormData();
-    formData.append("file", file);
-    fetch(
-      `${config.API.secure ? "https" : "http"}://${config.API.URL}/images`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    )
-      .then((res) => res.json())
-      .then((res) => console.log(res));
   };
+
+  useEffect(() => {
+    fetchImages();
+  }, []);
 
   return (
     <>
+      <UploadImageDialog
+        isOpen={isUploadDialogOpen}
+        onClose={() => {
+          setIsUploadDialogOpen(false);
+        }}
+        onSuccess={() => {
+          fetchImages();
+        }}
+      />
       <NeedLogin>
-        <div className="flex flex-col">
-          <div className="flex flex-row items-center mb-4">
+        <div className="w-full flex flex-col">
+          <div className="w-full flex flex-row items-center mb-4">
             <span className="text-xl font-medium">
               Imagens: {images.length}
             </span>
             <div className="ml-auto">
-              <Button type="button" onClick={() => {}} className="text-md">
+              <Button
+                type="button"
+                onClick={() => {
+                  setIsUploadDialogOpen(true);
+                }}
+                className="text-md"
+              >
                 Adicionar Imagem
               </Button>
             </div>
