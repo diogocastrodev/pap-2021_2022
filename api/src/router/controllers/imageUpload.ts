@@ -34,7 +34,7 @@ export async function imageUpload(req: Request, res: Response) {
 
       await axios({
         method: "POST",
-        url: `${config.CDN.URL}/upload/images`,
+        url: `${config.CDN.URL}upload/images`,
         headers: {
           "Content-Type": `multipart/form-data; boundary=${formData.getBoundary()}`,
           Authorization: `${config.CDN.KEY}`,

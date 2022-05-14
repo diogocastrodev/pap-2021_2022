@@ -30,7 +30,7 @@ export const ImagesResolver: Resolvers<ResolverContext> = {
             name: images[i].name,
 
             url: `${config.CDN.URL}${
-              !endsWithSlash && "/"
+              !endsWithSlash ? "/" : ""
             }images/upload/${user_id}/${images[i].name}`,
           });
         }
