@@ -21,12 +21,17 @@ export const ImagesResolver: Resolvers<ResolverContext> = {
 
         let images_array: ImagesWithUrl[] = [];
 
+        const endsWithSlash = config.CDN.URL.endsWith("/");
+
         for (let i = 0; i < images.length; i++) {
           images_array.push({
             image_id: images[i].image_id,
             type: images[i].type,
             name: images[i].name,
-            url: `${config.CDN.URL}/images/upload/${user_id}/${images[i].name}`,
+
+            url: `${config.CDN.URL}${
+              !endsWithSlash && "/"
+            }images/upload/${user_id}/${images[i].name}`,
           });
         }
 

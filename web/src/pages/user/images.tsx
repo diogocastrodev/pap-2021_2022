@@ -10,6 +10,7 @@ import { gqlClient } from "@src/libs/graphql-request";
 import { gql } from "graphql-request";
 import { useEffect, useState } from "react";
 import Button from "@components/Form/Buttons/Button";
+import { ImagesWithUrl } from "@src/graphql/graphql";
 
 const getImages = gql`
   query getImages {
@@ -22,11 +23,13 @@ const getImages = gql`
 `;
 
 export default function UserImagesPage() {
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<ImagesWithUrl[]>([]);
 
   useEffect(() => {
     gqlClient.request(getImages).then((res) => {
-      console.log(res.allImages);
+      if (res.allImages) {
+        setImages(res.allImages as ImagesWithUrl[]);
+      }
     });
   }, []);
 
@@ -44,7 +47,6 @@ export default function UserImagesPage() {
       .then((res) => console.log(res));
   };
 
-  const exampleUrl = `http://${config.CDN.URL}/images/upload/cl30iwdsj00013svk3rl74y1d/1652378999800-79f7d8a1-a55f-4794-bff9-a84b81ff74f4.png`;
   return (
     <>
       <NeedLogin>
@@ -60,14 +62,14 @@ export default function UserImagesPage() {
             </div>
           </div>
           <div className="flex flex-wrap w-full h-full gap-3">
-            {Array.from({ length: 4 }).map((_, i) => (
+            {images.map((image, i) => (
               <div
                 className="flex flex-col w-64 h-72 bg-white rounded-md"
                 key={i}
               >
                 <div className="w-64 h-64 bg-gray-300 rounded-md">
                   <img
-                    src={`${exampleUrl}`}
+                    src={`${image.url}`}
                     className="rounded-md aspect-square outline-none w-64 h-64 object-cover"
                   />
                 </div>
@@ -77,7 +79,7 @@ export default function UserImagesPage() {
                       <div className="h-7 bg-gray-200 rounded-md">
                         <Input
                           input={{
-                            value: `${exampleUrl}`,
+                            value: `${image.url}`,
                             className: "w-full h-full px-2 py-1 cursor-text",
                             disabled: true,
                           }}
@@ -91,7 +93,7 @@ export default function UserImagesPage() {
                       <a
                         className="w-6"
                         title="Abrir em outro separador"
-                        href={`${exampleUrl}`}
+                        href={`${image.url}`}
                         target="_blank"
                       >
                         <ExternalLinkIcon />
@@ -99,8 +101,8 @@ export default function UserImagesPage() {
                       <div
                         className="w-6 cursor-pointer"
                         title="Copiar Link"
-                        onClick={() => {
-                          navigator.clipboard.writeText(`${exampleUrl}`);
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(`${image.url}`);
                         }}
                       >
                         <ClipboardCopyIcon />
@@ -109,12 +111,12 @@ export default function UserImagesPage() {
                         className="w-6 cursor-pointer"
                         title="Transferir"
                         onClick={() => {
-                          const blob = new Blob([exampleUrl], {
-                            type: "image/png",
+                          const blob = new Blob([image.url], {
+                            type: `${image.type}`,
                           });
                           const link = document.createElement("a");
                           link.href = URL.createObjectURL(blob);
-                          link.download = "Name";
+                          link.download = `${image.name}`;
                           link.click();
                         }}
                       >

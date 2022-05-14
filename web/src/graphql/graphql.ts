@@ -54,6 +54,25 @@ export type Folders = {
   user?: Maybe<User>;
 };
 
+export type Images = {
+  __typename?: 'Images';
+  created_at: Scalars['DateTime'];
+  image_id: Scalars['ID'];
+  name: Scalars['String'];
+  path: Scalars['String'];
+  pathWithName: Scalars['String'];
+  type: Scalars['String'];
+  user: User;
+};
+
+export type ImagesWithUrl = {
+  __typename?: 'ImagesWithUrl';
+  image_id: Scalars['String'];
+  name: Scalars['String'];
+  type: Scalars['String'];
+  url: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createFile?: Maybe<Files>;
@@ -165,6 +184,7 @@ export type Priority = {
 
 export type Query = {
   __typename?: 'Query';
+  allImages?: Maybe<Array<Maybe<ImagesWithUrl>>>;
   checkToken?: Maybe<Scalars['Boolean']>;
   getDocumentContent: Scalars['String'];
   getFileContent?: Maybe<Files>;
