@@ -243,7 +243,7 @@ export default function DashboardPage(props: props) {
                 </div>
                 {/* Folders Wrapper */}
                 <div
-                  className="h-full mb-2 overflow-y-auto folders-scroll"
+                  className="h-full mb-2 overflow-y-auto folders-scroll pr-1"
                   id="folders-scroll"
                   onContextMenu={(e) => {
                     e.preventDefault();

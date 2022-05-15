@@ -122,8 +122,8 @@ export type MutationCreatePriorityArgs = {
 export type MutationCreateTodoArgs = {
   date?: InputMaybe<Scalars['DateTime']>;
   file?: InputMaybe<Scalars['ID']>;
-  name: Scalars['String'];
   priority?: InputMaybe<Scalars['ID']>;
+  text: Scalars['String'];
 };
 
 
@@ -178,9 +178,9 @@ export type MutationUpdateTodoArgs = {
   date?: InputMaybe<Scalars['DateTime']>;
   file?: InputMaybe<Scalars['ID']>;
   id: Scalars['ID'];
-  name?: InputMaybe<Scalars['String']>;
   priority?: InputMaybe<Scalars['ID']>;
   status?: InputMaybe<TodoStatus>;
+  text?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -504,7 +504,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createFile?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<MutationCreateFileArgs, 'fileType' | 'folder_id' | 'name'>>;
   createFolder?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType, RequireFields<MutationCreateFolderArgs, 'name'>>;
   createPriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationCreatePriorityArgs, 'color' | 'name' | 'order'>>;
-  createTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationCreateTodoArgs, 'name'>>;
+  createTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationCreateTodoArgs, 'text'>>;
   deactivateUser?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeactivateUserArgs, 'password'>>;
   deletePriority?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePriorityArgs, 'id'>>;
   deleteTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'id'>>;

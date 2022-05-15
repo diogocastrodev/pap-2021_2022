@@ -149,13 +149,16 @@ export default function DocumentPage(props: props) {
                 <div className="font-bold text-xl flex flex-row text-ellipsis overflow-hidden">
                   Ficheiro: <div className="font-medium ml-2">{fileName}</div>
                 </div>
-                <div className="pl-3 ml-auto">
+                <Stack type="row" className="pl-3 ml-auto space-x-2">
+                  <Button type="button" onClick={uploadNewDocumentContent}>
+                    Guardar
+                  </Button>
                   <Button type="button" onClick={clickToDownload}>
                     Transferir
                   </Button>
-                </div>
+                </Stack>
               </Stack>
-              <div>
+              <Stack type="row" className="items-center my-1">
                 {lastUpdate && (
                   <span className="text-sm">
                     Última actualização:{" "}
@@ -164,7 +167,7 @@ export default function DocumentPage(props: props) {
                     </span>
                   </span>
                 )}
-              </div>
+              </Stack>
             </div>
             {/* @ts-ignore */}
             <Editor

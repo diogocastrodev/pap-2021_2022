@@ -5,13 +5,14 @@ import {
   CheckIcon,
   TrashIcon,
 } from "@heroicons/react/outline";
-import { Todo, TodoStatus } from "@src/graphql/graphql";
+import { Priority, Todo, TodoStatus } from "@src/graphql/graphql";
 import { gqlClient } from "@src/libs/graphql-request";
 import { gql } from "graphql-request";
 import { ReactElement, useEffect, useState } from "react";
 import Button from "@components/Form/Buttons/Button";
 import CreateTodoDialog from "./Todo/CreateTodo/CreateTodoDialog";
 import Stack from "@components/Form/Stack/Stack";
+import { toast } from "react-toastify";
 
 interface props {
   id: string;
@@ -47,13 +48,22 @@ export default function TodoPage(props: props) {
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false);
 
-  const addTodo = async (id: string, text: string, status: TodoStatus) => {
+  const addTodo = async (
+    id: string,
+    text: string,
+    status: TodoStatus,
+    priority: Priority | undefined,
+    date: Date | undefined
+  ) => {
     const todo = {
       todo_id: id,
       text,
       status,
+      date,
+      priority,
     } as Todo;
     setTodos([...todos, todo]);
+    toast.success("Apontamento adicionado");
   };
 
   const resTodo = async (todoId: string) => {
@@ -65,6 +75,7 @@ export default function TodoPage(props: props) {
         return todo;
       })
     );
+    toast.success("Apontamento recuperado");
   };
 
   const finishTodo = async (todoId: string) => {
@@ -76,6 +87,7 @@ export default function TodoPage(props: props) {
         return todo;
       })
     );
+    toast.success("Apontamento concluído");
   };
 
   const deleteTodo = async (todoId: string) => {
@@ -87,6 +99,7 @@ export default function TodoPage(props: props) {
         return todo;
       })
     );
+    toast.success("Apontamento apagado");
   };
 
   useEffect(() => {
@@ -124,8 +137,8 @@ export default function TodoPage(props: props) {
       </div>
       <div className="my-1 border-b-2 border-gray-100"></div>
       <div className="space-y-2 flex flex-col w-full">
-        <Disclosure>
-          {({ open }) => (
+        <Disclosure defaultOpen={true}>
+          {({ open }: { open: boolean }) => (
             <>
               <div className="bg-gray-100 rounded-lg">
                 <Disclosure.Button className="text-left bg-orange-200 w-full py-1 px-2 rounded-lg flex flex-row items-center">
@@ -145,35 +158,34 @@ export default function TodoPage(props: props) {
                       .length > 0 && `py-2 px-2 space-y-3`
                   }`}
                 >
-                  {todos.map(
-                    (todo) =>
-                      todo.status === TodoStatus.Active && (
-                        <div
-                          key={todo.todo_id}
-                          className={`flex flex-row items-center hover:font-bold`}
-                        >
-                          <div className="break-all overflow-x-hidden">
-                            {todo.text}
-                          </div>
-                          <Stack type="row" className="ml-auto pl-3 space-x-1">
-                            <Buttons
-                              color="blue"
-                              onClick={() => {
-                                finishTodo(todo.todo_id);
-                              }}
-                              icon={<CheckIcon />}
-                            />
-                            <Buttons
-                              color="red"
-                              onClick={() => {
-                                deleteTodo(todo.todo_id);
-                              }}
-                              icon={<TrashIcon />}
-                            />
-                          </Stack>
+                  {todos
+                    .filter((todo) => todo.status === TodoStatus.Active)
+                    .map((todo) => (
+                      <div
+                        key={todo.todo_id}
+                        className={`flex flex-row items-center hover:font-bold`}
+                      >
+                        <div className="break-all overflow-x-hidden">
+                          {todo.text}
                         </div>
-                      )
-                  )}
+                        <Stack type="row" className="ml-auto pl-3 space-x-1">
+                          <Buttons
+                            color="blue"
+                            onClick={() => {
+                              finishTodo(todo.todo_id);
+                            }}
+                            icon={<CheckIcon />}
+                          />
+                          <Buttons
+                            color="red"
+                            onClick={() => {
+                              deleteTodo(todo.todo_id);
+                            }}
+                            icon={<TrashIcon />}
+                          />
+                        </Stack>
+                      </div>
+                    ))}
                 </Disclosure.Panel>
               </div>
             </>
@@ -181,7 +193,7 @@ export default function TodoPage(props: props) {
         </Disclosure>
         {/* Concluidos */}
         <Disclosure>
-          {({ open }) => (
+          {({ open }: { open: boolean }) => (
             <>
               <div className="bg-gray-100 rounded-lg">
                 <Disclosure.Button className="text-left bg-green-200 w-full py-1 px-2 rounded-lg flex flex-row items-center">
@@ -240,7 +252,7 @@ export default function TodoPage(props: props) {
         </Disclosure>
         {/* Apagados */}
         <Disclosure>
-          {({ open }) => (
+          {({ open }: { open: boolean }) => (
             <>
               <div className="bg-gray-100 rounded-lg">
                 <Disclosure.Button className="text-left bg-red-200 w-full py-1 px-2 rounded-lg flex flex-row items-center">

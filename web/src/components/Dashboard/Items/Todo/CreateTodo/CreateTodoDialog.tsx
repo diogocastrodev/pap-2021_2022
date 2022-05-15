@@ -4,28 +4,42 @@ import PreMadeDialog, {
   preMadeDialogNeeded,
 } from "@components/Dialog/PreMadeDialog";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Todo, TodoStatus } from "@src/graphql/graphql";
+import { Priority, Todo, TodoStatus } from "@src/graphql/graphql";
 import { gqlClient } from "@libs/graphql-request";
 import { gql } from "graphql-request";
 import Button from "@components/Form/Buttons/Button";
+import Form from "@components/Form/Form/Form";
 
 const createTodoMutation = gql`
-  mutation ($name: String!, $date: DateTime, $priority: ID, $file: ID) {
-    createTodo(name: $name, date: $date, priority: $priority, file: $file) {
-      file_id
+  mutation ($text: String!, $date: DateTime, $priority: ID, $file: ID) {
+    createTodo(text: $text, date: $date, priority: $priority, file: $file) {
       status
-      todoText
+      text
+      date
+      priority {
+        priority_id
+        name
+        color
+      }
     }
   }
 `;
 
 interface props extends preMadeDialogNeeded {
   file?: string;
-  onCreate: (id: string, text: string, status: TodoStatus) => void;
+  onCreate: (
+    id: string,
+    text: string,
+    status: TodoStatus,
+    priority: Priority,
+    date: Date
+  ) => void;
 }
 
 export default function CreateTodoDialog(props: props) {
   const [text, setText] = useState<string>("");
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [priority, setPriority] = useState<string | undefined>(undefined);
 
   const textInput = useRef<HTMLDivElement>(null);
 
@@ -60,21 +74,26 @@ export default function CreateTodoDialog(props: props) {
       return;
     }
     try {
+      console.log(props.file);
       await gqlClient
         .request(createTodoMutation, {
-          data: {
-            file_id: props.file,
-            name: text,
-          },
+          file: props.file,
+          date: date,
+          priority: priority,
+          text: text,
         })
         .then((res) => {
           const newTodo = res.createTodo as Todo;
           props.onCreate(
             newTodo.todo_id,
             newTodo.text,
-            newTodo.status as TodoStatus
+            newTodo.status as TodoStatus,
+            newTodo.priority as Priority,
+            newTodo.date
           );
           setText("");
+          setDate(undefined);
+          setPriority(undefined);
           props.onClose();
         });
     } catch (error) {
@@ -85,7 +104,7 @@ export default function CreateTodoDialog(props: props) {
   return (
     <>
       <PreMadeDialog isOpen={props.isOpen} onClose={props.onClose}>
-        <form className="flex flex-col" method="POST" onSubmit={createTodo}>
+        <Form className="flex flex-col" method="POST" onSubmit={createTodo}>
           <div className="flex flex-col">
             <Label text="Texto" />
             <Input
@@ -102,7 +121,7 @@ export default function CreateTodoDialog(props: props) {
             />
           </div>
           <Button>Criar Apontamento</Button>
-        </form>
+        </Form>
       </PreMadeDialog>
     </>
   );

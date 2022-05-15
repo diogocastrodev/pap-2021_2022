@@ -3,6 +3,7 @@ import Loader from "@src/components/Loader/Loader";
 import { Files, FileType } from "@src/graphql/graphql";
 import { gqlClient } from "@src/libs/graphql-request";
 import { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 import DocumentPage from "./DocumentPage";
 import TodoPage from "./TodoPage";
 

@@ -196,7 +196,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
     },
     createTodo: async (
       _,
-      { name, priority, file, date },
+      { text, priority, file, date },
       { is_authed, user_id }
     ) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
@@ -223,7 +223,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       }
 
       let newData: INewData = {
-        text: name,
+        text: text,
         date: date,
         status: TodoStatus.Active,
         user: {
@@ -243,6 +243,8 @@ export const TodoResolver: Resolvers<ResolverContext> = {
           },
         };
       }
+
+      console.log(file);
 
       if (file && typeof file !== null)
         newData = {
@@ -264,7 +266,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
     },
     updateTodo: async (
       _,
-      { id, name, priority, file },
+      { id, text, priority, file },
       { is_authed, user_id }
     ) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
@@ -287,14 +289,14 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       if (isUpdatable.user.public_user_id !== user_id)
         throw new Error("Unauthorized");
 
-      if (name === "") name = null;
+      if (text === "") text = null;
 
       let dataToUpdate = {};
 
-      if (name && typeof name !== null)
+      if (text && typeof text !== null)
         dataToUpdate = {
           ...dataToUpdate,
-          todoText: name,
+          todoText: text,
         };
 
       if (priority && typeof priority !== null)

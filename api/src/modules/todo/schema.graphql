@@ -12,10 +12,10 @@ type Mutation {
   updatePriority(id: ID!, name: String, color: String, order: Int): Priority!
   deletePriority(id: ID!): Boolean!
 
-  createTodo(name: String!, date: DateTime, priority: ID, file: ID): Todo!
+  createTodo(text: String!, date: DateTime, priority: ID, file: ID): Todo!
   updateTodo(
     id: ID!
-    name: String
+    text: String
     date: DateTime
     status: TodoStatus
     priority: ID
