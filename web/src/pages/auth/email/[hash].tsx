@@ -21,7 +21,10 @@ export default function VerifyEmailByHash() {
     gqlClient
       .request(verifyEmailMutation, { hash })
       .then((res) => {
-        if (res.verifyEmail) router.push("/auth/login");
+        if (res.verifyEmail) {
+          setLoading(false);
+          router.push("/auth/login");
+        }
       })
       .catch((err) => {
         setError(err);
@@ -32,7 +35,7 @@ export default function VerifyEmailByHash() {
     if (typeof hash === "string") {
       execVerifyEmail(hash as string);
     }
-  }, [hash]);
+  }, [hash || router.isReady]);
 
   return (
     <>

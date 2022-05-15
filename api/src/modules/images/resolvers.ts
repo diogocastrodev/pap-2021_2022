@@ -17,8 +17,6 @@ export const ImagesResolver: Resolvers<ResolverContext> = {
           },
         });
 
-        console.log(images);
-
         let images_array: ImagesWithUrl[] = [];
 
         const endsWithSlash = config.CDN.URL.endsWith("/");
