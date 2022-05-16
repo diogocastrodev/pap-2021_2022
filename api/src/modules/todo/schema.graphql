@@ -10,7 +10,7 @@ type Query {
 type Mutation {
   createPriority(name: String!, color: String!, order: Int!): Priority!
   updatePriority(id: ID!, name: String, color: String, order: Int): Priority!
-  deletePriority(id: ID!): Boolean!
+  deletePriority(id: ID!, removeTodos: Boolean!, otherPriority: ID): Boolean!
 
   createTodo(text: String!, date: DateTime, priority: ID, file: ID): Todo!
   updateTodo(
@@ -21,7 +21,7 @@ type Mutation {
     priority: ID
     file: ID
   ): Todo!
-  deleteTodo(id: ID!): Boolean!
+  dumpTodo(id: ID!): Boolean!
 }
 
 # Types

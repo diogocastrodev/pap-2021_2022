@@ -85,7 +85,7 @@ export type Mutation = {
   createTodo: Todo;
   deactivateUser?: Maybe<Scalars['Boolean']>;
   deletePriority: Scalars['Boolean'];
-  deleteTodo: Scalars['Boolean'];
+  dumpTodo: Scalars['Boolean'];
   login?: Maybe<Scalars['Boolean']>;
   logout?: Maybe<Scalars['Boolean']>;
   register?: Maybe<Scalars['Boolean']>;
@@ -134,10 +134,12 @@ export type MutationDeactivateUserArgs = {
 
 export type MutationDeletePriorityArgs = {
   id: Scalars['ID'];
+  otherPriority?: InputMaybe<Scalars['ID']>;
+  removeTodos: Scalars['Boolean'];
 };
 
 
-export type MutationDeleteTodoArgs = {
+export type MutationDumpTodoArgs = {
   id: Scalars['ID'];
 };
 
@@ -506,8 +508,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createPriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationCreatePriorityArgs, 'color' | 'name' | 'order'>>;
   createTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationCreateTodoArgs, 'text'>>;
   deactivateUser?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeactivateUserArgs, 'password'>>;
-  deletePriority?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePriorityArgs, 'id'>>;
-  deleteTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'id'>>;
+  deletePriority?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePriorityArgs, 'id' | 'removeTodos'>>;
+  dumpTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDumpTodoArgs, 'id'>>;
   login?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   logout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   register?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'password'>>;

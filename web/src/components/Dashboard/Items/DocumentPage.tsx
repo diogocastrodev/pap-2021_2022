@@ -16,6 +16,7 @@ import Loader from "@src/components/Loader/Loader";
 import { gqlClient } from "@libs/graphql-request";
 import Stack from "@components/Form/Stack/Stack";
 import Button from "@components/Form/Buttons/Button";
+import { toast } from "react-toastify";
 interface props {
   id: string;
 }
@@ -150,7 +151,14 @@ export default function DocumentPage(props: props) {
                   Ficheiro: <div className="font-medium ml-2">{fileName}</div>
                 </div>
                 <Stack type="row" className="pl-3 ml-auto space-x-2">
-                  <Button type="button" onClick={uploadNewDocumentContent}>
+                  <Button
+                    type="button"
+                    onClick={async () => {
+                      await uploadNewDocumentContent().then(() => {
+                        toast.success("Guardado com sucesso.");
+                      });
+                    }}
+                  >
                     Guardar
                   </Button>
                   <Button type="button" onClick={clickToDownload}>
@@ -163,7 +171,7 @@ export default function DocumentPage(props: props) {
                   <span className="text-sm">
                     Última actualização:{" "}
                     <span className="font-medium">
-                      {lastUpdate.toLocaleString("pt-PT")}
+                      {lastUpdate.toLocaleString("pt")}
                     </span>
                   </span>
                 )}

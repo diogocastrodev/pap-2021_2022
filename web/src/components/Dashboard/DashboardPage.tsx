@@ -15,7 +15,6 @@ import Loader from "../Loader/Loader";
 import Item from "./Item/Item";
 import LargeItem from "./LargeItem/Largeitem";
 import TinyItem from "./TinyItem/TinyItem";
-import { AuthContext } from "@src/context/AuthContext";
 import { useRouter } from "next/router";
 import TreeNode from "../Tree/TreeNode";
 import DashboardListFiles from "./Folders/Page/ListFiles";

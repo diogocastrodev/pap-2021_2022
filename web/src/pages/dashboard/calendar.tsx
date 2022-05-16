@@ -4,6 +4,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Stack from "@components/Form/Stack/Stack";
 import { Todo } from "@src/graphql/graphql";
+import TodoDisclosures from "../../components/Dashboard/Items/Todo/TodosDisclosure/TodosDisclosure";
 
 interface IFromTo {
   from: string;
@@ -69,7 +70,9 @@ export default function CalendarPage() {
             selectRange={true}
             className="w-full self-center"
           ></Calendar>
-          <div className="mt-6">hihihiihi</div>
+          <div className="mt-6">
+            <TodoDisclosures todos={[]} />
+          </div>
         </Stack>
       </DashboardPage>
     </>

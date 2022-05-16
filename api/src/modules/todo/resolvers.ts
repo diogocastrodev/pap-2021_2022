@@ -30,6 +30,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
         },
         include: {
           priority: true,
+          files: true,
           user: {
             select: {
               public_user_id: true,
@@ -41,6 +42,8 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       if (!todo) throw new Error("Todo not found");
 
       if (todo.user.public_user_id !== user_id) throw new Error("Unauthorized");
+
+      if (todo.status === "DUMPED") throw new Error("Todo not found");
 
       return todo;
     },
@@ -58,6 +61,8 @@ export const TodoResolver: Resolvers<ResolverContext> = {
           files: true,
         },
       });
+
+      todos.filter((todo) => todo.status !== "DUMPED");
 
       return todos;
     },
@@ -163,36 +168,86 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       return newPriority;
     },
-    deletePriority: async (_, { id }, { is_authed, user_id }) => {
+    deletePriority: async (
+      _,
+      { id, removeTodos, otherPriority },
+      { is_authed, user_id }
+    ) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
 
-      const isDeletable = await db.priority.findUnique({
-        where: {
-          priority_id: id,
-        },
-        include: {
-          user: {
-            select: {
-              public_user_id: true,
+      try {
+        const isDeletable = await db.priority.findUnique({
+          where: {
+            priority_id: id,
+          },
+          select: {
+            user: {
+              select: {
+                public_user_id: true,
+              },
             },
           },
-        },
-      });
+        });
 
-      if (!isDeletable) throw new Error("Priority not found");
+        if (!isDeletable) throw new Error("Priority not found");
 
-      if (isDeletable.user.public_user_id !== user_id)
-        throw new Error("Unauthorized");
+        if (isDeletable.user.public_user_id !== user_id)
+          throw new Error("Unauthorized");
 
-      const deletedPriority = await db.priority.delete({
-        where: {
-          priority_id: id,
-        },
-      });
+        if (removeTodos) {
+          // Delete all todos with this priority
+          await db.todo.updateMany({
+            where: {
+              priority: {
+                priority_id: id,
+              },
+            },
+            data: {
+              status: "DUMPED",
+              priorityPriority_id: null,
+            },
+          });
+        } else {
+          if (otherPriority) {
+            // Update the todos to another priority
+            await db.todo.updateMany({
+              where: {
+                priority: {
+                  priority_id: id,
+                },
+              },
+              data: {
+                priorityPriority_id: otherPriority,
+              },
+            });
+          } else {
+            // Remove priority from todos
+            await db.todo.updateMany({
+              where: {
+                priority: {
+                  priority_id: id,
+                },
+              },
+              data: {
+                priorityPriority_id: null,
+              },
+            });
+          }
+        }
 
-      if (!deletedPriority) throw new Error("Priority not found");
+        // Delete the Priority after all
+        const deletedPriority = await db.priority.delete({
+          where: {
+            priority_id: id,
+          },
+        });
 
-      return true;
+        if (!deletedPriority) throw new Error("Priority not found");
+
+        return true;
+      } catch (e) {
+        throw new Error(e as string);
+      }
     },
     createTodo: async (
       _,
@@ -243,8 +298,6 @@ export const TodoResolver: Resolvers<ResolverContext> = {
           },
         };
       }
-
-      console.log(file);
 
       if (file && typeof file !== null)
         newData = {
@@ -330,14 +383,14 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       return newTodo;
     },
-    deleteTodo: async (_, { id }, { is_authed, user_id }) => {
+    dumpTodo: async (_, { id }, { is_authed, user_id }) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
 
-      const isDeletable = await db.todo.findUnique({
+      const isDumpable = await db.todo.findUnique({
         where: {
           todo_id: id,
         },
-        include: {
+        select: {
           user: {
             select: {
               public_user_id: true,
@@ -346,18 +399,21 @@ export const TodoResolver: Resolvers<ResolverContext> = {
         },
       });
 
-      if (!isDeletable) throw new Error("Todo not found");
+      if (!isDumpable) throw new Error("Todo not found");
 
-      if (isDeletable.user.public_user_id !== user_id)
+      if (isDumpable.user.public_user_id !== user_id)
         throw new Error("Unauthorized");
 
-      const deletedTodo = await db.todo.delete({
+      const dumpedTodo = await db.todo.update({
         where: {
           todo_id: id,
         },
+        data: {
+          status: TodoStatus.Dumped,
+        },
       });
 
-      if (!deletedTodo) throw new Error("Todo not found");
+      if (!dumpedTodo) throw new Error("Todo not found");
 
       return true;
     },

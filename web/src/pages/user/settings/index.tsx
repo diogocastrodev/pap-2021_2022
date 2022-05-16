@@ -9,7 +9,6 @@ import Button from "@components/Form/Buttons/Button";
 import { gql } from "graphql-request";
 import { gqlClient } from "@src/libs/graphql-request";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const updateUser = gql`
   mutation updateUser($email: String!) {
