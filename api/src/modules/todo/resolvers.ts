@@ -531,7 +531,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
     },
     updateTodo: async (
       _,
-      { id, text, priority, file },
+      { id, text, priority, file, status, date },
       { is_authed, user_id }
     ) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
@@ -564,6 +564,18 @@ export const TodoResolver: Resolvers<ResolverContext> = {
           todoText: text,
         };
 
+      if (status && typeof status !== null)
+        dataToUpdate = {
+          ...dataToUpdate,
+          status: status as TodoStatus,
+        };
+
+      if (date && typeof date !== null && date !== "")
+        dataToUpdate = {
+          ...dataToUpdate,
+          date: new Date(date),
+        };
+
       if (priority && typeof priority !== null)
         dataToUpdate = {
           ...dataToUpdate,
@@ -593,7 +605,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       if (!newTodo) throw new Error("Todo not found");
 
-      return newTodo;
+      return true;
     },
     dumpTodo: async (_, { id }, { is_authed, user_id }) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");

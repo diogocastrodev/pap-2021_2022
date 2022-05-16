@@ -10,11 +10,15 @@ import { gqlClient } from "@libs/graphql-request";
 import { todosFragment } from "@graphql/fragments";
 
 const getAllTodos = gql`
-  ${todosFragment}
-
   query {
     getDatedTodos {
-      ...todoData
+      todo_id
+      text
+      date
+      status
+      priority {
+        priority_id
+      }
     }
   }
 `;
@@ -71,7 +75,6 @@ export default function CalendarPage() {
         (todo) =>
           new Date(todo.date) >= dates.from && new Date(todo.date) <= dates.to
       );
-      console.log(datedTodos);
       setDatedTodos(datedTodos);
     } catch (error) {
       console.log(error);

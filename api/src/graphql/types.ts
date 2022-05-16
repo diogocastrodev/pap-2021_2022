@@ -92,7 +92,7 @@ export type Mutation = {
   updateDocument: Scalars['Boolean'];
   updatePassword?: Maybe<Scalars['Boolean']>;
   updatePriority: Priority;
-  updateTodo: Todo;
+  updateTodo?: Maybe<Scalars['Boolean']>;
   updateUser?: Maybe<Scalars['Boolean']>;
   verifyHash?: Maybe<Scalars['Boolean']>;
 };
@@ -523,7 +523,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateDocument?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateDocumentArgs, 'content' | 'id'>>;
   updatePassword?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'newPassword' | 'oldPassword'>>;
   updatePriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationUpdatePriorityArgs, 'id'>>;
-  updateTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationUpdateTodoArgs, 'id'>>;
+  updateTodo?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateTodoArgs, 'id'>>;
   updateUser?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, Partial<MutationUpdateUserArgs>>;
   verifyHash?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationVerifyHashArgs, 'hash'>>;
 };

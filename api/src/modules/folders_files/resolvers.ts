@@ -22,7 +22,11 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
               },
             },
             document: true,
-            todos: true,
+            todos: {
+              include: {
+                priority: true,
+              },
+            },
           },
         });
 

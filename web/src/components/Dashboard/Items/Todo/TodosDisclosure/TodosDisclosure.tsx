@@ -4,13 +4,16 @@ import Stack from "@components/Form/Stack/Stack";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
+  BanIcon,
   CheckIcon,
+  ReplyIcon,
   TrashIcon,
 } from "@heroicons/react/outline";
 import { ReactElement, useEffect, useState } from "react";
 import { gql } from "graphql-request";
 import { gqlClient } from "@libs/graphql-request";
 import { lightHex } from "@src/functions/colors";
+import { toast } from "react-toastify";
 
 interface props {
   todos: Todo[];
@@ -23,6 +26,26 @@ const getPriorities = gql`
       name
       color
     }
+  }
+`;
+
+const updateTodo = gql`
+  mutation (
+    $id: ID!
+    $text: String
+    $date: DateTime
+    $status: TodoStatus
+    $priority: ID
+    $file: ID
+  ) {
+    updateTodo(
+      id: $id
+      text: $text
+      date: $date
+      status: $status
+      priority: $priority
+      file: $file
+    )
   }
 `;
 
@@ -53,6 +76,80 @@ export default function TodoDisclosures({ todos }: props) {
 
   // Handlers
 
+  async function finishTodo(todoId: string) {
+    await gqlClient
+      .request(updateTodo, {
+        id: todoId,
+        status: TodoStatus.Done,
+      })
+      .then(() => {
+        const newTodos = todos.map((todo) => {
+          if (todo.todo_id === todoId) {
+            todo.status = TodoStatus.Done;
+          }
+          return todo;
+        });
+        setPageTodos(newTodos);
+        toast.success("Apontamento concluído!");
+      })
+      .catch((e) => {});
+  }
+
+  async function restoreTodo(todoId: string) {
+    await gqlClient
+      .request(updateTodo, {
+        id: todoId,
+        status: TodoStatus.Active,
+      })
+      .then(() => {
+        const newTodos = todos.map((todo) => {
+          if (todo.todo_id === todoId) {
+            todo.status = TodoStatus.Active;
+          }
+          return todo;
+        });
+        setPageTodos(newTodos);
+        toast.success("Apontamento restaurado!");
+      })
+      .catch((e) => {});
+  }
+
+  async function binTodo(todoId: string) {
+    await gqlClient
+      .request(updateTodo, {
+        id: todoId,
+        status: TodoStatus.Deleted,
+      })
+      .then(() => {
+        const newTodos = todos.map((todo) => {
+          if (todo.todo_id === todoId) {
+            todo.status = TodoStatus.Deleted;
+          }
+          return todo;
+        });
+        setPageTodos(newTodos);
+        toast.success("Apontamento movido para a lixeira!");
+      })
+      .catch((e) => {});
+  }
+
+  async function deleteTodo(todoId: string) {
+    await gqlClient
+      .request(updateTodo, {
+        id: todoId,
+      })
+      .then(() => {
+        const newTodos = todos.map((todo) => {
+          if (todo.todo_id === todoId) {
+          }
+          return todo;
+        });
+        setPageTodos(newTodos);
+        toast.success("Apontamento apagado!");
+      })
+      .catch((e) => {});
+  }
+
   return (
     <>
       <div className="space-y-2 flex flex-col w-full">
@@ -76,7 +173,7 @@ export default function TodoDisclosures({ todos }: props) {
                   className={`text-black ${
                     pageTodos.filter(
                       (todo) => todo.status === TodoStatus.Active
-                    ).length > 0 && `py-2 px-2 space-y-3`
+                    ).length > 0 && `py-2 px-2 space-y-1`
                   }`}
                 >
                   {pageTodos
@@ -96,11 +193,12 @@ export default function TodoDisclosures({ todos }: props) {
                           <div>
                             {todo.priority &&
                               priorities.map(
-                                (priority) =>
+                                (priority, i) =>
                                   priority.priority_id ===
                                     todo.priority?.priority_id && (
                                     <div
                                       className="px-2 py-1 rounded-full select-none"
+                                      key={i}
                                       style={{
                                         backgroundColor: priority.color,
                                         color: lightHex(priority.color),
@@ -113,13 +211,24 @@ export default function TodoDisclosures({ todos }: props) {
                           </div>
                           <Buttons
                             color="blue"
-                            onClick={() => {}}
+                            onClick={() => {
+                              finishTodo(todo.todo_id);
+                            }}
                             icon={<CheckIcon />}
                           />
                           <Buttons
-                            color="red"
-                            onClick={() => {}}
+                            color="orange"
+                            onClick={() => {
+                              binTodo(todo.todo_id);
+                            }}
                             icon={<TrashIcon />}
+                          />
+                          <Buttons
+                            color="red"
+                            onClick={() => {
+                              deleteTodo(todo.todo_id);
+                            }}
+                            icon={<BanIcon />}
                           />
                         </Stack>
                       </div>
@@ -151,7 +260,7 @@ export default function TodoDisclosures({ todos }: props) {
                 <Disclosure.Panel
                   className={`text-black ${
                     pageTodos.filter((todo) => todo.status === TodoStatus.Done)
-                      .length > 0 && `py-2 px-2`
+                      .length > 0 && `py-2 px-2 space-y-1`
                   }`}
                 >
                   {pageTodos
@@ -168,17 +277,47 @@ export default function TodoDisclosures({ todos }: props) {
                             </div>
                             <Stack
                               type="row"
-                              className="ml-auto pl-3 space-x-1"
+                              className="ml-auto pl-3 space-x-1 items-center"
                             >
+                              <div>
+                                {todo.priority &&
+                                  priorities.map(
+                                    (priority, i) =>
+                                      priority.priority_id ===
+                                        todo.priority?.priority_id && (
+                                        <div
+                                          className="px-2 py-1 rounded-full select-none"
+                                          key={i}
+                                          style={{
+                                            backgroundColor: priority.color,
+                                            color: lightHex(priority.color),
+                                          }}
+                                        >
+                                          {priority.name}
+                                        </div>
+                                      )
+                                  )}
+                              </div>
                               <Buttons
                                 color="blue"
-                                onClick={() => {}}
-                                icon={<CheckIcon />}
+                                onClick={() => {
+                                  restoreTodo(todo.todo_id);
+                                }}
+                                icon={<ReplyIcon className="rotate-90 w-4" />}
+                              />
+                              <Buttons
+                                color="orange"
+                                onClick={() => {
+                                  binTodo(todo.todo_id);
+                                }}
+                                icon={<TrashIcon />}
                               />
                               <Buttons
                                 color="red"
-                                onClick={() => {}}
-                                icon={<TrashIcon />}
+                                onClick={() => {
+                                  deleteTodo(todo.todo_id);
+                                }}
+                                icon={<BanIcon />}
                               />
                             </Stack>
                           </div>
@@ -195,7 +334,7 @@ export default function TodoDisclosures({ todos }: props) {
             <>
               <div className="bg-gray-100 rounded-lg">
                 <Disclosure.Button className="text-left bg-red-200 w-full py-1 px-2 rounded-lg flex flex-row items-center">
-                  Apagados (
+                  Lixeira (
                   {
                     pageTodos.filter(
                       (todo) => todo.status === TodoStatus.Deleted
@@ -210,7 +349,7 @@ export default function TodoDisclosures({ todos }: props) {
                   className={`text-black ${
                     pageTodos.filter(
                       (todo) => todo.status === TodoStatus.Deleted
-                    ).length > 0 && `py-2 px-2`
+                    ).length > 0 && `py-2 px-2 space-y-1`
                   }`}
                 >
                   {pageTodos
@@ -227,16 +366,39 @@ export default function TodoDisclosures({ todos }: props) {
                             </div>
                             <Stack
                               type="row"
-                              className="ml-auto pl-3 space-x-1"
+                              className="ml-auto pl-3 space-x-1 items-center"
                             >
+                              <div>
+                                {todo.priority &&
+                                  priorities.map(
+                                    (priority, i) =>
+                                      priority.priority_id ===
+                                        todo.priority?.priority_id && (
+                                        <div
+                                          className="px-2 py-1 rounded-full select-none"
+                                          key={i}
+                                          style={{
+                                            backgroundColor: priority.color,
+                                            color: lightHex(priority.color),
+                                          }}
+                                        >
+                                          {priority.name}
+                                        </div>
+                                      )
+                                  )}
+                              </div>
                               <Buttons
                                 color="blue"
-                                onClick={() => {}}
-                                icon={<CheckIcon />}
+                                onClick={() => {
+                                  restoreTodo(todo.todo_id);
+                                }}
+                                icon={<ReplyIcon className="rotate-90 w-4" />}
                               />
                               <Buttons
                                 color="red"
-                                onClick={() => {}}
+                                onClick={() => {
+                                  deleteTodo(todo.todo_id);
+                                }}
                                 icon={<TrashIcon />}
                               />
                             </Stack>
@@ -265,7 +427,7 @@ const Buttons = ({ onClick, color, icon }: IButtons) => {
         className={`h-6 w-6 bg-${color}-200 hover:bg-${color}-300 cursor-pointer rounded-full flex justify-center items-center`}
         onClick={onClick}
       >
-        <div className="h-5 w-5">{icon}</div>
+        <div className="h-5 w-5 flex items-center justify-center">{icon}</div>
       </div>
     </>
   );

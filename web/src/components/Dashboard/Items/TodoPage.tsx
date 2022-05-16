@@ -19,14 +19,23 @@ interface props {
   id?: string;
 }
 
-const getTodosQuery = gql`
+const getFileNameQuery = gql`
   query ($fileId: ID!) {
     getFileContent(fileId: $fileId) {
       name
-      todos {
-        todo_id
-        text
-        status
+    }
+  }
+`;
+
+const getTodosQuery = gql`
+  query ($file: ID!) {
+    getTodosByFile(file: $file) {
+      todo_id
+      text
+      date
+      status
+      priority {
+        priority_id
       }
     }
   }
@@ -36,14 +45,25 @@ export default function TodoPage(props: props) {
   const [fileName, setFileName] = useState<string | undefined>(undefined);
   const [todos, setTodos] = useState<Todo[]>([]);
 
-  const getTodos = async () => {
+  const getFileName = async () => {
+    setFileName(undefined);
     await gqlClient
-      .request(getTodosQuery, {
+      .request(getFileNameQuery, {
         fileId: props.id,
       })
       .then((res) => {
         setFileName(res.getFileContent.name);
-        setTodos(res.getFileContent.todos as Todo[]);
+      });
+  };
+
+  const getTodos = async () => {
+    setTodos([]);
+    await gqlClient
+      .request(getTodosQuery, {
+        file: props.id,
+      })
+      .then((res) => {
+        setTodos(res.getTodosByFile as Todo[]);
       });
   };
 
@@ -104,10 +124,12 @@ export default function TodoPage(props: props) {
   };
 
   useEffect(() => {
+    getFileName();
     getTodos();
   }, []);
 
   useEffect(() => {
+    getFileName();
     getTodos();
   }, [props.id]);
 
