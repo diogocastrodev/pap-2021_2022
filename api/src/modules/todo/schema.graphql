@@ -6,6 +6,7 @@ type Query {
   getDatedTodos: [Todo]!
   getTodosByPriority(priority: ID!): [Todo]!
   getTodosByFolder(folder: ID!): [Todo]!
+  getTodosByFile(file: ID!): [Todo]!
 }
 
 type Mutation {

@@ -112,15 +112,50 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       try {
-        const todos = await db.todo.findMany({
+        const priorityTodos = await db.todo.findMany({
           where: {
             user: {
               public_user_id: user_id,
             },
             AND: {
-              NOT: {
-                date: null,
-              },
+              NOT: [
+                {
+                  status: "DUMPED",
+                },
+                {
+                  priorityPriority_id: null,
+                },
+                {
+                  date: null,
+                },
+              ],
+            },
+          },
+          include: {
+            priority: true,
+            files: true,
+          },
+          orderBy: {
+            priority: {
+              order: "desc",
+            },
+          },
+        });
+
+        const normalTodos = await db.todo.findMany({
+          where: {
+            user: {
+              public_user_id: user_id,
+            },
+            AND: {
+              NOT: [
+                {
+                  status: "DUMPED",
+                },
+                {
+                  date: null,
+                },
+              ],
             },
           },
           include: {
@@ -129,7 +164,11 @@ export const TodoResolver: Resolvers<ResolverContext> = {
           },
         });
 
-        todos.filter((todo) => todo.status !== "DUMPED");
+        const noPriority = normalTodos.filter((todo) => {
+          return todo.priorityPriority_id === null;
+        });
+
+        const todos = [...priorityTodos, ...noPriority];
 
         return todos;
       } catch (e) {
@@ -187,6 +226,70 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       });
 
       return todos;
+    },
+    getTodosByFile: async (_, { file }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
+      try {
+        const priorityTodos = await db.todo.findMany({
+          where: {
+            user: {
+              public_user_id: user_id,
+            },
+            files: {
+              file_id: file,
+            },
+            AND: {
+              NOT: [
+                {
+                  status: "DUMPED",
+                },
+                {
+                  priorityPriority_id: null,
+                },
+              ],
+            },
+          },
+          include: {
+            priority: true,
+            files: true,
+          },
+          orderBy: {
+            priority: {
+              order: "desc",
+            },
+          },
+        });
+
+        const normalTodos = await db.todo.findMany({
+          where: {
+            user: {
+              public_user_id: user_id,
+            },
+            files: {
+              file_id: file,
+            },
+            AND: {
+              NOT: {
+                status: "DUMPED",
+              },
+            },
+          },
+          include: {
+            priority: true,
+            files: true,
+          },
+        });
+
+        const noPriority = normalTodos.filter((todo) => {
+          return todo.priorityPriority_id === null;
+        });
+
+        const todos = [...priorityTodos, ...noPriority];
+
+        return todos;
+      } catch (error) {
+        throw new Error(error as string);
+      }
     },
   },
   Mutation: {

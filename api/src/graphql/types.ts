@@ -218,6 +218,7 @@ export type Query = {
   getFolderById?: Maybe<Folders>;
   getTodo?: Maybe<Todo>;
   getTodos: Array<Maybe<Todo>>;
+  getTodosByFile: Array<Maybe<Todo>>;
   getTodosByFolder: Array<Maybe<Todo>>;
   getTodosByPriority: Array<Maybe<Todo>>;
   me?: Maybe<User>;
@@ -248,6 +249,11 @@ export type QueryGetFolderByIdArgs = {
 
 export type QueryGetTodoArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGetTodosByFileArgs = {
+  file: Scalars['ID'];
 };
 
 
@@ -544,6 +550,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getFolderById?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType, RequireFields<QueryGetFolderByIdArgs, 'folderId'>>;
   getTodo?: Resolver<Maybe<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodoArgs, 'id'>>;
   getTodos?: Resolver<Array<Maybe<ResolversTypes['Todo']>>, ParentType, ContextType>;
+  getTodosByFile?: Resolver<Array<Maybe<ResolversTypes['Todo']>>, ParentType, ContextType, RequireFields<QueryGetTodosByFileArgs, 'file'>>;
   getTodosByFolder?: Resolver<Array<Maybe<ResolversTypes['Todo']>>, ParentType, ContextType, RequireFields<QueryGetTodosByFolderArgs, 'folder'>>;
   getTodosByPriority?: Resolver<Array<Maybe<ResolversTypes['Todo']>>, ParentType, ContextType, RequireFields<QueryGetTodosByPriorityArgs, 'priority'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
