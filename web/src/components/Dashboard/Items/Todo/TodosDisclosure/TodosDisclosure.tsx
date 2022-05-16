@@ -14,6 +14,7 @@ import { gql } from "graphql-request";
 import { gqlClient } from "@libs/graphql-request";
 import { lightHex } from "@src/functions/colors";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 interface props {
   todos: Todo[];
@@ -272,9 +273,16 @@ export default function TodoDisclosures({ todos }: props) {
                             key={todo.todo_id}
                             className={`flex flex-row items-center hover:font-bold`}
                           >
-                            <div className="break-all overflow-x-hidden">
-                              {todo.text}
-                            </div>
+                            <Stack type="col">
+                              <div className="break-all overflow-x-hidden">
+                                {todo.text}
+                              </div>
+                              {todo.date && (
+                                <div className="text-gray-600 text-sm">
+                                  {moment(todo.date).format("DD/MM/YYYY")}
+                                </div>
+                              )}
+                            </Stack>
                             <Stack
                               type="row"
                               className="ml-auto pl-3 space-x-1 items-center"
