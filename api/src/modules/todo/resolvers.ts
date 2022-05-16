@@ -49,22 +49,56 @@ export const TodoResolver: Resolvers<ResolverContext> = {
     },
     getTodos: async (_, __, { is_authed, user_id }) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
-
-      const todos = await db.todo.findMany({
-        where: {
-          user: {
-            public_user_id: user_id,
+      try {
+        const todos = await db.todo.findMany({
+          where: {
+            user: {
+              public_user_id: user_id,
+            },
+            AND: {
+              NOT: {
+                status: "DUMPED",
+              },
+            },
           },
-        },
-        include: {
-          priority: true,
-          files: true,
-        },
-      });
+          include: {
+            priority: true,
+            files: true,
+          },
+        });
 
-      todos.filter((todo) => todo.status !== "DUMPED");
+        return todos;
+      } catch (error) {
+        throw new Error(error as string);
+      }
+    },
+    getDatedTodos: async (_, __, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("Unauthorized");
 
-      return todos;
+      try {
+        const todos = await db.todo.findMany({
+          where: {
+            user: {
+              public_user_id: user_id,
+            },
+            AND: {
+              NOT: {
+                date: null,
+              },
+            },
+          },
+          include: {
+            priority: true,
+            files: true,
+          },
+        });
+
+        todos.filter((todo) => todo.status !== "DUMPED");
+
+        return todos;
+      } catch (e) {
+        throw new Error(e as string);
+      }
     },
     getTodosByPriority: async (_, { priority }, { is_authed, user_id }) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
@@ -76,6 +110,11 @@ export const TodoResolver: Resolvers<ResolverContext> = {
           },
           user: {
             public_user_id: user_id,
+          },
+          AND: {
+            NOT: {
+              status: "DUMPED",
+            },
           },
         },
         include: {
@@ -98,6 +137,11 @@ export const TodoResolver: Resolvers<ResolverContext> = {
           },
           user: {
             public_user_id: user_id,
+          },
+          AND: {
+            NOT: {
+              status: "DUMPED",
+            },
           },
         },
         include: {
@@ -279,7 +323,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       let newData: INewData = {
         text: text,
-        date: date,
+        date: new Date(date),
         status: TodoStatus.Active,
         user: {
           connect: {

@@ -3,6 +3,7 @@ type Query {
 
   getTodo(id: ID!): Todo
   getTodos: [Todo]!
+  getDatedTodos: [Todo]!
   getTodosByPriority(priority: ID!): [Todo]!
   getTodosByFolder(folder: ID!): [Todo]!
 }

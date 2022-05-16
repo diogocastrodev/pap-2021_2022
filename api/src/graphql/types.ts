@@ -211,6 +211,7 @@ export type Query = {
   __typename?: 'Query';
   allImages?: Maybe<Array<Maybe<ImagesWithUrl>>>;
   checkToken?: Maybe<Scalars['Boolean']>;
+  getDatedTodos: Array<Maybe<Todo>>;
   getDocumentContent: Scalars['String'];
   getFileContent?: Maybe<Files>;
   getFilesByFolder?: Maybe<Array<Maybe<Files>>>;
@@ -536,6 +537,7 @@ export type PriorityResolvers<ContextType = any, ParentType extends ResolversPar
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   allImages?: Resolver<Maybe<Array<Maybe<ResolversTypes['ImagesWithUrl']>>>, ParentType, ContextType>;
   checkToken?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  getDatedTodos?: Resolver<Array<Maybe<ResolversTypes['Todo']>>, ParentType, ContextType>;
   getDocumentContent?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryGetDocumentContentArgs, 'id'>>;
   getFileContent?: Resolver<Maybe<ResolversTypes['Files']>, ParentType, ContextType, RequireFields<QueryGetFileContentArgs, 'fileId'>>;
   getFilesByFolder?: Resolver<Maybe<Array<Maybe<ResolversTypes['Files']>>>, ParentType, ContextType, RequireFields<QueryGetFilesByFolderArgs, 'folderId'>>;

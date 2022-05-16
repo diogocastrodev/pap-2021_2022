@@ -9,6 +9,8 @@ import { gqlClient } from "@libs/graphql-request";
 import { gql } from "graphql-request";
 import Button from "@components/Form/Buttons/Button";
 import Form from "@components/Form/Form/Form";
+import InputGroup from "@components/Form/Inputs/InputGroup";
+import { Listbox } from "@headlessui/react";
 
 const createTodoMutation = gql`
   mutation ($text: String!, $date: DateTime, $priority: ID, $file: ID) {
@@ -38,8 +40,18 @@ interface props extends preMadeDialogNeeded {
 
 export default function CreateTodoDialog(props: props) {
   const [text, setText] = useState<string>("");
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [priority, setPriority] = useState<string | undefined>(undefined);
+  const [date, setDate] = useState<string | undefined>(undefined);
+  const [priority, setPriority] = useState<Priority | undefined>({
+    priority_id: "",
+    name: "Prioridades",
+    color: "#FFFFFF",
+    created_at: "",
+    order: 0,
+    updated_at: "",
+  });
+  const [Priorities, setPriorities] = useState<Priority[] | undefined>(
+    undefined
+  );
 
   const textInput = useRef<HTMLDivElement>(null);
 
@@ -106,21 +118,68 @@ export default function CreateTodoDialog(props: props) {
       <PreMadeDialog isOpen={props.isOpen} onClose={props.onClose}>
         <Form className="flex flex-col" method="POST" onSubmit={createTodo}>
           <div className="flex flex-col">
-            <Label text="Texto" />
-            <Input
-              input={{
-                value: text,
-                onChange: (e) => setText(e.target.value),
-                type: "text",
-                name: "fileName",
-                required: true,
-              }}
-              mainDiv={{
-                ref: textInput,
-              }}
-            />
+            <InputGroup>
+              <Label text="Texto" />
+              <Input
+                input={{
+                  value: text,
+                  onChange: (e) => setText(e.target.value),
+                  type: "text",
+                  name: "fileName",
+                  required: true,
+                }}
+                mainDiv={{
+                  ref: textInput,
+                }}
+              />
+            </InputGroup>
+            <InputGroup>
+              <Label text="Data" />
+              <Input
+                input={{
+                  value: date,
+                  onChange: (e) => setDate(e.target.value),
+                  type: "datetime-local",
+                  name: "fileDate",
+                  required: true,
+                }}
+              />
+            </InputGroup>
+            <InputGroup className="">
+              <Label text="Data" />
+              <Listbox value={priority} onChange={setPriority}>
+                <div className="relative">
+                  <Listbox.Button className={`relative max-w-fit`}>
+                    {priority?.name}
+                  </Listbox.Button>
+                  <Listbox.Options
+                    className={`absolute bg-gray-200 p-2 rounded-md top-8 max-h-64 overflow-hidden overflow-y-auto`}
+                  >
+                    {Priorities ? (
+                      Priorities.map((priority) => (
+                        <Listbox.Option
+                          key={priority.priority_id}
+                          value={priority.priority_id}
+                          className="cursor-pointer"
+                        >
+                          {({ active, selected }) => (
+                            <div className={`${active && "bg-blue-300"}`}>
+                              {priority.name}
+                            </div>
+                          )}
+                        </Listbox.Option>
+                      ))
+                    ) : (
+                      <Listbox.Option value={undefined} disabled={true}>
+                        {`Não foram encontradas prioridades`}
+                      </Listbox.Option>
+                    )}
+                  </Listbox.Options>
+                </div>
+              </Listbox>
+            </InputGroup>
           </div>
-          <Button>Criar Apontamento</Button>
+          <Button className="mt-4">Criar Apontamento</Button>
         </Form>
       </PreMadeDialog>
     </>

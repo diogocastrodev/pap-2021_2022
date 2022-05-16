@@ -46,3 +46,15 @@ export const folderChildrenFragment = gql`
     }
   }
 `;
+
+export const todosFragment = gql`
+  fragment todoData on Todo {
+    todo_id
+    text
+    date
+    status
+    priority {
+      priority_id
+    }
+  }
+`;
