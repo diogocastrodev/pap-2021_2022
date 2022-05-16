@@ -1,4 +1,14 @@
++ Update de Pastas (nome, cor, e novo parente (copiar o criar))
++ Update de Ficheiros (nome)
++ Update de Todos (mudar nome, data, prioridade)
++ Update de prioridades (mudar nome, cor, prioridade)
 
++ Delete de Ficheiros
++ Delete de Patas
 
-    [ ] global context for folders @created(22-03-02 10:34)
-        [ ] Prevent Page Refresh @created(22-03-02 10:34)
++ Verificar se nas prioridades também faz isso
++ Arranjar a dashboard porque depois que passas da página ele ativa o scroll, mesmo que ja tenha desativado isso 2000000 de vezes, mas pronto 
+- Soluções:
+  - Sticky/Fixed na navbar
+  - Fixed na barra da esquerda
+  - Documentos: Sticky
