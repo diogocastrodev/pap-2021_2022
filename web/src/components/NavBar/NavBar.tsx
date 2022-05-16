@@ -58,7 +58,7 @@ export default function Navbar(props: props) {
         },
         {
           text: "Sair",
-          href: "#",
+          href: "/user/logout",
           icon: <LogoutIcon />,
           onClick: () => {
             user.logout();

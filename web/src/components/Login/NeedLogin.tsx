@@ -3,7 +3,7 @@ import { useContext, useEffect } from "react";
 import { AuthContext } from "@context/AuthContext";
 
 interface props {
-  children: React.ReactNode | React.ReactNode[];
+  children: React.ReactNode | React.ReactNode[] | undefined;
 }
 
 export default function NeedLogin({ children }: props) {

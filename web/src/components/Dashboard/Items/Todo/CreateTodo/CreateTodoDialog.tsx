@@ -27,6 +27,16 @@ const createTodoMutation = gql`
   }
 `;
 
+const getPriorities = gql`
+  query {
+    priorities {
+      priority_id
+      name
+      color
+    }
+  }
+`;
+
 interface props extends preMadeDialogNeeded {
   file?: string;
   onCreate: (
@@ -39,19 +49,35 @@ interface props extends preMadeDialogNeeded {
 }
 
 export default function CreateTodoDialog(props: props) {
-  const [text, setText] = useState<string>("");
-  const [date, setDate] = useState<string | undefined>(undefined);
-  const [priority, setPriority] = useState<Priority | undefined>({
+  const noPriority = {
     priority_id: "",
-    name: "Prioridades",
+    name: "Sem prioridade",
     color: "#FFFFFF",
     created_at: "",
     order: 0,
     updated_at: "",
-  });
+  };
+  const [text, setText] = useState<string>("");
+  const [date, setDate] = useState<string | undefined>(undefined);
+  const [priority, setPriority] = useState<Priority | undefined>(noPriority);
   const [Priorities, setPriorities] = useState<Priority[] | undefined>(
     undefined
   );
+
+  async function fetchPriorities() {
+    gqlClient
+      .request(getPriorities)
+      .then((res) => {
+        if (res.priorities) {
+          setPriorities(res.priorities);
+        }
+      })
+      .catch((e) => {});
+  }
+
+  useEffect(() => {
+    fetchPriorities();
+  }, []);
 
   const textInput = useRef<HTMLDivElement>(null);
 
@@ -91,7 +117,8 @@ export default function CreateTodoDialog(props: props) {
         .request(createTodoMutation, {
           file: props.file,
           date: date,
-          priority: priority,
+          priority:
+            priority?.priority_id === "" ? undefined : priority?.priority_id,
           text: text,
         })
         .then((res) => {
@@ -105,7 +132,7 @@ export default function CreateTodoDialog(props: props) {
           );
           setText("");
           setDate(undefined);
-          setPriority(undefined);
+          setPriority(noPriority);
           props.onClose();
         });
     } catch (error) {
@@ -141,7 +168,6 @@ export default function CreateTodoDialog(props: props) {
                   onChange: (e) => setDate(e.target.value),
                   type: "datetime-local",
                   name: "fileDate",
-                  required: true,
                 }}
               />
             </InputGroup>
@@ -153,22 +179,42 @@ export default function CreateTodoDialog(props: props) {
                     {priority?.name}
                   </Listbox.Button>
                   <Listbox.Options
-                    className={`absolute bg-gray-200 p-2 rounded-md top-8 max-h-64 overflow-hidden overflow-y-auto`}
+                    className={`absolute bg-gray-200 p-2 rounded-md top-8 max-h-64 overflow-hidden overflow-y-auto w-64`}
                   >
                     {Priorities ? (
-                      Priorities.map((priority) => (
+                      <>
                         <Listbox.Option
-                          key={priority.priority_id}
-                          value={priority.priority_id}
-                          className="cursor-pointer"
+                          value={noPriority}
+                          className="cursor-pointer pb-1 mb-1 border-b-2 border-b-gray-300"
                         >
                           {({ active, selected }) => (
-                            <div className={`${active && "bg-blue-300"}`}>
-                              {priority.name}
+                            <div
+                              className={`${
+                                active && "bg-blue-300 rounded-md"
+                              } px-2 py-1`}
+                            >
+                              {noPriority.name}
                             </div>
                           )}
                         </Listbox.Option>
-                      ))
+                        {Priorities.map((priority) => (
+                          <Listbox.Option
+                            key={priority.priority_id}
+                            value={priority}
+                            className="cursor-pointer"
+                          >
+                            {({ active, selected }) => (
+                              <div
+                                className={`${
+                                  active && "bg-blue-300 rounded-md"
+                                } px-2 py-1`}
+                              >
+                                {priority.name}
+                              </div>
+                            )}
+                          </Listbox.Option>
+                        ))}
+                      </>
                     ) : (
                       <Listbox.Option value={undefined} disabled={true}>
                         {`Não foram encontradas prioridades`}

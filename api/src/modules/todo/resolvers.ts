@@ -17,6 +17,9 @@ export const TodoResolver: Resolvers<ResolverContext> = {
         include: {
           todos: true,
         },
+        orderBy: {
+          order: "desc",
+        },
       });
 
       return priorities;
@@ -50,7 +53,34 @@ export const TodoResolver: Resolvers<ResolverContext> = {
     getTodos: async (_, __, { is_authed, user_id }) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
       try {
-        const todos = await db.todo.findMany({
+        const priorityTodos = await db.todo.findMany({
+          where: {
+            user: {
+              public_user_id: user_id,
+            },
+            AND: {
+              NOT: [
+                {
+                  status: "DUMPED",
+                },
+                {
+                  priorityPriority_id: null,
+                },
+              ],
+            },
+          },
+          include: {
+            priority: true,
+            files: true,
+          },
+          orderBy: {
+            priority: {
+              order: "desc",
+            },
+          },
+        });
+
+        const normalTodos = await db.todo.findMany({
           where: {
             user: {
               public_user_id: user_id,
@@ -66,6 +96,12 @@ export const TodoResolver: Resolvers<ResolverContext> = {
             files: true,
           },
         });
+
+        const noPriority = normalTodos.filter((todo) => {
+          return todo.priorityPriority_id === null;
+        });
+
+        const todos = [...priorityTodos, ...noPriority];
 
         return todos;
       } catch (error) {
@@ -154,16 +190,24 @@ export const TodoResolver: Resolvers<ResolverContext> = {
     },
   },
   Mutation: {
-    createPriority: async (_, { name, color }, { is_authed, user_id }) => {
+    createPriority: async (
+      _,
+      { name, color, order },
+      { is_authed, user_id }
+    ) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       try {
+        if (order < 0 || order > 999)
+          throw new Error("Order must be between 0 and 999");
+
         const color_hex = check.chars.color(color);
 
         const priority = await db.priority.create({
           data: {
             name,
             color: color_hex,
+            order: order,
             user: {
               connect: {
                 public_user_id: user_id,
@@ -177,8 +221,15 @@ export const TodoResolver: Resolvers<ResolverContext> = {
         throw new Error(e as string);
       }
     },
-    updatePriority: async (_, { id, name, color }, { is_authed, user_id }) => {
+    updatePriority: async (
+      _,
+      { id, name, color, order },
+      { is_authed, user_id }
+    ) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
+
+      if (!order || order < 0 || order > 999)
+        throw new Error("Order must be between 0 and 999");
 
       const isUpdatable = await db.priority.findUnique({
         where: {
@@ -198,14 +249,23 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       if (isUpdatable.user.public_user_id !== user_id)
         throw new Error("Unauthorized");
 
+      interface IDataToUpdate {
+        name?: string;
+        color?: string;
+        order?: number;
+      }
+
+      const dataToUpdate: IDataToUpdate = {};
+
+      if (name) dataToUpdate.name = name;
+      if (color) dataToUpdate.color = check.chars.color(color);
+      if (order && order >= 0 && 999 >= order) dataToUpdate.order = order;
+
       const newPriority = await db.priority.update({
         where: {
           priority_id: id,
         },
-        data: {
-          name: name || "",
-          color: color || "",
-        },
+        data: dataToUpdate,
       });
 
       if (!newPriority) throw new Error("Priority not found");
@@ -332,7 +392,12 @@ export const TodoResolver: Resolvers<ResolverContext> = {
         },
       };
 
-      if (priority && typeof priority === "string") {
+      if (
+        priority &&
+        typeof priority === "string" &&
+        priority !== "" &&
+        priority.length > 0
+      ) {
         newData = {
           ...newData,
           priority: {

@@ -1,5 +1,5 @@
 import { Disclosure } from "@headlessui/react";
-import { Todo, TodoStatus } from "@src/graphql/graphql";
+import { Priority, Todo, TodoStatus } from "@src/graphql/graphql";
 import Stack from "@components/Form/Stack/Stack";
 import {
   ArrowDownIcon,
@@ -8,16 +8,43 @@ import {
   TrashIcon,
 } from "@heroicons/react/outline";
 import { ReactElement, useEffect, useState } from "react";
+import { gql } from "graphql-request";
+import { gqlClient } from "@libs/graphql-request";
+import { lightHex } from "@src/functions/colors";
 
 interface props {
   todos: Todo[];
 }
 
+const getPriorities = gql`
+  query {
+    priorities {
+      priority_id
+      name
+      color
+    }
+  }
+`;
+
 export default function TodoDisclosures({ todos }: props) {
   const [pageTodos, setPageTodos] = useState<Todo[]>([]);
+  const [priorities, setPriorities] = useState<Priority[]>([]);
+
+  async function fetchPriorities() {
+    await gqlClient
+      .request(getPriorities)
+      .then((res) => {
+        setPriorities(res.priorities);
+      })
+      .catch((err) => {});
+  }
 
   useEffect(() => {
     setPageTodos(todos);
+  }, []);
+
+  useEffect(() => {
+    fetchPriorities();
   }, []);
 
   useEffect(() => {
@@ -57,12 +84,33 @@ export default function TodoDisclosures({ todos }: props) {
                     .map((todo) => (
                       <div
                         key={todo.todo_id}
-                        className={`flex flex-row items-center hover:font-bold`}
+                        className={`flex flex-row items-center group`}
                       >
-                        <div className="break-all overflow-x-hidden">
+                        <div className="break-all overflow-x-hidden group-hover:font-semibold">
                           {todo.text}
                         </div>
-                        <Stack type="row" className="ml-auto pl-3 space-x-1">
+                        <Stack
+                          type="row"
+                          className="ml-auto pl-3 space-x-1 items-center"
+                        >
+                          <div>
+                            {todo.priority &&
+                              priorities.map(
+                                (priority) =>
+                                  priority.priority_id ===
+                                    todo.priority?.priority_id && (
+                                    <div
+                                      className="px-2 py-1 rounded-full select-none"
+                                      style={{
+                                        backgroundColor: priority.color,
+                                        color: lightHex(priority.color),
+                                      }}
+                                    >
+                                      {priority.name}
+                                    </div>
+                                  )
+                              )}
+                          </div>
                           <Buttons
                             color="blue"
                             onClick={() => {}}

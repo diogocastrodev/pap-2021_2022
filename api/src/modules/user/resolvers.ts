@@ -4,6 +4,7 @@ import { Resolvers } from "../../graphql/types";
 import { db } from "../../database";
 import { verifyPassword, createPassword, getUserByPublicId } from "./helpers";
 import { check } from "../../functions/check";
+import { defaultPriorities } from "../todo/helpers";
 
 // TODO: Add context to resolver
 export const UserResolvers: Resolvers<ResolverContext> = {
@@ -92,6 +93,31 @@ export const UserResolvers: Resolvers<ResolverContext> = {
         });
 
         if (!createdUser) throw new Error("Error creating user");
+
+        try {
+          await db.priority.createMany({
+            data: [
+              {
+                name: "Baixa",
+                color: "#00bcd4",
+                userId: createdUser.user_id,
+                order: 1,
+              },
+              {
+                name: "Mediana",
+                color: "#ff9800",
+                userId: createdUser.user_id,
+                order: 2,
+              },
+              {
+                name: "Alta",
+                color: "#f44336",
+                userId: createdUser.user_id,
+                order: 3,
+              },
+            ],
+          });
+        } catch (e) {}
 
         return true;
       } catch (e) {
