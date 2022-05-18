@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 .editor-toolbar {
-  @apply sticky top-0 bg-gray-50 z-20;
+  @apply sticky top-2 bg-gray-50 z-20;
 }
 
 .editor-editor {
-  @apply break-words max-w-full overflow-hidden;
+  @apply break-words max-w-full overflow-hidden overflow-y-auto;
 }
 
 .editor-wrapper {
@@ -39,21 +39,21 @@
   filter: blur(2px);
 }
 
-.folders-scroll::-webkit-scrollbar {
+.custom-scroll::-webkit-scrollbar {
   @apply w-2;
 }
 
 /* Track */
-.folders-scroll::-webkit-scrollbar-track {
+.custom-scroll::-webkit-scrollbar-track {
   @apply bg-gray-300 rounded-full;
 }
 
 /* Handle */
-.folders-scroll::-webkit-scrollbar-thumb {
+.custom-scroll::-webkit-scrollbar-thumb {
   @apply bg-gray-500 rounded-full;
 }
 
 /* Handle on hover */
-.folders-scroll::-webkit-scrollbar-thumb:hover {
+.custom-scroll::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-600;
 }

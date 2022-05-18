@@ -66,9 +66,6 @@ export default function TreeNode({
                   onClick={() =>
                     onClick && onClick(folder.folder_id, folder.name)
                   }
-                  onContextMenu={() => {
-                    onContext && onContext(folder.folder_id);
-                  }}
                 >
                   {folder.name}
                 </div>
@@ -82,16 +79,6 @@ export default function TreeNode({
                         <div
                           key={file!.file_id}
                           className="mx-1 flex flex-row items-center last:pb-2"
-                          onContextMenu={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setContextPos({
-                              x: e.clientX,
-                              y: e.clientY,
-                            });
-                            setIsContextOpen(true);
-                            setContextFileIdOpened(file!.file_id);
-                          }}
                         >
                           {file?.fileType === FileType.Document ? (
                             <DocumentTextIcon className="w-5" />

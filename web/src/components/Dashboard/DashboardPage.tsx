@@ -146,17 +146,10 @@ export default function DashboardPage(props: props) {
 
       {/* Menu */}
       <NeedLogin>
-        <div className="w-full h-[91.9vh] grid grid-cols-4 gap-2">
-          <TinyItem className="flex-none overscroll-y-auto overflow-hidden">
-            <Item
-              extra={{
-                onContextMenu: (e: MouseEvent<HTMLDivElement>) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                },
-              }}
-            >
-              <div className="w-full flex flex-1 h-full flex-col pt-2 px-2">
+        <div className="w-full max-h-[calc(100vh-4rem)] flex flex-row gap-x-2 relative">
+          <TinyItem className="min-w-[16rem]">
+            <Item>
+              <div className="w-full flex h-full flex-col pt-2 px-2">
                 <div className="mb-4 mt-2">
                   <div className="w-full flex items-center cursor-pointer">
                     <Link href={`/dashboard/calendar`}>
@@ -244,15 +237,6 @@ export default function DashboardPage(props: props) {
                 <div
                   className="h-full mb-2 overflow-y-auto folders-scroll pr-1"
                   id="folders-scroll"
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setContextMenuPos({
-                      x: e.clientX,
-                      y: e.clientY,
-                    });
-                    setOpenContextMenu(true);
-                  }}
                 >
                   {/* Folder Loader */}
                   {folders.folderData.loading && (

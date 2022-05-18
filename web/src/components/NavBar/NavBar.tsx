@@ -82,7 +82,7 @@ export default function Navbar(props: props) {
     <div
       className={`${
         props.initialPage && screenY === 0 ? `` : `shadow-lg bg-gray-50`
-      } h-12 w-screen  sticky -top-0.5  overflow-hidden z-50`}
+      } h-12 w-screen fixed -top-0.5  overflow-hidden z-50`}
     >
       <div className="px-4 h-full flex">
         <div className="w-full flex flex-row items-center">

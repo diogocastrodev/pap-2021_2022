@@ -141,7 +141,7 @@ export default function DocumentPage(props: props) {
 
   return (
     <>
-      <div className="p-2 rounded-md min-h-full relative">
+      <div className="p-2 rounded-md relative">
         {loading && <Loader size="medium" />}
         {!loading && (
           <>
@@ -150,7 +150,7 @@ export default function DocumentPage(props: props) {
                 <div className="font-bold text-xl flex flex-row text-ellipsis overflow-hidden">
                   Ficheiro: <div className="font-medium ml-2">{fileName}</div>
                 </div>
-                <Stack type="row" className="pl-3 ml-auto space-x-2">
+                <Stack type="row" className="pl-3 space-x-2 xl:ml-auto">
                   <Button
                     type="button"
                     onClick={async () => {

@@ -14,6 +14,7 @@ import { ImagesWithUrl } from "@src/graphql/graphql";
 import UploadImageDialog from "@src/components/Images/UploadImageDialog";
 import { browser } from "process";
 import axios from "axios";
+import ToTheMoon from "../../components/Extras/ToTheMoon";
 
 const getImages = gql`
   query getImages {
@@ -43,6 +44,7 @@ export default function UserImagesPage() {
 
   return (
     <>
+      <ToTheMoon></ToTheMoon>
       <UploadImageDialog
         isOpen={isUploadDialogOpen}
         onClose={() => {
