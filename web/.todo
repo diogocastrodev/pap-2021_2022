@@ -1,14 +1,39 @@
+  /* -------------------------------------------------------------------------- */
+  /*                                   Update                                   */
+  /* -------------------------------------------------------------------------- */
+
 + Update de Pastas (nome, cor, e novo parente (copiar o criar))
+  [ ] API @created(22-05-18 12:38)
+    [ ] Schema @created(22-05-18 12:39)
+    [ ] Resolvers @created(22-05-18 12:39)
+  [ ] Web @created(22-05-18 12:38)
 + Update de Ficheiros (nome)
+  [ ] API @created(22-05-18 12:38)
+    [ ] Schema @created(22-05-18 12:39)
+    [ ] Resolvers @created(22-05-18 12:39)
+  [ ] Web @created(22-05-18 12:38)
 + Update de Todos (mudar nome, data, prioridade)
+  [ ] API @created(22-05-18 12:38)
+    [ ] Schema @created(22-05-18 12:39)
+    [ ] Resolvers @created(22-05-18 12:39)
+  [ ] Web @created(22-05-18 12:38)
 + Update de prioridades (mudar nome, cor, prioridade)
+  [ ] API @created(22-05-18 12:38)
+    [ ] Schema @created(22-05-18 12:39)
+    [ ] Resolvers @created(22-05-18 12:39)
+  [ ] Web @created(22-05-18 12:38)
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Delete                                   */
+  /* -------------------------------------------------------------------------- */
 
 + Delete de Ficheiros
+  [ ] API @created(22-05-18 12:38)
+    [ ] Schema @created(22-05-18 12:39)
+    [ ] Resolvers @created(22-05-18 12:39)
+  [ ] Web @created(22-05-18 12:38)
 + Delete de Patas
-
-+ Verificar se nas prioridades também faz isso
-+ Arranjar a dashboard porque depois que passas da página ele ativa o scroll, mesmo que ja tenha desativado isso 2000000 de vezes, mas pronto 
-- Soluções:
-  - Sticky/Fixed na navbar
-  - Fixed na barra da esquerda
-  - Documentos: Sticky
+  [ ] API @created(22-05-18 12:39)
+    [ ] Schema @created(22-05-18 12:39)
+    [ ] Resolvers @created(22-05-18 12:39)
+  [ ] Web @created(22-05-18 12:39)

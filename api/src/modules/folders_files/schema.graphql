@@ -6,6 +6,8 @@ type Query {
 
 type Mutation {
   createFile(fileType: FileType!, name: String!, folder_id: ID!): Files
+  updateFile(fileId: ID!, name: String!): Boolean
+  deleteFile(fileId: ID!): Boolean
 }
 
 enum FileType {

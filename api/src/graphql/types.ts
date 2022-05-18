@@ -84,12 +84,14 @@ export type Mutation = {
   createPriority: Priority;
   createTodo: Todo;
   deactivateUser?: Maybe<Scalars['Boolean']>;
+  deleteFile?: Maybe<Scalars['Boolean']>;
   deletePriority: Scalars['Boolean'];
   dumpTodo: Scalars['Boolean'];
   login?: Maybe<Scalars['Boolean']>;
   logout?: Maybe<Scalars['Boolean']>;
   register?: Maybe<Scalars['Boolean']>;
   updateDocument: Scalars['Boolean'];
+  updateFile?: Maybe<Scalars['Boolean']>;
   updatePassword?: Maybe<Scalars['Boolean']>;
   updatePriority: Priority;
   updateTodo?: Maybe<Scalars['Boolean']>;
@@ -132,6 +134,11 @@ export type MutationDeactivateUserArgs = {
 };
 
 
+export type MutationDeleteFileArgs = {
+  fileId: Scalars['ID'];
+};
+
+
 export type MutationDeletePriorityArgs = {
   id: Scalars['ID'];
   otherPriority?: InputMaybe<Scalars['ID']>;
@@ -159,6 +166,12 @@ export type MutationRegisterArgs = {
 export type MutationUpdateDocumentArgs = {
   content: Scalars['String'];
   id: Scalars['ID'];
+};
+
+
+export type MutationUpdateFileArgs = {
+  fileId: Scalars['ID'];
+  name: Scalars['String'];
 };
 
 
@@ -515,12 +528,14 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createPriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationCreatePriorityArgs, 'color' | 'name' | 'order'>>;
   createTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationCreateTodoArgs, 'text'>>;
   deactivateUser?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeactivateUserArgs, 'password'>>;
+  deleteFile?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteFileArgs, 'fileId'>>;
   deletePriority?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePriorityArgs, 'id' | 'removeTodos'>>;
   dumpTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDumpTodoArgs, 'id'>>;
   login?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   logout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   register?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'password'>>;
   updateDocument?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateDocumentArgs, 'content' | 'id'>>;
+  updateFile?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateFileArgs, 'fileId' | 'name'>>;
   updatePassword?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'newPassword' | 'oldPassword'>>;
   updatePriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationUpdatePriorityArgs, 'id'>>;
   updateTodo?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateTodoArgs, 'id'>>;
