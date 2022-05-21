@@ -184,5 +184,138 @@ export const FolderResolver: Resolvers<ResolverContext> = {
         throw new Error(e as string);
       }
     },
+    updateFolder: async (
+      _,
+      { folderId, name, color, parent_id, remParentId },
+      { is_authed, user_id }
+    ) => {
+      if (!is_authed || user_id === undefined)
+        throw new AuthenticationError("no login");
+
+      if (name === "") throw new Error("name is empty");
+
+      try {
+        const folder = await db.folders.findUnique({
+          where: {
+            folder_id: folderId,
+          },
+          select: {
+            user: {
+              select: {
+                public_user_id: true,
+              },
+            },
+          },
+        });
+
+        if (!folder) throw new Error("folder not found");
+
+        if (folder.user.public_user_id.toString() !== user_id.toString())
+          throw new Error("no access");
+
+        interface UpdateFolder {
+          name?: string;
+          color?: string;
+          parent_folder?: {
+            connect: {
+              folder_id: string;
+            };
+          };
+          parent_id?: undefined;
+        }
+
+        let data: UpdateFolder = {};
+
+        if (name) data.name = name;
+        if (color) data.color = check.chars.color(color);
+
+        if (parent_id && !remParentId) {
+          data = {
+            ...data,
+            parent_folder: {
+              connect: {
+                folder_id: parent_id,
+              },
+            },
+          };
+        }
+
+        if (!parent_id && remParentId) {
+          data = {
+            ...data,
+            parent_id: undefined,
+          };
+        }
+
+        const updatedFolder = await db.folders.update({
+          where: {
+            folder_id: folderId,
+          },
+          data,
+        });
+
+        if (!updatedFolder) throw new Error("Failed updating folder");
+
+        return updatedFolder;
+      } catch (e) {
+        throw new Error(e as string);
+      }
+    },
+    deleteFolder: async (_, { folderId }, { is_authed, user_id }) => {
+      if (!is_authed || user_id === undefined)
+        throw new AuthenticationError("no login");
+
+      try {
+        const folder = await db.folders.findUnique({
+          where: {
+            folder_id: folderId,
+          },
+          select: {
+            user: {
+              select: {
+                public_user_id: true,
+              },
+            },
+          },
+        });
+
+        if (!folder) throw new Error("folder not found");
+
+        if (folder.user.public_user_id.toString() !== user_id.toString())
+          throw new Error("no access");
+
+        // Delete children folders and files
+
+        const children = await db.folders.deleteMany({
+          where: {
+            parent_folder: {
+              folder_id: folderId,
+            },
+          },
+        });
+
+        if (!children) throw new Error("Failed deleting children");
+
+        const files = await db.files.deleteMany({
+          where: {
+            folder_id: folderId,
+          },
+        });
+
+        if (!files) throw new Error("Failed deleting files");
+
+        const deletedFolder = await db.folders.delete({
+          where: {
+            folder_id: folderId,
+          },
+        });
+
+        if (!deletedFolder) throw new Error("Failed deleting folder");
+
+        return true;
+      } catch (e) {
+        throw new Error(e as string);
+      }
+    },
   },
 };

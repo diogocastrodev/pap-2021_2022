@@ -8,6 +8,14 @@ type Query {
 
 type Mutation {
   createFolder(name: String!, parent_id: ID, color: String): Folders
+  updateFolder(
+    folderId: ID!
+    name: String
+    color: String
+    parent_id: String
+    remParentId: Boolean
+  ): Folders
+  deleteFolder(folderId: ID!): Boolean
 }
 
 type returnFolders {

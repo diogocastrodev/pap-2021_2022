@@ -3,14 +3,14 @@
   /* -------------------------------------------------------------------------- */
 
 + Update de Pastas (nome, cor, e novo parente (copiar o criar))
-  [ ] API @created(22-05-18 12:38)
-    [ ] Schema @created(22-05-18 12:39)
-    [ ] Resolvers @created(22-05-18 12:39)
+  [+] API @created(22-05-18 12:38) @done(22-05-21 16:02)
+    [+] Schema @created(22-05-18 12:39) @done(22-05-21 16:02)
+    [+] Resolvers @created(22-05-18 12:39) @done(22-05-21 16:02)
   [ ] Web @created(22-05-18 12:38)
 + Update de Ficheiros (nome)
-  [ ] API @created(22-05-18 12:38)
-    [ ] Schema @created(22-05-18 12:39)
-    [ ] Resolvers @created(22-05-18 12:39)
+  [+] API @created(22-05-18 12:38) @done(22-05-21 16:02)
+    [+] Schema @created(22-05-18 12:39) @done(22-05-21 16:02)
+    [+] Resolvers @created(22-05-18 12:39) @done(22-05-21 16:02)
   [ ] Web @created(22-05-18 12:38)
 + Update de Todos (mudar nome, data, prioridade)
   [+] API @created(22-05-18 12:38) @done(22-05-21 14:32)
@@ -28,12 +28,12 @@
   /* -------------------------------------------------------------------------- */
 
 + Delete de Ficheiros
-  [ ] API @created(22-05-18 12:38)
-    [ ] Schema @created(22-05-18 12:39)
-    [ ] Resolvers @created(22-05-18 12:39)
-  [ ] Web @created(22-05-18 12:38)
-+ Delete de Patas
-  [ ] API @created(22-05-18 12:39)
-    [ ] Schema @created(22-05-18 12:39)
-    [ ] Resolvers @created(22-05-18 12:39)
-  [ ] Web @created(22-05-18 12:39)
+  [+] API @created(22-05-18 12:38) @done(22-05-21 15:14)
+    [+] Schema @created(22-05-18 12:39) @done(22-05-21 15:14)
+    [+] Resolvers @created(22-05-18 12:39) @done(22-05-21 15:14)
+  [+] Web @created(22-05-18 12:38) @done(22-05-21 15:14)
+[+] Delete de Patas @done(22-05-21 15:14)
+  [+] API @created(22-05-18 12:39) @done(22-05-21 15:14)
+    [+] Schema @created(22-05-18 12:39) @done(22-05-21 15:14)
+    [+] Resolvers @created(22-05-18 12:39) @done(22-05-21 15:14)
+  [+] Web @created(22-05-18 12:39) @done(22-05-21 15:14)

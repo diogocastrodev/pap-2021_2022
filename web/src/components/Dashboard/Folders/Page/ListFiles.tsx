@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import Button from "../../../Form/Buttons/Button";
 import CreateFileDialog from "../../Files/Create File/CreateFile";
 import Input from "@components/Form/Inputs/Input";
-import { Listbox } from "@headlessui/react";
+import { Listbox, Menu } from "@headlessui/react";
 import {
   ArrowLeftIcon,
   DocumentTextIcon,
@@ -15,6 +15,8 @@ import {
 } from "@heroicons/react/outline";
 import Link from "next/link";
 import { gqlClient } from "@libs/graphql-request";
+import { CogIcon, BanIcon } from "@heroicons/react/outline";
+import UpdateFolderDialog from "../UpdateFolder/UpdateFolderDialog";
 
 interface props {
   folderId: string;
@@ -26,6 +28,28 @@ export default function DashboardListFiles({ folderId }: props) {
   const [parentId, setParentId] = useState<string | undefined>(undefined);
   const [childrenFolders, setChildrenFolders] = useState<Folders[]>([]);
   const [fileList, setFileList] = useState<Files[]>([]);
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Dialog                                   */
+  /* -------------------------------------------------------------------------- */
+
+  const [updateFolderOpen, setUpdateFolderOpen] = useState(false);
+  const [updateFolderId, setUpdateFolderId] = useState<string | undefined>(
+    undefined
+  );
+  const [deleteFolderOpen, setDeleteFolderOpen] = useState(false);
+  const [deleteFolderId, setDeleteFolderId] = useState<string | undefined>(
+    undefined
+  );
+
+  const [updateFileOpen, setUpdateFileOpen] = useState(false);
+  const [updateFileId, setUpdateFileId] = useState<string | undefined>(
+    undefined
+  );
+  const [deleteFileOpen, setDeleteFileOpen] = useState(false);
+  const [deleteFileId, setDeleteFileId] = useState<string | undefined>(
+    undefined
+  );
 
   const [loading, setLoading] = useState(true);
 
@@ -105,6 +129,7 @@ export default function DashboardListFiles({ folderId }: props) {
           list = list.sort(function (a, b) {
             return b.created_at - a.created_at;
           });
+
           break;
       }
       switch (FileSearchTypeOfFile) {
@@ -145,6 +170,11 @@ export default function DashboardListFiles({ folderId }: props) {
         onClose={onCloseCreateFileDialog}
         folderId={folderId}
       />
+      <UpdateFolderDialog
+        isOpen={updateFolderOpen}
+        onClose={() => setUpdateFolderOpen(false)}
+        folderId={folderId}
+      />
       <div>
         <Stack type="row" className="pb-4">
           <span className="text-xl underline underline-offset-1">
@@ -153,7 +183,7 @@ export default function DashboardListFiles({ folderId }: props) {
               {" " + (fileList.length + childrenFolders.length) + " "}itens
             </span>
           </span>
-          <div className="ml-auto">
+          <Stack className="items-center ml-auto space-x-3">
             <Button
               type="button"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -163,7 +193,48 @@ export default function DashboardListFiles({ folderId }: props) {
             >
               Criar Ficheiro
             </Button>
-          </div>
+            <Menu>
+              <div className="relative">
+                <Menu.Button>
+                  <div className="h-8 w-8 bg-gray-200 rounded-md flex justify-center items-center cursor-pointer hover:bg-gray-300">
+                    <CogIcon className="w-6 h-6" />
+                  </div>
+                </Menu.Button>
+                <Menu.Items
+                  className={`absolute bg-gray-200  right-2 top-9 p-2 rounded-md outline-none w-44`}
+                >
+                  <Menu.Item
+                    as="div"
+                    className="hover:bg-blue-200 rounded-md p-1 cursor-pointer flex items-center"
+                    onClick={() => {
+                      // Update Folder Handler
+                      setUpdateFolderId(folderId);
+                      setUpdateFolderOpen(true);
+                    }}
+                  >
+                    <div className="w-5 h-5 mr-1">
+                      <CogIcon />
+                    </div>
+                    <div>Atualizar Pasta</div>
+                  </Menu.Item>
+                  <Menu.Item
+                    as="div"
+                    className="hover:bg-blue-200 rounded-md p-1 cursor-pointer flex items-center"
+                    onClick={() => {
+                      // Delete Folder Handler
+                      setDeleteFolderId(folderId);
+                      setDeleteFolderOpen(true);
+                    }}
+                  >
+                    <div className="w-5 h-5 mr-1">
+                      <BanIcon />
+                    </div>
+                    <div>Apagar Pasta</div>
+                  </Menu.Item>
+                </Menu.Items>
+              </div>
+            </Menu>
+          </Stack>
         </Stack>
         {loading && <Loader size="medium" />}
         <div className="space-y-4">
@@ -254,7 +325,7 @@ export default function DashboardListFiles({ folderId }: props) {
               </Stack>
               <div className="mt-4 space-y-1">
                 {getFileListBySearch().map((file) => (
-                  <div key={file.file_id} className="flex">
+                  <div key={file.file_id} className="flex items-center">
                     <Link href={`/dashboard/i/${file.file_id}`}>
                       <div className="hover:text-blue-700 flex items-center cursor-pointer">
                         {file.fileType === FileType.Document ? (
@@ -265,6 +336,50 @@ export default function DashboardListFiles({ folderId }: props) {
                         <div className="">{file.name}</div>
                       </div>
                     </Link>
+                    <div className="ml-auto flex items-center">
+                      <Menu as="div" className={`relative`}>
+                        <div className="relative">
+                          <Menu.Button>
+                            <div className="h-8 w-8 bg-gray-200 rounded-md flex justify-center items-center cursor-pointer hover:bg-gray-300">
+                              <CogIcon className="w-6 h-6" />
+                            </div>
+                          </Menu.Button>
+                          <Menu.Items
+                            className={`absolute bg-gray-200 right-10 top-0 p-2 rounded-md outline-none w-48`}
+                          >
+                            <div className="absolute top-2 -right-2 w-3 h-3 bg-gray-200"></div>
+                            <Menu.Item
+                              as="div"
+                              className="hover:bg-blue-200 rounded-md p-1 cursor-pointer flex items-center"
+                              onClick={() => {
+                                // File Update Handler
+                                setUpdateFileId(file.file_id);
+                                setUpdateFileOpen(true);
+                              }}
+                            >
+                              <div className="w-5 h-5 mr-1">
+                                <CogIcon />
+                              </div>
+                              <div>Atualizar Ficheiro</div>
+                            </Menu.Item>
+                            <Menu.Item
+                              as="div"
+                              className="hover:bg-blue-200 rounded-md p-1 cursor-pointer flex items-center"
+                              onClick={() => {
+                                // File Delete Handler
+                                setDeleteFileId(file.file_id);
+                                setDeleteFileOpen(true);
+                              }}
+                            >
+                              <div className="w-5 h-5 mr-1">
+                                <BanIcon />
+                              </div>
+                              <div>Apagar Ficheiro</div>
+                            </Menu.Item>
+                          </Menu.Items>
+                        </div>
+                      </Menu>
+                    </div>
                   </div>
                 ))}
               </div>

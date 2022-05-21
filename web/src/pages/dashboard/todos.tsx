@@ -58,7 +58,12 @@ export default function TodosPage() {
               </Button>
             </div>
           </Stack>
-          <TodoDisclosures todos={todos} />
+          <TodoDisclosures
+            todos={todos}
+            onDump={() => {
+              fetchAllTodos();
+            }}
+          />
         </Stack>
       </DashboardPage>
     </>
