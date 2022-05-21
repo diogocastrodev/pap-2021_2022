@@ -1,8 +1,11 @@
 import { Dialog } from "@headlessui/react";
 import { FoldersContext } from "@src/context/FoldersContext";
 import moment from "moment";
+import "moment/locale/pt";
+moment.locale("pt");
 import { useContext } from "react";
 import PreMadeDialog, { preMadeDialogNeeded } from "../../Dialog/PreMadeDialog";
+
 interface props extends preMadeDialogNeeded {
   pos: {
     x: number;

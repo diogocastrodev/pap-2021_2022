@@ -1328,8 +1328,8 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "Folders",
+              "kind": "SCALAR",
+              "name": "Boolean",
               "ofType": null
             },
             "isDeprecated": false,

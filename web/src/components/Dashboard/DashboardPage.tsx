@@ -207,7 +207,7 @@ export default function DashboardPage(props: props) {
                       </Menu.Button>
                       <Menu.Items
                         className={
-                          "fixed z-[99] top-44 left-30 py-3 px-2 min-w bg-gray-200 rounded-md shadow-md select-none focus:outline-none space-y-1"
+                          "fixed z-[99] top-40 left-30 py-3 px-2 min-w bg-gray-200 rounded-md shadow-md select-none focus:outline-none space-y-1"
                         }
                       >
                         {foldersThreeDotOptions.map((item, i: number) => (

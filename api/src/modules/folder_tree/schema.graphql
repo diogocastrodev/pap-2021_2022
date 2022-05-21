@@ -14,7 +14,7 @@ type Mutation {
     color: String
     parent_id: String
     remParentId: Boolean
-  ): Folders
+  ): Boolean
   deleteFolder(folderId: ID!): Boolean
 }
 

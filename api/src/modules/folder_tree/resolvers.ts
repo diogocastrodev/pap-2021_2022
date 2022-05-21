@@ -256,7 +256,7 @@ export const FolderResolver: Resolvers<ResolverContext> = {
 
         if (!updatedFolder) throw new Error("Failed updating folder");
 
-        return updatedFolder;
+        return true;
       } catch (e) {
         throw new Error(e as string);
       }

@@ -93,7 +93,7 @@ export type Mutation = {
   register?: Maybe<Scalars['Boolean']>;
   updateDocument: Scalars['Boolean'];
   updateFile?: Maybe<Scalars['Boolean']>;
-  updateFolder?: Maybe<Folders>;
+  updateFolder?: Maybe<Scalars['Boolean']>;
   updatePassword?: Maybe<Scalars['Boolean']>;
   updatePriority: Priority;
   updateTodo?: Maybe<Scalars['Boolean']>;
@@ -554,7 +554,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   register?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'password'>>;
   updateDocument?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateDocumentArgs, 'content' | 'id'>>;
   updateFile?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateFileArgs, 'fileId' | 'name'>>;
-  updateFolder?: Resolver<Maybe<ResolversTypes['Folders']>, ParentType, ContextType, RequireFields<MutationUpdateFolderArgs, 'folderId'>>;
+  updateFolder?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateFolderArgs, 'folderId'>>;
   updatePassword?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'newPassword' | 'oldPassword'>>;
   updatePriority?: Resolver<ResolversTypes['Priority'], ParentType, ContextType, RequireFields<MutationUpdatePriorityArgs, 'id'>>;
   updateTodo?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateTodoArgs, 'id'>>;
