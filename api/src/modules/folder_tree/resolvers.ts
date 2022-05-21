@@ -284,33 +284,58 @@ export const FolderResolver: Resolvers<ResolverContext> = {
         if (folder.user.public_user_id.toString() !== user_id.toString())
           throw new Error("no access");
 
-        // Delete children folders and files
-
-        const children = await db.folders.deleteMany({
-          where: {
-            parent_folder: {
-              folder_id: folderId,
-            },
+        const deleteEverything = {
+          deleteTodos: async (folderId: string) => {
+            return await db.todo.deleteMany({
+              where: {
+                files: {
+                  folder_id: folderId,
+                },
+              },
+            });
           },
-        });
+          deleteDocuments: async (folderId: string) => {
+            return await db.document.deleteMany({
+              where: {
+                files: {
+                  folder_id: folderId,
+                },
+              },
+            });
+          },
+          deleteFiles: async (folderId: string) => {
+            return await db.files.deleteMany({
+              where: {
+                folder_id: folderId,
+              },
+            });
+          },
+          deleteFolders: async (folderId: string) => {
+            return await db.folders.delete({
+              where: {
+                folder_id: folderId,
+              },
+            });
+          },
+          emptyFolder: async (folderId: string) => {
+            await deleteEverything.deleteTodos(folderId);
+            await deleteEverything.deleteDocuments(folderId);
+            await deleteEverything.deleteFiles(folderId);
+            await deleteEverything.deleteFolders(folderId);
+            return true;
+          },
+        };
 
-        if (!children) throw new Error("Failed deleting children");
-
-        const files = await db.files.deleteMany({
+        const allFolders = await db.folders.delete({
           where: {
             folder_id: folderId,
           },
-        });
-
-        if (!files) throw new Error("Failed deleting files");
-
-        const deletedFolder = await db.folders.delete({
-          where: {
-            folder_id: folderId,
+          include: {
+            folders: true,
           },
         });
 
-        if (!deletedFolder) throw new Error("Failed deleting folder");
+        if (!allFolders) throw new Error("folder not found");
 
         return true;
       } catch (e) {

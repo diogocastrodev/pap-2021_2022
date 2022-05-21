@@ -31,7 +31,7 @@ model folders {
   updated_at    DateTime  @updatedAt @db.Timestamp(6)
   parent_id     String?   @db.VarChar(255)
   user_id       String    @db.VarChar(255)
-  parent_folder folders?  @relation("subfolder", fields: [parent_id], references: [folder_id])
+  parent_folder folders?  @relation("subfolder", fields: [parent_id], references: [folder_id], onDelete: Cascade)
   user          user      @relation(fields: [user_id], references: [user_id])
   files         files[]
   folders       folders[] @relation("subfolder")
@@ -44,7 +44,7 @@ model files {
   folder_id  String    @db.VarChar(255)
   created_at DateTime  @default(now()) @db.Timestamp(6)
   updated_at DateTime  @updatedAt @db.Timestamp(6)
-  folders    folders   @relation(fields: [folder_id], references: [folder_id])
+  folders    folders   @relation(fields: [folder_id], references: [folder_id], onDelete: Cascade)
   document   document?
   todos      todo[]
 }
@@ -55,7 +55,7 @@ model document {
   created_at  DateTime @default(now()) @db.Timestamp(6)
   updated_at  DateTime @updatedAt @db.Timestamp(6)
   file_id     String   @unique @db.VarChar(255)
-  files       files    @relation(fields: [file_id], references: [file_id])
+  files       files    @relation(fields: [file_id], references: [file_id], onDelete: Cascade)
 }
 
 model todo {
@@ -68,7 +68,7 @@ model todo {
   user_id             String     @db.VarChar(255)
   file_id             String?    @db.VarChar(255)
   priorityPriority_id String?    @db.VarChar(255)
-  files               files?     @relation(fields: [file_id], references: [file_id])
+  files               files?     @relation(fields: [file_id], references: [file_id], onDelete: Cascade)
   priority            priority?  @relation(fields: [priorityPriority_id], references: [priority_id])
   user                user       @relation(fields: [user_id], references: [user_id])
 }

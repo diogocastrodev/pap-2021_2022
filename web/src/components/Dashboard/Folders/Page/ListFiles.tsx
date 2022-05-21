@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import Stack from "@src/components/Form/Stack/Stack";
 import Loader from "@src/components/Loader/Loader";
 import { FoldersContext } from "@src/context/FoldersContext";
@@ -14,9 +13,9 @@ import {
   PencilIcon,
 } from "@heroicons/react/outline";
 import Link from "next/link";
-import { gqlClient } from "@libs/graphql-request";
 import { CogIcon, BanIcon } from "@heroicons/react/outline";
 import UpdateFolderDialog from "../UpdateFolder/UpdateFolderDialog";
+import DeleteFolderDialog from "../DeleteFolder/DeleteFolder";
 
 interface props {
   folderId: string;
@@ -175,6 +174,11 @@ export default function DashboardListFiles({ folderId }: props) {
         onClose={() => setUpdateFolderOpen(false)}
         folderId={folderId}
       />
+      <DeleteFolderDialog
+        isOpen={deleteFolderOpen}
+        onClose={() => setDeleteFolderOpen(false)}
+        folderId={folderId}
+      />
       <div>
         <Stack type="row" className="pb-4">
           <span className="text-xl underline underline-offset-1">
@@ -201,7 +205,7 @@ export default function DashboardListFiles({ folderId }: props) {
                   </div>
                 </Menu.Button>
                 <Menu.Items
-                  className={`absolute bg-gray-200  right-2 top-9 p-2 rounded-md outline-none w-44`}
+                  className={`absolute bg-gray-200 z-20 right-2 top-9 p-2 rounded-md outline-none w-44`}
                 >
                   <Menu.Item
                     as="div"
