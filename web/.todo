@@ -18,10 +18,10 @@
     [ ] Resolvers @created(22-05-18 12:39)
   [ ] Web @created(22-05-18 12:38)
 + Update de prioridades (mudar nome, cor, prioridade)
-  [ ] API @created(22-05-18 12:38)
-    [ ] Schema @created(22-05-18 12:39)
-    [ ] Resolvers @created(22-05-18 12:39)
-  [ ] Web @created(22-05-18 12:38)
+  [+] API @created(22-05-18 12:38) @done(22-05-21 13:42)
+    [+] Schema @created(22-05-18 12:39) @done(22-05-21 13:42)
+    [+] Resolvers @created(22-05-18 12:39) @done(22-05-21 13:42)
+  [+] Web @created(22-05-18 12:38) @done(22-05-21 13:42)
 
   /* -------------------------------------------------------------------------- */
   /*                                   Delete                                   */
