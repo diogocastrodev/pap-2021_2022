@@ -18,9 +18,11 @@ type Mutation {
   updateTodo(
     id: ID!
     text: String
+    remDate: Boolean
     date: DateTime
     status: TodoStatus
     priority: ID
+    remPriority: Boolean
     file: ID
   ): Boolean
   dumpTodo(id: ID!): Boolean!

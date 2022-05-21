@@ -193,6 +193,8 @@ export type MutationUpdateTodoArgs = {
   file?: InputMaybe<Scalars['ID']>;
   id: Scalars['ID'];
   priority?: InputMaybe<Scalars['ID']>;
+  remDate?: InputMaybe<Scalars['Boolean']>;
+  remPriority?: InputMaybe<Scalars['Boolean']>;
   status?: InputMaybe<TodoStatus>;
   text?: InputMaybe<Scalars['String']>;
 };

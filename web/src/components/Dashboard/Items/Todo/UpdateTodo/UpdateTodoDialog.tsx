@@ -13,6 +13,7 @@ import Input from "@components/Form/Inputs/Input";
 import { Listbox } from "@headlessui/react";
 import Button from "@components/Form/Buttons/Button";
 import { useRouter } from "next/router";
+import { XIcon } from "@heroicons/react/solid";
 
 interface props extends preMadeDialogNeeded {
   todo: Todo | undefined;
@@ -33,9 +34,11 @@ const updateMutation = gql`
   mutation updateTodo(
     $id: ID!
     $text: String
+    $remDate: Boolean
     $date: DateTime
     $status: TodoStatus
     $priority: ID
+    $remPriority: Boolean
     $file: ID
   ) {
     updateTodo(
@@ -45,6 +48,8 @@ const updateMutation = gql`
       status: $status
       priority: $priority
       file: $file
+      remDate: $remDate
+      remPriority: $remPriority
     )
   }
 `;
@@ -72,12 +77,31 @@ export default function UpdateTodoDialog({ isOpen, onClose, todo }: props) {
 
   async function updateHandler(e: FormEvent) {
     e.preventDefault();
+    let customVars = {};
+
+    if (!Priority) {
+      customVars = {
+        ...customVars,
+        priority: undefined,
+        remPriority: true,
+      };
+    }
+
+    if (!DueDate || DueDate === "") {
+      customVars = {
+        ...customVars,
+        date: undefined,
+        remDate: true,
+      };
+    }
+
     await gqlClient
       .request(updateMutation, {
         id: todo?.todo_id,
         text: Text,
         date: DueDate,
         priority: Priority?.priority_id,
+        ...customVars,
       })
       .then((res) => {
         if (res.updateTodo) {
@@ -94,14 +118,31 @@ export default function UpdateTodoDialog({ isOpen, onClose, todo }: props) {
 
   useEffect(() => {
     if (todo) {
-      setText(todo.text);
-      setDueDate(todo.date ? todo.date.toString() : "");
+      setText("");
+      setDueDate("");
+      setPriority(undefined);
 
-      Priorities.map((priority) => {
-        if (priority.priority_id === todo.priority?.priority_id) {
-          setPriority(priority);
-        }
-      });
+      setText(todo.text);
+      // Covert date to yyyy-mm-dd
+      if (todo.date) {
+        const date = new Date(todo.date);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        setDueDate(
+          `${year}-${month < 10 ? "0" : ""}${month}-${
+            day < 10 ? "0" : ""
+          }${day}`
+        );
+      }
+
+      if (todo.priority) {
+        Priorities.map((priority) => {
+          if (priority.priority_id === todo.priority?.priority_id) {
+            setPriority(priority);
+          }
+        });
+      }
     }
   }, [todo]);
 
@@ -135,7 +176,7 @@ export default function UpdateTodoDialog({ isOpen, onClose, todo }: props) {
                           backgroundColor: Priority?.color,
                         }}
                       ></div>
-                      {Priority?.name}
+                      {Priority ? Priority?.name : "Sem prioridade"}
                     </Listbox.Button>
                     <Listbox.Options
                       className={`bg-gray-200 absolute w-full outline-none p-2 rounded-md`}
@@ -158,6 +199,14 @@ export default function UpdateTodoDialog({ isOpen, onClose, todo }: props) {
                     </Listbox.Options>
                   </div>
                 </Listbox>
+                <div
+                  className="ml-2 text-md text-black text-opacity-75 hover:text-opacity-100 cursor-pointer"
+                  onClick={() => {
+                    setPriority(undefined);
+                  }}
+                >
+                  Remover Prioridade
+                </div>
               </div>
             </InputGroup>
             <InputGroup>
@@ -169,6 +218,14 @@ export default function UpdateTodoDialog({ isOpen, onClose, todo }: props) {
                   onChange: (e) => setDueDate(e.target.value),
                 }}
               />
+              <div
+                className="ml-2 text-md text-black text-opacity-75 hover:text-opacity-100 cursor-pointer"
+                onClick={() => {
+                  setDueDate("");
+                }}
+              >
+                Remover Data
+              </div>
             </InputGroup>
             <Button>Atualizar</Button>
           </Stack>

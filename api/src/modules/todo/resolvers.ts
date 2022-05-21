@@ -515,7 +515,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
     },
     updateTodo: async (
       _,
-      { id, text, priority, file, status, date },
+      { id, text, priority, file, status, date, remDate, remPriority },
       { is_authed, user_id }
     ) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
@@ -554,13 +554,25 @@ export const TodoResolver: Resolvers<ResolverContext> = {
           status: status as TodoStatus,
         };
 
+      if (remDate)
+        dataToUpdate = {
+          ...dataToUpdate,
+          date: null,
+        };
+
       if (date && typeof date !== null && date !== "")
         dataToUpdate = {
           ...dataToUpdate,
           date: new Date(date),
         };
 
-      if (priority && typeof priority !== null)
+      if (remPriority)
+        dataToUpdate = {
+          ...dataToUpdate,
+          priorityPriority_id: null,
+        };
+
+      if (priority && typeof priority !== null && priority !== "")
         dataToUpdate = {
           ...dataToUpdate,
           priority: {
@@ -579,6 +591,8 @@ export const TodoResolver: Resolvers<ResolverContext> = {
             },
           },
         };
+
+      console.log(dataToUpdate);
 
       const newTodo = await db.todo.update({
         where: {
