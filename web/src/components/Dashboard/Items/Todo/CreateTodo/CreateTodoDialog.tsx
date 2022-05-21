@@ -123,6 +123,7 @@ export default function CreateTodoDialog(props: props) {
         })
         .then((res) => {
           const newTodo = res.createTodo as Todo;
+          console.log(newTodo);
           props.onCreate(
             newTodo.todo_id,
             newTodo.text,

@@ -375,11 +375,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       return newPriority;
     },
-    deletePriority: async (
-      _,
-      { id, removeTodos, otherPriority },
-      { is_authed, user_id }
-    ) => {
+    deletePriority: async (_, { id, removeTodos }, { is_authed, user_id }) => {
       if (!is_authed || !user_id) throw new Error("Unauthorized");
 
       try {
@@ -415,31 +411,16 @@ export const TodoResolver: Resolvers<ResolverContext> = {
             },
           });
         } else {
-          if (otherPriority) {
-            // Update the todos to another priority
-            await db.todo.updateMany({
-              where: {
-                priority: {
-                  priority_id: id,
-                },
+          await db.todo.updateMany({
+            where: {
+              priority: {
+                priority_id: id,
               },
-              data: {
-                priorityPriority_id: otherPriority,
-              },
-            });
-          } else {
-            // Remove priority from todos
-            await db.todo.updateMany({
-              where: {
-                priority: {
-                  priority_id: id,
-                },
-              },
-              data: {
-                priorityPriority_id: null,
-              },
-            });
-          }
+            },
+            data: {
+              priorityPriority_id: null,
+            },
+          });
         }
 
         // Delete the Priority after all
@@ -523,6 +504,9 @@ export const TodoResolver: Resolvers<ResolverContext> = {
 
       const todo = await db.todo.create({
         data: newData,
+        include: {
+          priority: true,
+        },
       });
 
       if (!todo) throw new Error("Todo not found");

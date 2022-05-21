@@ -161,7 +161,12 @@ export default function TodoPage(props: props) {
         </div>
       </div>
       <div className="my-1 border-b-2 border-gray-100"></div>
-      <TodoDisclosures todos={todos} />
+      <TodoDisclosures
+        todos={todos}
+        onDump={(id: string) => {
+          setTodos(todos.filter((todo) => todo.todo_id !== id));
+        }}
+      />
     </>
   );
 }

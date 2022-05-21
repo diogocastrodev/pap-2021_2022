@@ -18,6 +18,7 @@ import moment from "moment";
 
 interface props {
   todos: Todo[];
+  onDump: (todoId: string) => void;
 }
 
 const getPriorities = gql`
@@ -50,7 +51,13 @@ const updateTodo = gql`
   }
 `;
 
-export default function TodoDisclosures({ todos }: props) {
+const dumpTodo = gql`
+  mutation ($id: ID!) {
+    dumpTodo(id: $id)
+  }
+`;
+
+export default function TodoDisclosures({ todos, onDump }: props) {
   const [pageTodos, setPageTodos] = useState<Todo[]>([]);
   const [priorities, setPriorities] = useState<Priority[]>([]);
 
@@ -136,15 +143,12 @@ export default function TodoDisclosures({ todos }: props) {
 
   async function deleteTodo(todoId: string) {
     await gqlClient
-      .request(updateTodo, {
+      .request(dumpTodo, {
         id: todoId,
       })
       .then(() => {
-        const newTodos = todos.map((todo) => {
-          if (todo.todo_id === todoId) {
-          }
-          return todo;
-        });
+        onDump(todoId);
+        const newTodos = todos.filter((todo) => todo.todo_id !== todoId);
         setPageTodos(newTodos);
         toast.success("Apontamento apagado!");
       })
@@ -407,7 +411,7 @@ export default function TodoDisclosures({ todos }: props) {
                                 onClick={() => {
                                   deleteTodo(todo.todo_id);
                                 }}
-                                icon={<TrashIcon />}
+                                icon={<BanIcon />}
                               />
                             </Stack>
                           </div>

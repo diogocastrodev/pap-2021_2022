@@ -67,6 +67,9 @@ export default function CreatePriorityDialog({
     if (parseInt(PriorityOrder) > 999) {
       setPriorityOrder("999");
     }
+    if (parseInt(PriorityOrder) < 0) {
+      setPriorityOrder("0");
+    }
   }, [PriorityOrder]);
 
   return (

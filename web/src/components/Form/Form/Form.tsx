@@ -7,7 +7,9 @@ interface props extends React.HTMLProps<HTMLFormElement> {
 export default function Form(props: props) {
   return (
     <>
-      <form {...props}>{props.children}</form>
+      <form {...props} method="POST">
+        {props.children}
+      </form>
     </>
   );
 }

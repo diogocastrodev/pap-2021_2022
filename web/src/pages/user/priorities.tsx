@@ -9,10 +9,15 @@ import { lightHex } from "@src/functions/colors";
 import CreatePriorityDialog from "../../components/Priority/Create/CreatePriority";
 import ToTheMoon from "../../components/Extras/ToTheMoon";
 import {
+  BanIcon,
   CogIcon,
   DotsHorizontalIcon,
   DotsVerticalIcon,
+  RefreshIcon,
 } from "@heroicons/react/outline";
+import { Menu } from "@headlessui/react";
+import DeletePriorityDialog from "@components/Priority/Delete/DeletePriority";
+import UpdatePriorityDialog from "@components/Priority/Update/UpdatePriority";
 
 const getPriorities = gql`
   query {
@@ -25,8 +30,21 @@ const getPriorities = gql`
   }
 `;
 
+interface IItems {
+  name: string;
+  onClick: (id: string) => void;
+  icon?: JSX.Element;
+}
+
 export default function PrioritiesPage() {
   const [isCreatePriorityOpen, setIsCreatePriorityOpen] = useState(false);
+
+  const [isUpdatePriorityOpen, setIsUpdatePriorityOpen] = useState(false);
+  const [updatePriority, setUpdatePriority] = useState<Priority>();
+
+  const [isDeletePriorityOpen, setIsDeletePriorityOpen] = useState(false);
+  const [deletePriorityID, setDeletePriorityID] = useState("");
+
   const [Priorities, setPriorities] = useState<Priority[] | undefined>(
     undefined
   );
@@ -49,6 +67,17 @@ export default function PrioritiesPage() {
         isOpen={isCreatePriorityOpen}
         onClose={() => setIsCreatePriorityOpen(false)}
         onSuccess={fetchPriorities}
+      />
+      <UpdatePriorityDialog
+        isOpen={isUpdatePriorityOpen}
+        onClose={() => setIsUpdatePriorityOpen(false)}
+        priority={updatePriority}
+        onSuccess={fetchPriorities}
+      />
+      <DeletePriorityDialog
+        isOpen={isDeletePriorityOpen}
+        onClose={() => setIsDeletePriorityOpen(false)}
+        id={deletePriorityID}
       />
       <ToTheMoon></ToTheMoon>
       <NeedLogin>
@@ -81,9 +110,53 @@ export default function PrioritiesPage() {
                     >
                       <span className="ml-2">{priority.name}</span>
                       <div className="ml-auto px-3 flex items-center space-x-3">
-                        <div className="w-5">
-                          <DotsVerticalIcon />
-                        </div>
+                        <Menu as="div" className={`relative flex items-center`}>
+                          <Menu.Button className={`relative outline-none`}>
+                            <div className="w-5">
+                              <DotsVerticalIcon />
+                            </div>
+                          </Menu.Button>
+                          <Menu.Items
+                            className={`text-black absolute z-[99] right-4 top-4 py-3 px-2 min-w bg-gray-100 rounded-md shadow-md select-none focus:outline-none space-y-1`}
+                          >
+                            <Menu.Item>
+                              {({ active }: { active: boolean }) => (
+                                <div
+                                  className={`${
+                                    active && "bg-blue-200"
+                                  } px-2 py-1 rounded-lg flex items-center cursor-pointer`}
+                                  onClick={() => {
+                                    setUpdatePriority(priority);
+                                    setIsUpdatePriorityOpen(true);
+                                  }}
+                                >
+                                  <div className="w-5 h-5">
+                                    <RefreshIcon />
+                                  </div>
+                                  <span className="ml-1">Atualizar</span>
+                                </div>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }: { active: boolean }) => (
+                                <div
+                                  className={`${
+                                    active && "bg-blue-200"
+                                  } px-2 py-1 rounded-lg flex items-center cursor-pointer`}
+                                  onClick={() => {
+                                    setDeletePriorityID(priority.priority_id);
+                                    setIsDeletePriorityOpen(true);
+                                  }}
+                                >
+                                  <div className="w-5 h-5">
+                                    <BanIcon />
+                                  </div>
+                                  <span className="ml-1">Apagar</span>
+                                </div>
+                              )}
+                            </Menu.Item>
+                          </Menu.Items>
+                        </Menu>
                       </div>
                     </div>
                   </div>

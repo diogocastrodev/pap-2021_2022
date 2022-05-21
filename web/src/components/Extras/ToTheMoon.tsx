@@ -17,7 +17,7 @@ export default function ToTheMoon() {
         className="bg-blue-500 hover:bg-blue-600 fixed bottom-8 right-8 h-10 w-10 flex justify-center items-center z-[99]"
         onClick={handleClick}
       >
-        <ArrowUpIcon className="w-8" />
+        <ArrowUpIcon className="w-5 h-5" />
       </Button>
     </>
   );

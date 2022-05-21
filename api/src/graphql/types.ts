@@ -141,7 +141,6 @@ export type MutationDeleteFileArgs = {
 
 export type MutationDeletePriorityArgs = {
   id: Scalars['ID'];
-  otherPriority?: InputMaybe<Scalars['ID']>;
   removeTodos: Scalars['Boolean'];
 };
 
