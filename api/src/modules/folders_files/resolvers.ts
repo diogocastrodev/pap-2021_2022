@@ -125,5 +125,45 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
         throw new Error(err as string);
       }
     },
+    updateFile: async (_, { fileId, name }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("User not authenticated");
+
+      try {
+        // Check if user can update file
+        const file = await db.files.findUnique({
+          where: {
+            file_id: fileId,
+          },
+          include: {
+            folders: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        });
+
+        if (!file) throw new Error("File not found");
+
+        if (file.folders.user.public_user_id !== user_id)
+          throw new Error("You cannot update other people's files");
+
+        // Update file
+        const updatedFile = await db.files.update({
+          where: {
+            file_id: fileId,
+          },
+          data: {
+            name: name,
+          },
+        });
+
+        if (!updatedFile) throw new Error("File not found");
+
+        return true;
+      } catch (err) {
+        throw new Error(err as string);
+      }
+    },
   },
 };

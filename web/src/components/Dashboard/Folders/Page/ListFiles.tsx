@@ -17,6 +17,7 @@ import { CogIcon, BanIcon } from "@heroicons/react/outline";
 import UpdateFolderDialog from "../UpdateFolder/UpdateFolderDialog";
 import DeleteFolderDialog from "../DeleteFolder/DeleteFolder";
 import DeleteFileDialog from "../../Files/DeleteFile/DeleteFile";
+import UpdateFileDialog from "../../Files/Update File/UpdateFile";
 
 interface props {
   folderId: string;
@@ -179,6 +180,12 @@ export default function DashboardListFiles({ folderId }: props) {
         isOpen={deleteFolderOpen}
         onClose={() => setDeleteFolderOpen(false)}
         folderId={folderId}
+      />
+      <UpdateFileDialog
+        isOpen={updateFileOpen}
+        onClose={() => setUpdateFileOpen(false)}
+        id={updateFileId}
+        onUpdate={refreshFolders}
       />
       <DeleteFileDialog
         isOpen={deleteFileOpen}
