@@ -88,5 +88,42 @@ export const FolderFilesResolver: Resolvers<ResolverContext> = {
         throw new Error(err as string);
       }
     },
+    deleteFile: async (_, { fileId }, { is_authed, user_id }) => {
+      if (!is_authed || !user_id) throw new Error("User not authenticated");
+
+      try {
+        // Check if user can delete file
+        const file = await db.files.findUnique({
+          where: {
+            file_id: fileId,
+          },
+          include: {
+            folders: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        });
+
+        if (!file) throw new Error("File not found");
+
+        if (file.folders.user.public_user_id !== user_id)
+          throw new Error("You cannot delete other people's files");
+
+        // Delete file
+        const deletedFile = await db.files.delete({
+          where: {
+            file_id: fileId,
+          },
+        });
+
+        if (!deletedFile) throw new Error("File not found");
+
+        return true;
+      } catch (err) {
+        throw new Error(err as string);
+      }
+    },
   },
 };

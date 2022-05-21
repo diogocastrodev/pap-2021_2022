@@ -28,6 +28,7 @@ import ItemsToPage from "./Items/Items";
 import Head from "next/head";
 import NeedLogin from "../Login/NeedLogin";
 import Link from "next/link";
+import DeleteFileDialog from "./Files/DeleteFile/DeleteFile";
 
 interface props {
   folder?: {

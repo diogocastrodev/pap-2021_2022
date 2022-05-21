@@ -16,13 +16,14 @@ import Link from "next/link";
 import { CogIcon, BanIcon } from "@heroicons/react/outline";
 import UpdateFolderDialog from "../UpdateFolder/UpdateFolderDialog";
 import DeleteFolderDialog from "../DeleteFolder/DeleteFolder";
+import DeleteFileDialog from "../../Files/DeleteFile/DeleteFile";
 
 interface props {
   folderId: string;
 }
 
 export default function DashboardListFiles({ folderId }: props) {
-  const { folderData } = useContext(FoldersContext);
+  const { folderData, refreshFolders } = useContext(FoldersContext);
 
   const [parentId, setParentId] = useState<string | undefined>(undefined);
   const [childrenFolders, setChildrenFolders] = useState<Folders[]>([]);
@@ -178,6 +179,12 @@ export default function DashboardListFiles({ folderId }: props) {
         isOpen={deleteFolderOpen}
         onClose={() => setDeleteFolderOpen(false)}
         folderId={folderId}
+      />
+      <DeleteFileDialog
+        isOpen={deleteFileOpen}
+        onClose={() => setDeleteFileOpen(false)}
+        id={deleteFileId}
+        onDelete={refreshFolders}
       />
       <div>
         <Stack type="row" className="pb-4">
