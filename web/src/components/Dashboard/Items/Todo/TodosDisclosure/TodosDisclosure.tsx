@@ -6,6 +6,7 @@ import {
   ArrowUpIcon,
   BanIcon,
   CheckIcon,
+  CogIcon,
   ReplyIcon,
   TrashIcon,
 } from "@heroicons/react/outline";
@@ -15,6 +16,7 @@ import { gqlClient } from "@libs/graphql-request";
 import { lightHex } from "@src/functions/colors";
 import { toast } from "react-toastify";
 import moment from "moment";
+import UpdateTodoDialog from "../UpdateTodo/UpdateTodoDialog";
 
 interface props {
   todos: Todo[];
@@ -60,6 +62,9 @@ const dumpTodo = gql`
 export default function TodoDisclosures({ todos, onDump }: props) {
   const [pageTodos, setPageTodos] = useState<Todo[]>([]);
   const [priorities, setPriorities] = useState<Priority[]>([]);
+
+  const [updateTodoOpen, setUpdateTodoOpen] = useState<boolean>(false);
+  const [updateTodoID, setUpdateTodoID] = useState<Todo | undefined>(undefined);
 
   async function fetchPriorities() {
     await gqlClient
@@ -157,6 +162,11 @@ export default function TodoDisclosures({ todos, onDump }: props) {
 
   return (
     <>
+      <UpdateTodoDialog
+        isOpen={updateTodoOpen}
+        onClose={() => setUpdateTodoOpen(false)}
+        todo={updateTodoID}
+      />
       <div className="space-y-2 flex flex-col w-full">
         <Disclosure defaultOpen={true}>
           {({ open }: { open: boolean }) => (
@@ -214,6 +224,14 @@ export default function TodoDisclosures({ todos, onDump }: props) {
                                   )
                               )}
                           </div>
+                          <Buttons
+                            color="gray"
+                            onClick={() => {
+                              setUpdateTodoID(todo);
+                              setUpdateTodoOpen(true);
+                            }}
+                            icon={<CogIcon className="w-4" />}
+                          />
                           <Buttons
                             color="blue"
                             onClick={() => {
@@ -311,6 +329,14 @@ export default function TodoDisclosures({ todos, onDump }: props) {
                                   )}
                               </div>
                               <Buttons
+                                color="gray"
+                                onClick={() => {
+                                  setUpdateTodoID(todo);
+                                  setUpdateTodoOpen(true);
+                                }}
+                                icon={<CogIcon className="w-4" />}
+                              />
+                              <Buttons
                                 color="blue"
                                 onClick={() => {
                                   restoreTodo(todo.todo_id);
@@ -399,6 +425,14 @@ export default function TodoDisclosures({ todos, onDump }: props) {
                                       )
                                   )}
                               </div>
+                              <Buttons
+                                color="gray"
+                                onClick={() => {
+                                  setUpdateTodoID(todo);
+                                  setUpdateTodoOpen(true);
+                                }}
+                                icon={<CogIcon className="w-4" />}
+                              />
                               <Buttons
                                 color="blue"
                                 onClick={() => {

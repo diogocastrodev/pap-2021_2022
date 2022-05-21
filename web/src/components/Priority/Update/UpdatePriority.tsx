@@ -58,7 +58,8 @@ export default function UpdatePriorityDialog({
             onSuccess();
           }
         }
-      });
+      })
+      .catch((err) => {});
   };
 
   useEffect(() => {

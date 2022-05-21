@@ -58,7 +58,7 @@ export default function CreateTodoDialog(props: props) {
     updated_at: "",
   };
   const [text, setText] = useState<string>("");
-  const [date, setDate] = useState<string | undefined>(undefined);
+  const [date, setDate] = useState<string>("");
   const [priority, setPriority] = useState<Priority | undefined>(noPriority);
   const [Priorities, setPriorities] = useState<Priority[] | undefined>(
     undefined
@@ -132,7 +132,7 @@ export default function CreateTodoDialog(props: props) {
             newTodo.date
           );
           setText("");
-          setDate(undefined);
+          setDate("");
           setPriority(noPriority);
           props.onClose();
         });
@@ -167,7 +167,7 @@ export default function CreateTodoDialog(props: props) {
                 input={{
                   value: date,
                   onChange: (e) => setDate(e.target.value),
-                  type: "datetime-local",
+                  type: "date",
                   name: "fileDate",
                 }}
               />

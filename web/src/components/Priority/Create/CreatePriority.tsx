@@ -58,7 +58,7 @@ export default function CreatePriorityDialog({
           }
         }
       })
-      .then((e) => {
+      .catch((e) => {
         console.log(e);
       });
   }

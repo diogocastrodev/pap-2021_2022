@@ -71,7 +71,7 @@ export default function DeletePriorityDialog({ isOpen, onClose, id }: props) {
                     className={({ active }) =>
                       `${
                         active && `bg-blue-200`
-                      }text-left py-2 px-3 rounded-md w-full `
+                      }text-left py-2 px-3 rounded-md w-full hover:bg-blue-200 p-1`
                     }
                   >
                     {({ selected }) => (

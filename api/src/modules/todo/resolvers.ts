@@ -545,7 +545,7 @@ export const TodoResolver: Resolvers<ResolverContext> = {
       if (text && typeof text !== null)
         dataToUpdate = {
           ...dataToUpdate,
-          todoText: text,
+          text: text,
         };
 
       if (status && typeof status !== null)
