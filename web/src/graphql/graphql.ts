@@ -79,14 +79,22 @@ export type Mutation = {
   createFolder?: Maybe<Folders>;
   createPriority: Priority;
   createTodo: Todo;
+  deactivateUser?: Maybe<Scalars['Boolean']>;
+  deleteFile?: Maybe<Scalars['Boolean']>;
+  deleteFolder?: Maybe<Scalars['Boolean']>;
   deletePriority: Scalars['Boolean'];
-  deleteTodo: Scalars['Boolean'];
+  dumpTodo: Scalars['Boolean'];
   login?: Maybe<Scalars['Boolean']>;
   logout?: Maybe<Scalars['Boolean']>;
+  moveFolder?: Maybe<Scalars['Boolean']>;
   register?: Maybe<Scalars['Boolean']>;
   updateDocument: Scalars['Boolean'];
+  updateFile?: Maybe<Scalars['Boolean']>;
+  updateFolder?: Maybe<Scalars['Boolean']>;
+  updatePassword?: Maybe<Scalars['Boolean']>;
   updatePriority: Priority;
-  updateTodo: Todo;
+  updateTodo?: Maybe<Scalars['Boolean']>;
+  updateUser?: Maybe<Scalars['Boolean']>;
   verifyHash?: Maybe<Scalars['Boolean']>;
 };
 
@@ -115,17 +123,33 @@ export type MutationCreatePriorityArgs = {
 export type MutationCreateTodoArgs = {
   date?: InputMaybe<Scalars['DateTime']>;
   file?: InputMaybe<Scalars['ID']>;
-  name: Scalars['String'];
   priority?: InputMaybe<Scalars['ID']>;
+  text: Scalars['String'];
+};
+
+
+export type MutationDeactivateUserArgs = {
+  password: Scalars['String'];
+};
+
+
+export type MutationDeleteFileArgs = {
+  fileId: Scalars['ID'];
+};
+
+
+export type MutationDeleteFolderArgs = {
+  folderId: Scalars['ID'];
 };
 
 
 export type MutationDeletePriorityArgs = {
   id: Scalars['ID'];
+  removeTodos: Scalars['Boolean'];
 };
 
 
-export type MutationDeleteTodoArgs = {
+export type MutationDumpTodoArgs = {
   id: Scalars['ID'];
 };
 
@@ -133,6 +157,13 @@ export type MutationDeleteTodoArgs = {
 export type MutationLoginArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationMoveFolderArgs = {
+  folderId: Scalars['ID'];
+  parent_id?: InputMaybe<Scalars['ID']>;
+  remParent?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -148,6 +179,25 @@ export type MutationUpdateDocumentArgs = {
 };
 
 
+export type MutationUpdateFileArgs = {
+  fileId: Scalars['ID'];
+  name: Scalars['String'];
+};
+
+
+export type MutationUpdateFolderArgs = {
+  color?: InputMaybe<Scalars['String']>;
+  folderId: Scalars['ID'];
+  name?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdatePasswordArgs = {
+  newPassword: Scalars['String'];
+  oldPassword: Scalars['String'];
+};
+
+
 export type MutationUpdatePriorityArgs = {
   color?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
@@ -160,9 +210,16 @@ export type MutationUpdateTodoArgs = {
   date?: InputMaybe<Scalars['DateTime']>;
   file?: InputMaybe<Scalars['ID']>;
   id: Scalars['ID'];
-  name?: InputMaybe<Scalars['String']>;
   priority?: InputMaybe<Scalars['ID']>;
+  remDate?: InputMaybe<Scalars['Boolean']>;
+  remPriority?: InputMaybe<Scalars['Boolean']>;
   status?: InputMaybe<TodoStatus>;
+  text?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateUserArgs = {
+  email?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -186,12 +243,14 @@ export type Query = {
   __typename?: 'Query';
   allImages?: Maybe<Array<Maybe<ImagesWithUrl>>>;
   checkToken?: Maybe<Scalars['Boolean']>;
+  getDatedTodos: Array<Maybe<Todo>>;
   getDocumentContent: Scalars['String'];
   getFileContent?: Maybe<Files>;
   getFilesByFolder?: Maybe<Array<Maybe<Files>>>;
   getFolderById?: Maybe<Folders>;
   getTodo?: Maybe<Todo>;
   getTodos: Array<Maybe<Todo>>;
+  getTodosByFile: Array<Maybe<Todo>>;
   getTodosByFolder: Array<Maybe<Todo>>;
   getTodosByPriority: Array<Maybe<Todo>>;
   me?: Maybe<User>;
@@ -222,6 +281,11 @@ export type QueryGetFolderByIdArgs = {
 
 export type QueryGetTodoArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGetTodosByFileArgs = {
+  file: Scalars['ID'];
 };
 
 
