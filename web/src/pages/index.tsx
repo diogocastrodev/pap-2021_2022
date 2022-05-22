@@ -17,7 +17,7 @@ export default function indexPage() {
               <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-blue-400 pr-2">
                 note.so
               </span>
-              aplicação de notas para ajudar você a organizar suas anotações
+              aplicação de notas para o ajudar a organizar
             </span>
           </div>
           <Stack type="row" className="mt-4 space-x-4">

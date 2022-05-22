@@ -79,10 +79,8 @@ export default function CreateFolderDialog(props: props) {
           }}
         ></AntiFocusTrap>
         <div className="flex flex-row max-h-120 ">
-          <div className="flex flex-col w-1/4 mr-4 ">
-            <span className="text-justify">
-              Clique na pasta no qual deseja adicionar
-            </span>
+          <div className="flex flex-col w-1/3 mr-4 ">
+            <span className="text-justify">Clique no Parente</span>
             <div className="flex flex-1 w-full bg-gray-200 rounded-md mr-4 py-1 overflow-hidden overflow-y-auto">
               <TreeNode
                 folders={folderData.folders as ExportedData[]}
@@ -102,7 +100,7 @@ export default function CreateFolderDialog(props: props) {
             <Stack type="col" className="">
               <Stack type="col">
                 <InputGroup>
-                  <Label text="Folder Name" required={true} />
+                  <Label text="Nome" required={true} />
                   <Input
                     input={{
                       type: "text",
@@ -118,7 +116,7 @@ export default function CreateFolderDialog(props: props) {
                   />
                 </InputGroup>
                 <InputGroup>
-                  <Label text="Folder Parent" />
+                  <Label text="Parente" />
                   <Input
                     input={{
                       type: "text",
@@ -139,7 +137,7 @@ export default function CreateFolderDialog(props: props) {
               </Stack>
               <Stack type="col" className="">
                 <InputGroup>
-                  <Label text="Color" />
+                  <Label text="Cor" />
                   <Input
                     input={{
                       type: "color",

@@ -83,11 +83,6 @@ export default function DashboardListFiles({ folderId }: props) {
     );
   }
 
-  enum SearchType {
-    Recent = "Mais Recente",
-    Older = "Mais Antigo",
-  }
-
   enum TypeOfFile {
     All = "Todos",
     Document = "Documentos",
@@ -95,9 +90,6 @@ export default function DashboardListFiles({ folderId }: props) {
   }
 
   const [FileSearch, setFileSearch] = useState<string>("");
-  const [FileSearchType, setFileSearchType] = useState<SearchType>(
-    SearchType.Recent
-  );
   const [FileSearchTypeOfFile, setFileSearchTypeOfFile] = useState<TypeOfFile>(
     TypeOfFile.All
   );
@@ -118,21 +110,6 @@ export default function DashboardListFiles({ folderId }: props) {
           FileSearch.toLowerCase().trim() === " "
         );
       });
-
-      switch (FileSearchType) {
-        case SearchType.Recent:
-          list = list.sort(function (a, b) {
-            return a.created_at - b.created_at;
-          });
-
-          break;
-        case SearchType.Older:
-          list = list.sort(function (a, b) {
-            return b.created_at - a.created_at;
-          });
-
-          break;
-      }
       switch (FileSearchTypeOfFile) {
         case TypeOfFile.All:
           return list;
@@ -297,27 +274,6 @@ export default function DashboardListFiles({ folderId }: props) {
                       className: "w-full",
                     }}
                   />
-                  <Listbox
-                    value={FileSearchType}
-                    onChange={setFileSearchType}
-                    as="div"
-                    className={`relative`}
-                  >
-                    <Listbox.Button
-                      className={`bg-gray-200 px-4 py-2 rounded-xl `}
-                    >
-                      {FileSearchType}
-                    </Listbox.Button>
-                    <Listbox.Options
-                      className={`absolute top-10 bg-gray-200 rounded-lg px-3 py-1 space-y-1`}
-                    >
-                      {Object.values(SearchType).map((type) => (
-                        <Listbox.Option key={type} value={type}>
-                          {type.toString()}
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
-                  </Listbox>
                   <Listbox
                     value={FileSearchTypeOfFile}
                     onChange={setFileSearchTypeOfFile}

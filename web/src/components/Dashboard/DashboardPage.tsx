@@ -175,7 +175,7 @@ export default function DashboardPage(props: props) {
                   <FolderIcon className="w-5" />
                   {/* Section Title */}
                   <div className="ml-2 flex items-center">
-                    Folders
+                    Pastas
                     <div
                       className="ml-1"
                       onMouseEnter={(e) => {
