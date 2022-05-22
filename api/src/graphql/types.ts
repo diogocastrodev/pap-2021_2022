@@ -90,6 +90,7 @@ export type Mutation = {
   dumpTodo: Scalars['Boolean'];
   login?: Maybe<Scalars['Boolean']>;
   logout?: Maybe<Scalars['Boolean']>;
+  moveFolder?: Maybe<Scalars['Boolean']>;
   register?: Maybe<Scalars['Boolean']>;
   updateDocument: Scalars['Boolean'];
   updateFile?: Maybe<Scalars['Boolean']>;
@@ -163,6 +164,13 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationMoveFolderArgs = {
+  folderId: Scalars['ID'];
+  parent_id?: InputMaybe<Scalars['ID']>;
+  remParent?: InputMaybe<Scalars['Boolean']>;
+};
+
+
 export type MutationRegisterArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -185,8 +193,6 @@ export type MutationUpdateFolderArgs = {
   color?: InputMaybe<Scalars['String']>;
   folderId: Scalars['ID'];
   name?: InputMaybe<Scalars['String']>;
-  parent_id?: InputMaybe<Scalars['String']>;
-  remParentId?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -551,6 +557,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   dumpTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDumpTodoArgs, 'id'>>;
   login?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   logout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  moveFolder?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationMoveFolderArgs, 'folderId'>>;
   register?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'password'>>;
   updateDocument?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateDocumentArgs, 'content' | 'id'>>;
   updateFile?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateFileArgs, 'fileId' | 'name'>>;

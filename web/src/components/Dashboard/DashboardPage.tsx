@@ -23,12 +23,12 @@ import LastUpdateTimeFolders from "./LastUpdateTime/LastUpdateTime";
 import FoldersContextMenu from "./Folders/ContextMenu/FoldersContextMenu";
 import SearchDialog from "./Search/SearchDialog";
 import CreateFolderDialog from "./Folders/Create Folder/CreateFolder";
-import OrganizeFolderDialog from "./Folders/Organize Folders/OrganizeFolder";
 import ItemsToPage from "./Items/Items";
 import Head from "next/head";
 import NeedLogin from "../Login/NeedLogin";
 import Link from "next/link";
 import DeleteFileDialog from "./Files/DeleteFile/DeleteFile";
+import OrganizeFolderDialog from "./Folders/Organize Folders/OrganizeFolder";
 
 interface props {
   folder?: {

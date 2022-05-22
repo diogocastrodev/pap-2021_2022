@@ -186,7 +186,7 @@ export const FolderResolver: Resolvers<ResolverContext> = {
     },
     updateFolder: async (
       _,
-      { folderId, name, color, parent_id, remParentId },
+      { folderId, name, color },
       { is_authed, user_id }
     ) => {
       if (!is_authed || user_id === undefined)
@@ -228,24 +228,6 @@ export const FolderResolver: Resolvers<ResolverContext> = {
 
         if (name) data.name = name;
         if (color) data.color = check.chars.color(color);
-
-        if (parent_id && !remParentId) {
-          data = {
-            ...data,
-            parent_folder: {
-              connect: {
-                folder_id: parent_id,
-              },
-            },
-          };
-        }
-
-        if (!parent_id && remParentId) {
-          data = {
-            ...data,
-            parent_id: undefined,
-          };
-        }
 
         const updatedFolder = await db.folders.update({
           where: {
@@ -336,6 +318,88 @@ export const FolderResolver: Resolvers<ResolverContext> = {
         });
 
         if (!allFolders) throw new Error("folder not found");
+
+        return true;
+      } catch (e) {
+        throw new Error(e as string);
+      }
+    },
+    moveFolder: async (
+      _,
+      { folderId, parent_id, remParent },
+      { is_authed, user_id }
+    ) => {
+      if (!is_authed || user_id === undefined)
+        throw new AuthenticationError("no login");
+
+      try {
+        const folder = await db.folders.findUnique({
+          where: {
+            folder_id: folderId,
+          },
+          select: {
+            user: {
+              select: {
+                public_user_id: true,
+              },
+            },
+          },
+        });
+
+        if (!folder) throw new Error("folder not found");
+
+        if (folder.user.public_user_id.toString() !== user_id.toString())
+          throw new Error("no access");
+
+        if (parent_id) {
+          const parent = await db.folders.findUnique({
+            where: {
+              folder_id: parent_id,
+            },
+            select: {
+              user: {
+                select: {
+                  public_user_id: true,
+                },
+              },
+            },
+          });
+
+          if (!parent) throw new Error("Parent folder not found");
+
+          if (parent.user.public_user_id.toString() !== user_id.toString())
+            throw new Error("You can't move folder in this folder");
+        }
+
+        const data: {
+          parent_folder?: {
+            connect: {
+              folder_id: string;
+            };
+          };
+          parent_id?: undefined;
+        } = {};
+
+        if (parent_id && !remParent) {
+          data.parent_folder = {
+            connect: {
+              folder_id: parent_id,
+            },
+          };
+        }
+
+        if (!parent_id && remParent) {
+          data.parent_id = undefined;
+        }
+
+        const updatedFolder = await db.folders.update({
+          where: {
+            folder_id: folderId,
+          },
+          data,
+        });
+
+        if (!updatedFolder) throw new Error("Failed updating folder");
 
         return true;
       } catch (e) {
