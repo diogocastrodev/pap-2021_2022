@@ -1,6 +1,6 @@
 import { graphQL_Endpoint } from "../global/variables";
 import { GraphQLClient } from "graphql-request";
-import { accessGlobalState } from "./Apollo";
+import { accessGlobalState } from "../global/variables";
 
 const Token = accessGlobalState();
 

@@ -2,7 +2,6 @@ import { gql } from "@apollo/client";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from "../graphql/graphql";
 import { gqlClient } from "../libs/graphql-request";
-import { accessGlobalState } from "../libs/Apollo";
 import { routes } from "../functions/routes";
 
 /* Context.Provider children */
@@ -63,8 +62,6 @@ const AuthProvider = ({ children }: Props) => {
   const [AuthData, setAuthData] = useState<AuthType>({ loading: true });
   /* create a mutation Function to Login */
   /* Access token */
-  const token = accessGlobalState();
-
   const checkSession = async () => {
     await gqlClient
       .request(checkSessionQuery)
