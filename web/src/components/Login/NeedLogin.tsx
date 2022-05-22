@@ -3,7 +3,7 @@ import { useContext, useEffect } from "react";
 import { AuthContext } from "@context/AuthContext";
 
 interface props {
-  children: React.ReactNode | React.ReactNode[] | undefined;
+  children?: React.ReactNode | React.ReactNode[] | undefined;
 }
 
 export default function NeedLogin({ children }: props) {
@@ -17,11 +17,5 @@ export default function NeedLogin({ children }: props) {
     }
   }, [AuthData.loading || AuthData.is_logged]);
 
-  return (
-    <>
-      {!AuthData.loading && AuthData.user && AuthData.is_logged && (
-        <>{children}</>
-      )}
-    </>
-  );
+  return <>{!AuthData.loading && <>{children}</>}</>;
 }

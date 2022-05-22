@@ -26,19 +26,13 @@ export default function UploadImageDialog({
         formData.append("images", files[index]);
       }
       await axios
-        .post(
-          `${config.API.secure ? "https" : "http"}://${
-            config.API.URL
-          }/upload/images`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              "Access-Control-Allow-Origin": "*",
-            },
-            withCredentials: true,
-          }
-        )
+        .post(`${config.API.URL}/upload/images`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Access-Control-Allow-Origin": "*",
+          },
+          withCredentials: true,
+        })
         .then((res) => {
           onClose();
           if (res.status === 200) {

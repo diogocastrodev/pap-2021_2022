@@ -70,11 +70,13 @@ const AuthProvider = ({ children }: Props) => {
           setAuthData({
             user: AuthData.user,
             is_logged: true,
+            loading: false,
           });
         } else {
           setAuthData({
             user: undefined,
             is_logged: false,
+            loading: false,
           });
         }
       })
@@ -82,6 +84,7 @@ const AuthProvider = ({ children }: Props) => {
         setAuthData({
           user: undefined,
           is_logged: false,
+          loading: false,
         });
       });
   };
@@ -94,6 +97,7 @@ const AuthProvider = ({ children }: Props) => {
         setAuthData({
           is_logged: true,
           user: res.me,
+          loading: false,
         });
       })
       .catch((err) => {

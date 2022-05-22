@@ -107,6 +107,7 @@ export default function CreateFileDialog({ isOpen, onClose, folderId }: props) {
               value={type}
               name={`fileType`}
               ref={typeSelect}
+              className="outline-none w-full text-left"
             >
               {Object.values(FileType).map((type) => (
                 <option
@@ -114,12 +115,14 @@ export default function CreateFileDialog({ isOpen, onClose, folderId }: props) {
                   value={type as FileType}
                   className="capitalize"
                 >
-                  {type}
+                  {type === FileType.Document
+                    ? "Documento"
+                    : "Lista de Apontamentos"}
                 </option>
               ))}
             </select>
           </Stack>
-          <Button type="submit">Teste</Button>
+          <Button type="submit">Criar Ficheiro</Button>
         </form>
       </PreMadeDialog>
     </>

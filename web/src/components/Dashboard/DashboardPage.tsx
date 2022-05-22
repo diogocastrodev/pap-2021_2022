@@ -144,7 +144,7 @@ export default function DashboardPage(props: props) {
           onClose={() => setDialogOpen(false)}
         />
       )}
-
+      <NeedLogin />
       {/* Menu */}
       <NeedLogin>
         <div className="w-full max-h-[calc(100vh-4rem)] flex flex-row gap-x-2 relative">
