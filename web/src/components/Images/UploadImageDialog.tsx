@@ -57,7 +57,7 @@ export default function UploadImageDialog({
                   onChange: (e) => {
                     setFiles(e.target.files);
                   },
-                  accept: ".jpg, .jpeg, .png",
+                  accept: ".png",
                 }}
               />
               <Button className="mt-4">Enviar</Button>
