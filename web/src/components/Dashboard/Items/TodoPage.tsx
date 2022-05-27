@@ -139,7 +139,9 @@ export default function TodoPage(props: props) {
         isOpen={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}
         file={props.id}
-        onCreate={addTodo}
+        onCreate={() => {
+          getTodos();
+        }}
       />
       <div className="flex flex-row items-center flex-1">
         <div className="flex flex-col">

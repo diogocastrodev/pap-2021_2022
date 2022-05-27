@@ -70,8 +70,8 @@ export default function UpdateFileDialog({
     <>
       <PreMadeDialog isOpen={isOpen} onClose={onClose}>
         <Stack type="col">
-          <div className="">Atualizar Ficheiro</div>
-          <Form onSubmit={formHandler}>
+          <div className="text-xl font-semibold">Atualizar Ficheiro</div>
+          <Form onSubmit={formHandler} className="space-y-2">
             <InputGroup>
               <Label text="Nome"></Label>
               <Input

@@ -3,7 +3,7 @@ import { createState, State } from "@hookstate/core";
 export const config = {
   port: process.env.PORT || 3000,
   API: {
-    URL: process.env.API_URL || "localhost:4000",
+    URL: process.env.API_URL || "http://localhost:4000",
   },
 };
 

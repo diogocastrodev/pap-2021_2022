@@ -28,9 +28,6 @@ const corsOptions: CorsOptions = {
   credentials: true,
   origin: [
     "http://localhost:3000",
-    "https://castro.pap12m.pt",
-    "http://51.68.197.137:3000",
-
     config.env === "development" && "https://studio.apollographql.com",
   ],
 };

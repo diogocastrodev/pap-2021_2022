@@ -11,6 +11,7 @@ import Button from "@components/Form/Buttons/Button";
 import Form from "@components/Form/Form/Form";
 import InputGroup from "@components/Form/Inputs/InputGroup";
 import { Listbox } from "@headlessui/react";
+import { useRouter } from "next/router";
 
 const createTodoMutation = gql`
   mutation ($text: String!, $date: DateTime, $priority: ID, $file: ID) {
@@ -49,6 +50,7 @@ interface props extends preMadeDialogNeeded {
 }
 
 export default function CreateTodoDialog(props: props) {
+  const router = useRouter();
   const noPriority = {
     priority_id: "",
     name: "Sem prioridade",
@@ -134,6 +136,7 @@ export default function CreateTodoDialog(props: props) {
           setText("");
           setDate("");
           setPriority(noPriority);
+          router.reload();
           props.onClose();
         });
     } catch (error) {
