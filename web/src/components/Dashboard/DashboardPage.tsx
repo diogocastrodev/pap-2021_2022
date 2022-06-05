@@ -118,7 +118,6 @@ export default function DashboardPage(props: props) {
       <Head>
         <title>Dashboard | note.so</title>
       </Head>
-      <SearchDialog />
       <FoldersContextMenu
         folder={folderFocused}
         isOpen={OpenContextMenu}

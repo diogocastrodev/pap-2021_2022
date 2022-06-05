@@ -23,12 +23,25 @@ export default function RegisterPage() {
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
 
+  const [error, setError] = useState<string | undefined>(undefined);
+
   const router = useRouter();
 
   useEffect(() => {
     if (Password.length < 8 || Password.length > 32) {
+      setError("A senha deve ter entre 8 e 32 caracteres");
+    } else {
+      setError(undefined);
     }
   }, [Password]);
+
+  useEffect(() => {
+    if (Password !== ConfPassword) {
+      setError("As senhas não coincidem");
+    } else {
+      setError(undefined);
+    }
+  }, [ConfPassword]);
 
   return (
     <>
@@ -41,8 +54,12 @@ export default function RegisterPage() {
             <Form
               onSubmit={(e) => {
                 e.preventDefault();
-                /* TODO: Register */
-                if (Password === ConfPassword) {
+                if (
+                  Password.length >= 8 &&
+                  Password.length <= 32 &&
+                  Password === ConfPassword
+                ) {
+                  setError(undefined);
                   gqlClient
                     .request(registerMutation, {
                       email: Email,
@@ -52,7 +69,18 @@ export default function RegisterPage() {
                       routes.redirect("/auth/login");
                     })
                     .catch((e) => {
-                      throw new Error(e as string);
+                      const error: string = e.message.split(":")[1];
+                      if (error.match("Error creating user")) {
+                        setError("Erro ao criar o utilizador");
+                      }
+                      if (error.match("Invalid password")) {
+                        setError(
+                          "Senha inválida, deve ter entre 8 e 32 caracteres"
+                        );
+                      }
+                      if (error.match("Invalid email")) {
+                        setError("Email inválido");
+                      }
                     });
                 }
               }}
@@ -97,6 +125,9 @@ export default function RegisterPage() {
                 <Button type="submit" className="mt-4">
                   Registar
                 </Button>
+                {error && (
+                  <div className="text-red-500 text-center mt-4">{error}</div>
+                )}
               </Stack>
             </Form>
           </div>
