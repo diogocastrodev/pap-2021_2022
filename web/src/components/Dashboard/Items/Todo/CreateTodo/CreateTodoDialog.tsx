@@ -176,7 +176,7 @@ export default function CreateTodoDialog(props: props) {
               />
             </InputGroup>
             <InputGroup className="">
-              <Label text="Data" />
+              <Label text="Prioridade" />
               <Listbox value={priority} onChange={setPriority}>
                 <div className="relative">
                   <Listbox.Button className={`relative max-w-fit`}>
